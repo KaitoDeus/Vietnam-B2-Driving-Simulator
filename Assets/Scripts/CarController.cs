@@ -2,41 +2,95 @@ using UnityEngine;
 
 public class CarController : MonoBehaviour
 {
-    public float moveSpeed = 10f;
-    public float turnSpeed = 100f;
+    [Header("Wheel Colliders")]
+    public WheelCollider frontLeftCollider;
+    public WheelCollider frontRightCollider;
+    public WheelCollider rearLeftCollider;
+    public WheelCollider rearRightCollider;
+
+    [Header("Wheel Visuals")]
+    public Transform frontLeftTransform;
+    public Transform frontRightTransform;
+    public Transform rearLeftTransform;
+    public Transform rearRightTransform;
+
+    [Header("Car Settings")]
+    public float maxMotorTorque = 1500f;  // N.m
+    public float maxBrakeTorque = 3000f;  // N.m
+    public float maxSteerAngle = 35f;     // Degrees
+    public Vector3 centerOfMassOffset = new Vector3(0f, -0.5f, 0f);
 
     private Rigidbody rb;
     private float moveInput;
     private float turnInput;
+    private float brakeInput;
 
     private void Start()
     {
         rb = GetComponent<Rigidbody>();
+        if (rb != null)
+        {
+            rb.centerOfMass += centerOfMassOffset;
+        }
     }
 
     private void Update()
     {
         moveInput = Input.GetAxis("Vertical");
         turnInput = Input.GetAxis("Horizontal");
+        brakeInput = Input.GetKey(KeyCode.Space) ? 1f : 0f;
     }
 
     private void FixedUpdate()
     {
-        Move();
-        Turn();
+        ApplySteering();
+        ApplyMotor();
+        ApplyBraking();
+        UpdateAllWheels();
     }
 
-    void Move()
+    private void ApplySteering()
     {
-        Vector3 moveDirection = transform.forward * moveInput * moveSpeed;
-        rb.MovePosition(rb.position + moveDirection * Time.fixedDeltaTime);
+        float currentSteerAngle = turnInput * maxSteerAngle;
+        if (frontLeftCollider != null) frontLeftCollider.steerAngle = currentSteerAngle;
+        if (frontRightCollider != null) frontRightCollider.steerAngle = currentSteerAngle;
     }
 
-    void Turn()
+    private void ApplyMotor()
     {
-        float turn = turnInput * turnSpeed * Time.fixedDeltaTime;
-        Quaternion turnRotation = Quaternion.Euler(0f, turn, 0f);
+        float torque = moveInput * maxMotorTorque;
+        // Rear wheel drive (RWD)
+        if (rearLeftCollider != null) rearLeftCollider.motorTorque = torque;
+        if (rearRightCollider != null) rearRightCollider.motorTorque = torque;
+    }
 
-        rb.MoveRotation(rb.rotation * turnRotation);
+    private void ApplyBraking()
+    {
+        float currentBrake = brakeInput * maxBrakeTorque;
+        if (frontLeftCollider != null) frontLeftCollider.brakeTorque = currentBrake;
+        if (frontRightCollider != null) frontRightCollider.brakeTorque = currentBrake;
+        if (rearLeftCollider != null) rearLeftCollider.brakeTorque = currentBrake;
+        if (rearRightCollider != null) rearRightCollider.brakeTorque = currentBrake;
+    }
+
+    private void UpdateAllWheels()
+    {
+        UpdateWheel(frontLeftCollider, frontLeftTransform);
+        UpdateWheel(frontRightCollider, frontRightTransform);
+        UpdateWheel(rearLeftCollider, rearLeftTransform);
+        UpdateWheel(rearRightCollider, rearRightTransform);
+    }
+
+    private void UpdateWheel(WheelCollider col, Transform trans)
+    {
+        if (col == null || trans == null) return;
+
+        Vector3 position;
+        Quaternion rotation;
+        col.GetWorldPose(out position, out rotation);
+
+        trans.position = position;
+        // Xoay thêm 90 độ quanh trục Z để Cylinder nằm ngang làm bánh xe
+        trans.rotation = rotation * Quaternion.Euler(0f, 0f, 90f);
     }
 }
