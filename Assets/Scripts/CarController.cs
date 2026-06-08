@@ -19,6 +19,7 @@ public class CarController : MonoBehaviour
     public float maxBrakeTorque = 3000f;  // N.m
     public float maxSteerAngle = 35f;     // Degrees
     public Vector3 centerOfMassOffset = new Vector3(0f, -0.5f, 0f);
+    public Vector3 wheelRotationOffset = Vector3.zero;
 
     private Rigidbody rb;
     private float moveInput;
@@ -90,7 +91,6 @@ public class CarController : MonoBehaviour
         col.GetWorldPose(out position, out rotation);
 
         trans.position = position;
-        // Xoay thêm 90 độ quanh trục Z để Cylinder nằm ngang làm bánh xe
-        trans.rotation = rotation * Quaternion.Euler(0f, 0f, 90f);
+        trans.rotation = rotation * Quaternion.Euler(wheelRotationOffset);
     }
 }
