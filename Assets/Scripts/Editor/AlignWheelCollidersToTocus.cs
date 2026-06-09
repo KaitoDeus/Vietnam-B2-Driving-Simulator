@@ -137,6 +137,9 @@ public class AlignWheelCollidersToTocus : EditorWindow
         rlCol.radius = averageRadius;
         rrCol.radius = averageRadius;
 
+        // Cấu hình vật lý và ma sát bám đường cho xe nặng 1.5 tấn
+        ConfigurePhysics(car, new WheelCollider[] { flCol, frCol, rlCol, rrCol });
+
         // Dọn dẹp pivot ảo cũ nếu có để giữ cấu trúc sạch
         CleanUpOldPivots(flVisual);
         CleanUpOldPivots(frVisual);
@@ -238,22 +241,13 @@ public class AlignWheelCollidersToTocus : EditorWindow
             colObj.transform.localScale = Vector3.one;
 
             WheelCollider col = colObj.AddComponent<WheelCollider>();
-            
-            // Cấu hình vật lý chuẩn cho ô tô Sedan thực tế
-            col.mass = 20f;
             col.radius = averageRadius;
-            col.suspensionDistance = 0.15f;
-
-            // Spring & Damper để xe nhún đầm bám đường
-            JointSpring spring = col.suspensionSpring;
-            spring.spring = 35000f;
-            spring.damper = 4500f;
-            spring.targetPosition = 0.5f;
-            col.suspensionSpring = spring;
-
             newCols[i] = col;
             Undo.RegisterCreatedObjectUndo(colObj, "Create " + names[i]);
         }
+
+        // Cấu hình vật lý và ma sát bám đường cho xe nặng 1.5 tấn
+        ConfigurePhysics(car, newCols);
 
         // 5. Gán liên kết toàn bộ trực tiếp vào CarController (không dùng Pivot ảo)
         controller.frontLeftCollider = newCols[0];
@@ -362,5 +356,53 @@ public class AlignWheelCollidersToTocus : EditorWindow
             if (result != null) return result;
         }
         return null;
+    }
+
+    private static void ConfigurePhysics(GameObject car, WheelCollider[] colliders)
+    {
+        Rigidbody rb = car.GetComponent<Rigidbody>();
+        if (rb == null)
+        {
+            rb = car.AddComponent<Rigidbody>();
+        }
+
+        // Cấu hình Rigidbody chuẩn cho ô tô Sedan thực tế
+        rb.mass = 1500f;          // Trọng lượng 1.5 tấn giúp xe đầm, có quán tính thực tế
+        rb.linearDamping = 0.15f;          // Lực cản không khí nhẹ để giảm gia tốc ảo ở tốc độ cao
+        rb.angularDamping = 1.5f;    // Tăng lực cản xoay để tránh xe bị xoay vòng khi trượt bánh
+        rb.interpolation = RigidbodyInterpolation.Interpolate; // Khử hiện tượng giật hình (jitter) của xe
+
+        foreach (var col in colliders)
+        {
+            if (col == null) continue;
+
+            col.mass = 20f;              // Khối lượng bánh xe
+            col.suspensionDistance = 0.15f; // Hành trình nhún ngắn hơn (15cm) để giảm độ nghiêng thân xe khi cua
+
+            // Cấu hình lò xo giảm chấn nhún cho xe 1.5 tấn (cứng cáp hơn)
+            JointSpring spring = col.suspensionSpring;
+            spring.spring = 40000f;      // Tăng độ cứng lò xo
+            spring.damper = 5000f;       // Tăng giảm chấn để ổn định thân xe nhanh hơn
+            spring.targetPosition = 0.5f; // Trọng tâm nhún ở giữa
+            col.suspensionSpring = spring;
+
+            // Cấu hình lực bám dọc (Forward Friction) chống trượt quay bánh khi tăng tốc/phanh
+            WheelFrictionCurve forwardFriction = col.forwardFriction;
+            forwardFriction.extremumSlip = 0.4f;
+            forwardFriction.extremumValue = 1.0f;
+            forwardFriction.asymptoteSlip = 0.8f;
+            forwardFriction.asymptoteValue = 0.5f;
+            forwardFriction.stiffness = 2.0f; // Tăng ma sát dọc để xe bám đường tốt hơn
+            col.forwardFriction = forwardFriction;
+
+            // Cấu hình lực bám ngang (Sideways Friction) chống văng đuôi trượt dài
+            WheelFrictionCurve sidewaysFriction = col.sidewaysFriction;
+            sidewaysFriction.extremumSlip = 0.3f;
+            sidewaysFriction.extremumValue = 1.0f;
+            sidewaysFriction.asymptoteSlip = 0.5f;
+            sidewaysFriction.asymptoteValue = 0.7f;
+            sidewaysFriction.stiffness = 2.2f; // Tăng ma sát ngang để tránh cảm giác xe lướt trên băng
+            col.sidewaysFriction = sidewaysFriction;
+        }
     }
 }
