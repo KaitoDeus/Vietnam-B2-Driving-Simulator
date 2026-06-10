@@ -26,6 +26,9 @@ public class CarController : MonoBehaviour
     public float engineBrakeTorque = 15f;     // Lực phanh động cơ nhẹ khi thả ga (giúp xe trôi được trớn xa hơn)
     public float parkingBrakeTorque = 1000f;   // Lực phanh tay tự động khóa bánh khi dừng hẳn
 
+    [HideInInspector]
+    public bool isEngineOn = false; // Trạng thái nổ/tắt máy xe (Phím I)
+
     private Rigidbody rb;
     private float moveInput;
     private float turnInput;
@@ -42,8 +45,22 @@ public class CarController : MonoBehaviour
 
     private void Update()
     {
-        moveInput = Input.GetAxis("Vertical");
-        turnInput = Input.GetAxis("Horizontal");
+        // Nhấn phím I để nổ/tắt máy
+        if (Input.GetKeyDown(KeyCode.I))
+        {
+            isEngineOn = !isEngineOn;
+        }
+
+        if (isEngineOn)
+        {
+            moveInput = Input.GetAxis("Vertical");
+            turnInput = Input.GetAxis("Horizontal");
+        }
+        else
+        {
+            moveInput = 0f;
+            turnInput = 0f;
+        }
         brakeInput = Input.GetKey(KeyCode.Space) ? 1f : 0f;
     }
 
@@ -78,7 +95,7 @@ public class CarController : MonoBehaviour
             }
         }
 
-        if (!isBrakingWithPedal)
+        if (!isBrakingWithPedal && isEngineOn)
         {
             torque = moveInput * maxMotorTorque;
         }
