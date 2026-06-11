@@ -367,8 +367,8 @@ public class AlignWheelCollidersToTocus : EditorWindow
         }
 
         // Cấu hình Rigidbody chuẩn cho ô tô Sedan thực tế
-        rb.mass = 1500f;          // Trọng lượng 1.5 tấn giúp xe đầm, có quán tính thực tế
-        rb.linearDamping = 0.15f;          // Lực cản không khí nhẹ để giảm gia tốc ảo ở tốc độ cao
+        rb.mass = 1800f;          // Trọng lượng 1.8 tấn giúp xe đầm, có quán tính thực tế
+        rb.linearDamping = 0.05f;          // Giảm lực cản để tăng trớn lăn cho xe (trôi xa hơn)
         rb.angularDamping = 1.5f;    // Tăng lực cản xoay để tránh xe bị xoay vòng khi trượt bánh
         rb.interpolation = RigidbodyInterpolation.Interpolate; // Khử hiện tượng giật hình (jitter) của xe
 
@@ -379,10 +379,10 @@ public class AlignWheelCollidersToTocus : EditorWindow
             col.mass = 20f;              // Khối lượng bánh xe
             col.suspensionDistance = 0.15f; // Hành trình nhún ngắn hơn (15cm) để giảm độ nghiêng thân xe khi cua
 
-            // Cấu hình lò xo giảm chấn nhún cho xe 1.5 tấn (cứng cáp hơn)
+            // Cấu hình lò xo giảm chấn nhún cho xe 1.8 tấn (cứng cáp hơn)
             JointSpring spring = col.suspensionSpring;
             spring.spring = 40000f;      // Tăng độ cứng lò xo
-            spring.damper = 5000f;       // Tăng giảm chấn để ổn định thân xe nhanh hơn
+            spring.damper = 7000f;       // Tăng giảm chấn để ổn định thân xe nhanh hơn khi lên/xuống dốc
             spring.targetPosition = 0.5f; // Trọng tâm nhún ở giữa
             col.suspensionSpring = spring;
 

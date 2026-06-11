@@ -26,6 +26,12 @@ public class CarController : MonoBehaviour
     public float engineBrakeTorque = 15f;     // Lực phanh động cơ nhẹ khi thả ga (giúp xe trôi được trớn xa hơn)
     public float parkingBrakeTorque = 1000f;   // Lực phanh tay tự động khóa bánh khi dừng hẳn
 
+    [Header("Drift & Downforce")]
+    [Tooltip("Hệ số ma sát ngang của bánh sau khi kéo phanh tay (Space) để drift")]
+    public float driftRearSidewaysStiffness = 0.4f;
+    [Tooltip("Lực ghì xe xuống mặt đường để tránh bay xe/sốc dốc khi chạy nhanh")]
+    public float downforceForce = 50f;
+
     [HideInInspector]
     public bool isEngineOn = false; // Trạng thái nổ/tắt máy xe (Phím I)
 
@@ -34,6 +40,9 @@ public class CarController : MonoBehaviour
     private float turnInput;
     private float brakeInput;
 
+    private WheelFrictionCurve defaultRearLeftSidewaysFriction;
+    private WheelFrictionCurve defaultRearRightSidewaysFriction;
+
     private void Start()
     {
         rb = GetComponent<Rigidbody>();
@@ -41,6 +50,10 @@ public class CarController : MonoBehaviour
         {
             rb.centerOfMass += centerOfMassOffset;
         }
+
+        // Lưu lại ma sát ngang mặc định của bánh sau
+        if (rearLeftCollider != null) defaultRearLeftSidewaysFriction = rearLeftCollider.sidewaysFriction;
+        if (rearRightCollider != null) defaultRearRightSidewaysFriction = rearRightCollider.sidewaysFriction;
     }
 
     private void Update()
@@ -62,6 +75,8 @@ public class CarController : MonoBehaviour
             turnInput = 0f;
         }
         brakeInput = Input.GetKey(KeyCode.Space) ? 1f : 0f;
+
+        UpdateAllWheels();
     }
 
     private void FixedUpdate()
@@ -70,7 +85,8 @@ public class CarController : MonoBehaviour
         ApplyMotor();
         ApplyBraking();
         ApplyAntiRoll();
-        UpdateAllWheels();
+        ApplyDriftFriction();
+        ApplyDownforce();
     }
 
     private void ApplySteering()
@@ -204,5 +220,41 @@ public class CarController : MonoBehaviour
     {
         if (rb == null) return 0f;
         return Vector3.Dot(rb.linearVelocity, transform.forward);
+    }
+
+    private void ApplyDriftFriction()
+    {
+        if (rearLeftCollider == null || rearRightCollider == null) return;
+
+        // Nếu đang nhấn phanh tay (Space)
+        bool isHandbraking = Input.GetKey(KeyCode.Space);
+
+        if (isHandbraking)
+        {
+            // Giảm mạnh ma sát ngang bánh sau để xe trượt bánh (drift)
+            WheelFrictionCurve wfcL = rearLeftCollider.sidewaysFriction;
+            wfcL.stiffness = driftRearSidewaysStiffness;
+            rearLeftCollider.sidewaysFriction = wfcL;
+
+            WheelFrictionCurve wfcR = rearRightCollider.sidewaysFriction;
+            wfcR.stiffness = driftRearSidewaysStiffness;
+            rearRightCollider.sidewaysFriction = wfcR;
+        }
+        else
+        {
+            // Trả lại ma sát mặc định khi không phanh tay
+            rearLeftCollider.sidewaysFriction = defaultRearLeftSidewaysFriction;
+            rearRightCollider.sidewaysFriction = defaultRearRightSidewaysFriction;
+        }
+    }
+
+    private void ApplyDownforce()
+    {
+        if (rb != null)
+        {
+            // Lực ghì tỉ lệ thuận với vận tốc tiến của xe để dìm xe xuống dốc khi đi nhanh
+            float speed = rb.linearVelocity.magnitude;
+            rb.AddForce(-transform.up * downforceForce * speed);
+        }
     }
 }
