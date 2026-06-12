@@ -12,9 +12,9 @@ public class TrafficLightIntersection : MonoBehaviour
 
     [Header("Traffic Light Groups")]
     [Tooltip("Nhóm đèn A (ví dụ: Hướng Bắc - Nam)")]
-    public LightGroup groupA;
+    public LightGroup groupA = new LightGroup() { name = "Group A" };
     [Tooltip("Nhóm đèn B (ví dụ: Hướng Đông - Tây)")]
-    public LightGroup groupB;
+    public LightGroup groupB = new LightGroup() { name = "Group B" };
 
     [Header("Timings (Seconds)")]
     public int greenDuration = 15;
@@ -30,6 +30,7 @@ public class TrafficLightIntersection : MonoBehaviour
             return;
         }
 
+        Debug.Log($"[TrafficLightIntersection] Khởi tạo chu kỳ đèn giao thông thành công. Nhóm A: {groupA.lights.Length} đèn, Nhóm B: {groupB.lights.Length} đèn.");
         StartCoroutine(IntersectionCycleRoutine());
     }
 

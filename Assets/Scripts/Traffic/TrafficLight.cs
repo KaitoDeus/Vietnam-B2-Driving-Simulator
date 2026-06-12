@@ -32,27 +32,95 @@ public class TrafficLight : MonoBehaviour
     [Header("Countdown UI")]
     public TextMeshPro countdownText;
 
+    [Header("Mesh Swapper (For models requiring mesh changes per light)")]
+    public Mesh offMesh;
+    public Mesh redMesh;
+    public Mesh yellowMesh;
+    public Mesh greenMesh;
+
     private TrafficLightState currentState = TrafficLightState.Off;
+    private bool isInitialized = false;
 
     public void SetState(TrafficLightState state, int secondsRemaining)
     {
+        bool stateChanged = !isInitialized || currentState != state;
         currentState = state;
+        isInitialized = true;
 
-        // 1. Điều khiển bật/tắt GameObject của đèn tương ứng (Cách đơn giản nhất)
-        if (redLightVisual != null) redLightVisual.SetActive(state == TrafficLightState.Red);
-        if (yellowLightVisual != null) yellowLightVisual.SetActive(state == TrafficLightState.Yellow);
-        if (greenLightVisual != null) greenLightVisual.SetActive(state == TrafficLightState.Green);
-
-        // 2. Thay đổi Material phát sáng (Emission) nếu dùng chung 1 mesh Renderer
-        if (lightRenderer != null)
+        if (stateChanged)
         {
-            Material[] sharedMats = lightRenderer.sharedMaterials;
-            if (sharedMats.Length > Mathf.Max(redMaterialIndex, yellowMaterialIndex, greenMaterialIndex))
+            // 0. Thực hiện đổi Mesh nếu sử dụng Mesh Swapper
+            if (lightRenderer != null)
             {
-                sharedMats[redMaterialIndex] = (state == TrafficLightState.Red) ? redOnMaterial : redOffMaterial;
-                sharedMats[yellowMaterialIndex] = (state == TrafficLightState.Yellow) ? yellowOnMaterial : yellowOffMaterial;
-                sharedMats[greenMaterialIndex] = (state == TrafficLightState.Green) ? greenOnMaterial : greenOffMaterial;
-                lightRenderer.materials = sharedMats;
+                MeshFilter filter = lightRenderer.GetComponent<MeshFilter>();
+                if (filter != null)
+                {
+                    switch (state)
+                    {
+                        case TrafficLightState.Red:
+                            if (redMesh != null) filter.sharedMesh = redMesh;
+                            break;
+                        case TrafficLightState.Yellow:
+                            if (yellowMesh != null) filter.sharedMesh = yellowMesh;
+                            break;
+                        case TrafficLightState.Green:
+                            if (greenMesh != null) filter.sharedMesh = greenMesh;
+                            break;
+                        case TrafficLightState.Off:
+                        default:
+                            if (offMesh != null) filter.sharedMesh = offMesh;
+                            break;
+                    }
+                }
+            }
+
+            // 1. Điều khiển bật/tắt GameObject của đèn tương ứng (Cách đơn giản nhất)
+            if (redLightVisual != null) redLightVisual.SetActive(state == TrafficLightState.Red);
+            if (yellowLightVisual != null) yellowLightVisual.SetActive(state == TrafficLightState.Yellow);
+            if (greenLightVisual != null) greenLightVisual.SetActive(state == TrafficLightState.Green);
+
+            // 2. Thay đổi Material phát sáng (Emission) nếu dùng chung 1 mesh Renderer
+            if (lightRenderer != null)
+            {
+                Material[] sharedMats = lightRenderer.sharedMaterials;
+                // Kiểm tra nếu các chỉ số vật liệu trùng nhau (dùng chung 1 slot như mô hình Tarbo-CITY)
+                if (redMaterialIndex == yellowMaterialIndex && yellowMaterialIndex == greenMaterialIndex)
+                {
+                    int targetIndex = redMaterialIndex;
+                    if (sharedMats.Length > targetIndex)
+                    {
+                        Material targetMat = yellowOffMaterial;
+                        switch (state)
+                        {
+                            case TrafficLightState.Red:
+                                targetMat = redOnMaterial;
+                                break;
+                            case TrafficLightState.Yellow:
+                                targetMat = yellowOnMaterial;
+                                break;
+                            case TrafficLightState.Green:
+                                targetMat = greenOnMaterial;
+                                break;
+                            case TrafficLightState.Off:
+                            default:
+                                targetMat = yellowOffMaterial;
+                                break;
+                        }
+                        sharedMats[targetIndex] = targetMat;
+                        lightRenderer.sharedMaterials = sharedMats;
+                    }
+                }
+                else
+                {
+                    // Trường hợp các đèn nằm ở các slot material khác nhau
+                    if (sharedMats.Length > Mathf.Max(redMaterialIndex, yellowMaterialIndex, greenMaterialIndex))
+                    {
+                        sharedMats[redMaterialIndex] = (state == TrafficLightState.Red) ? redOnMaterial : redOffMaterial;
+                        sharedMats[yellowMaterialIndex] = (state == TrafficLightState.Yellow) ? yellowOnMaterial : yellowOffMaterial;
+                        sharedMats[greenMaterialIndex] = (state == TrafficLightState.Green) ? greenOnMaterial : greenOffMaterial;
+                        lightRenderer.sharedMaterials = sharedMats;
+                    }
+                }
             }
         }
 
