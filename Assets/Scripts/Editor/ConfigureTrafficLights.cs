@@ -263,17 +263,16 @@ public class ConfigureTrafficLights : EditorWindow
 
                     if (!string.IsNullOrEmpty(basePrefix))
                     {
-                        Mesh offMesh = FindMeshAsset(basePrefix + "Black") ?? FindMeshAsset(basePrefix + "black");
-                        Mesh greenMesh = FindMeshAsset(basePrefix + "Green") ?? FindMeshAsset(basePrefix + "green");
-                        Mesh yellowMesh = FindMeshAsset(basePrefix + "Yellow") ?? FindMeshAsset(basePrefix + "yellow");
-                        Mesh redMesh = FindMeshAsset(basePrefix + "White") ?? FindMeshAsset(basePrefix + "white") ?? FindMeshAsset(basePrefix + "Whtie") ?? FindMeshAsset(basePrefix + "whtie");
-
-                        lightController.offMesh = offMesh;
-                        lightController.greenMesh = greenMesh;
-                        lightController.yellowMesh = yellowMesh;
-                        lightController.redMesh = redMesh;
-
-                        Debug.Log($"[ConfigureTrafficLights] {t.name} meshes configured: Off={offMesh?.name}, Red={redMesh?.name}, Yellow={yellowMesh?.name}, Green={greenMesh?.name}");
+                        Mesh blackMesh = FindMeshAsset(basePrefix + "Black") ?? FindMeshAsset(basePrefix + "black");
+                        if (blackMesh != null)
+                        {
+                            meshFilter.sharedMesh = blackMesh;
+                            lightController.offMesh = blackMesh;
+                            lightController.greenMesh = blackMesh;
+                            lightController.yellowMesh = blackMesh;
+                            lightController.redMesh = blackMesh;
+                            Debug.Log($"[ConfigureTrafficLights] {t.name} forced to black mesh: {blackMesh.name}");
+                        }
                     }
                 }
 

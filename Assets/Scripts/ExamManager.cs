@@ -96,6 +96,22 @@ public class ExamManager : MonoBehaviour
             // Phát giọng đọc với độ trễ nhẹ sau tiếng bính boong
             StartCoroutine(PlayVoiceWithDelay(clipToPlay, 0.8f));
         }
+
+        // 3. Nếu là bài kết thúc, tự động hoàn thành thi sau khi giọng đọc xong
+        if (newStep == ExamStep.KetThuc)
+        {
+            float delay = 0.8f + (clipToPlay != null ? clipToPlay.length : 2f) + 1.5f;
+            StartCoroutine(CompleteExamAfterDelay(delay));
+        }
+    }
+
+    private IEnumerator CompleteExamAfterDelay(float delay)
+    {
+        yield return new WaitForSeconds(delay);
+        if (isExamActive && currentScore >= 80)
+        {
+            PassExam();
+        }
     }
 
     private AudioClip GetVoiceClipForStep(ExamStep step)

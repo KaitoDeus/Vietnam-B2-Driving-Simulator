@@ -49,30 +49,7 @@ public class TrafficLight : MonoBehaviour
 
         if (stateChanged)
         {
-            // 0. Thực hiện đổi Mesh nếu sử dụng Mesh Swapper
-            if (lightRenderer != null)
-            {
-                MeshFilter filter = lightRenderer.GetComponent<MeshFilter>();
-                if (filter != null)
-                {
-                    switch (state)
-                    {
-                        case TrafficLightState.Red:
-                            if (redMesh != null) filter.sharedMesh = redMesh;
-                            break;
-                        case TrafficLightState.Yellow:
-                            if (yellowMesh != null) filter.sharedMesh = yellowMesh;
-                            break;
-                        case TrafficLightState.Green:
-                            if (greenMesh != null) filter.sharedMesh = greenMesh;
-                            break;
-                        case TrafficLightState.Off:
-                        default:
-                            if (offMesh != null) filter.sharedMesh = offMesh;
-                            break;
-                    }
-                }
-            }
+            // 0. Mesh swapping disabled to keep housing black. Only material changes are used.
 
             // 1. Điều khiển bật/tắt GameObject của đèn tương ứng (Cách đơn giản nhất)
             if (redLightVisual != null) redLightVisual.SetActive(state == TrafficLightState.Red);
