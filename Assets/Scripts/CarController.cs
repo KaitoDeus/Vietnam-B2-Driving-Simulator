@@ -130,7 +130,7 @@ public class CarController : MonoBehaviour
         blinkerAudioSource.playOnAwake = false;
         blinkerAudioSource.loop = false;
         blinkerAudioSource.spatialBlend = 0f; // Âm thanh cabin 2D
-        blinkerAudioSource.volume = 0.4f;
+        blinkerAudioSource.volume = 0.4f * PlayerPrefs.GetFloat("SFXVolume", 0.8f);
 
         // Nếu chưa gán âm thanh trong Inspector, tự động tạo âm thanh tạch-tạch cơ học chất lượng cao
         if (blinkerSound == null)

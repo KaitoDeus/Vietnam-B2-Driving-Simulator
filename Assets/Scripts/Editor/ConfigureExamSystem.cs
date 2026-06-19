@@ -25,6 +25,13 @@ public class ConfigureExamSystem
     {
         if (state == PlayModeStateChange.EnteredEditMode)
         {
+            // Không tự động chạy cấu hình nếu đang ở màn hình MainMenu
+            var scene = EditorSceneManager.GetActiveScene();
+            if (scene.name == "MainMenu")
+            {
+                return;
+            }
+
             // Chỉ chạy Setup nếu chưa có ExamManager trong scene
             ExamManager existing = Object.FindFirstObjectByType<ExamManager>();
             if (existing == null)

@@ -9,10 +9,10 @@ public class ExamManager : MonoBehaviour
     [Header("Hệ thống Âm thanh")]
     public AudioSource voiceSource;       // Nguồn phát giọng đọc
     public AudioSource sfxSource;         // Nguồn phát tiếng bính boong, tít tít lỗi
-    
+
     public AudioClip soundBinhBoong;      // Tiếng nhận bài thi
     public AudioClip soundTingTingError;  // Tiếng phạt lỗi
-    
+
     [Header("Giọng đọc 11 bài thi (Tiếng Việt)")]
     public AudioClip voiceXuatPhat;
     public AudioClip voiceDungNhuongDiBo;
@@ -47,6 +47,12 @@ public class ExamManager : MonoBehaviour
 
     private void Start()
     {
+        // Đồng bộ âm lượng từ Settings đã lưu
+        float voiceVol = PlayerPrefs.GetFloat("VoiceVolume", 1.0f);
+        float sfxVol = PlayerPrefs.GetFloat("SFXVolume", 0.8f);
+        if (voiceSource != null) voiceSource.volume = voiceVol;
+        if (sfxSource != null) sfxSource.volume = sfxVol;
+
         // Tự động phát âm thanh mời khởi hành khi vào game
         StartCoroutine(StartExamDelayed());
     }
@@ -83,7 +89,7 @@ public class ExamManager : MonoBehaviour
 
         currentStep = newStep;
         completedSteps.Add(newStep);
-        
+
         Debug.Log($"Bắt đầu Bài Thi: {newStep}");
 
         // 1. Phát tiếng bính boong nhận bài

@@ -89,6 +89,11 @@ public class CameraController : MonoBehaviour
         // Khởi tạo điểm đặt camera
         InitDriverSeat();
 
+        // Tải độ nhạy chuột từ Settings đã lưu
+        float savedSens = PlayerPrefs.GetFloat("MouseSensitivity", 3.0f);
+        mouseSensitivityX = savedSens;
+        mouseSensitivityY = savedSens * 0.67f; // Giữ tỷ lệ X/Y xấp xỉ 3:2
+
         // Cài đặt góc xoay ban đầu cho camera góc nhìn thứ 3 theo hướng xe
         if (carTarget != null)
         {
