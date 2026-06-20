@@ -76,6 +76,10 @@ public class CarController : MonoBehaviour
     [HideInInspector] public bool isLeftBlinkerOn = false;
     [HideInInspector] public bool isRightBlinkerOn = false;
     [HideInInspector] public bool isHazardOn = false;
+    [HideInInspector] public bool isLowBeamOn = false;
+    [HideInInspector] public bool isHighBeamOn = false;
+
+    public float CurrentSpeed => rb != null ? rb.linearVelocity.magnitude * 3.6f : 0f;
 
     private Rigidbody rb;
     private float moveInput;
@@ -192,6 +196,20 @@ public class CarController : MonoBehaviour
                 isHazardOn = !isHazardOn;
                 Debug.Log($"[Hazard] Đèn khẩn cấp: {(isHazardOn ? "BẬT" : "TẮT")}");
             }
+
+            if (Input.GetKeyDown(KeyCode.L))
+            {
+                isLowBeamOn = !isLowBeamOn;
+                if (!isLowBeamOn) isHighBeamOn = false;
+                Debug.Log($"[Đèn Pha/Cos] Đèn cos (Low beam): {(isLowBeamOn ? "BẬT" : "TẮT")}");
+            }
+
+            if (Input.GetKeyDown(KeyCode.H))
+            {
+                isHighBeamOn = !isHighBeamOn;
+                if (isHighBeamOn) isLowBeamOn = true;
+                Debug.Log($"[Đèn Pha/Cos] Đèn pha (High beam): {(isHighBeamOn ? "BẬT" : "TẮT")}");
+            }
         }
         else
         {
@@ -200,6 +218,8 @@ public class CarController : MonoBehaviour
             isLeftBlinkerOn = false;
             isRightBlinkerOn = false;
             isHazardOn = false;
+            isLowBeamOn = false;
+            isHighBeamOn = false;
             currentGear = GearState.N;
         }
 
