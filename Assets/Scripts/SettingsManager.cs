@@ -9,8 +9,11 @@ public class SettingsManager : MonoBehaviour
 
     [Header("Audio UI Elements")]
     public Slider musicVolumeSlider;
+    public TMP_Text musicVolumeText;
     public Slider sfxVolumeSlider;
+    public TMP_Text sfxVolumeText;
     public Slider voiceVolumeSlider;
+    public TMP_Text voiceVolumeText;
 
     [Header("Graphics UI Elements")]
     public TMP_Dropdown qualityDropdown;
@@ -39,6 +42,61 @@ public class SettingsManager : MonoBehaviour
     {
         LoadSettings();
         InitializeResolutionDropdown();
+        RegisterListeners();
+    }
+
+    private void RegisterListeners()
+    {
+        if (musicVolumeSlider != null)
+        {
+            musicVolumeSlider.onValueChanged.RemoveAllListeners();
+            musicVolumeSlider.onValueChanged.AddListener(val => {
+                SetMusicVolume(val);
+                UpdateMusicVolumeText(val);
+            });
+        }
+
+        if (sfxVolumeSlider != null)
+        {
+            sfxVolumeSlider.onValueChanged.RemoveAllListeners();
+            sfxVolumeSlider.onValueChanged.AddListener(val => {
+                SetSFXVolume(val);
+                UpdateSFXVolumeText(val);
+            });
+        }
+
+        if (voiceVolumeSlider != null)
+        {
+            voiceVolumeSlider.onValueChanged.RemoveAllListeners();
+            voiceVolumeSlider.onValueChanged.AddListener(val => {
+                SetVoiceVolume(val);
+                UpdateVoiceVolumeText(val);
+            });
+        }
+
+        if (qualityDropdown != null)
+        {
+            qualityDropdown.onValueChanged.RemoveAllListeners();
+            qualityDropdown.onValueChanged.AddListener(SetQuality);
+        }
+
+        if (fullscreenToggle != null)
+        {
+            fullscreenToggle.onValueChanged.RemoveAllListeners();
+            fullscreenToggle.onValueChanged.AddListener(SetFullscreen);
+        }
+
+        if (resolutionDropdown != null)
+        {
+            resolutionDropdown.onValueChanged.RemoveAllListeners();
+            resolutionDropdown.onValueChanged.AddListener(SetResolution);
+        }
+
+        if (sensitivitySlider != null)
+        {
+            sensitivitySlider.onValueChanged.RemoveAllListeners();
+            sensitivitySlider.onValueChanged.AddListener(SetSensitivity);
+        }
     }
 
     // ==========================================
@@ -65,6 +123,30 @@ public class SettingsManager : MonoBehaviour
         // ExamManager sẽ đọc giá trị này để điều chỉnh âm lượng giọng đọc
     }
 
+    private void UpdateMusicVolumeText(float volume)
+    {
+        if (musicVolumeText != null)
+        {
+            musicVolumeText.text = Mathf.RoundToInt(volume * 100) + "%";
+        }
+    }
+
+    private void UpdateSFXVolumeText(float volume)
+    {
+        if (sfxVolumeText != null)
+        {
+            sfxVolumeText.text = Mathf.RoundToInt(volume * 100) + "%";
+        }
+    }
+
+    private void UpdateVoiceVolumeText(float volume)
+    {
+        if (voiceVolumeText != null)
+        {
+            voiceVolumeText.text = Mathf.RoundToInt(volume * 100) + "%";
+        }
+    }
+
     // ==========================================
     // 2. CÀI ĐẶT ĐỒ HỌA (GRAPHICS SETTINGS)
     // ==========================================
@@ -75,11 +157,38 @@ public class SettingsManager : MonoBehaviour
         PlayerPrefs.Save();
     }
 
+    public void SetResolution(int resolutionIndex)
+    {
+        if (resolutions == null || resolutionIndex >= resolutions.Length) return;
+
+        Resolution resolution = resolutions[resolutionIndex];
+        bool isFullscreen = PlayerPrefs.GetInt("Fullscreen", Screen.fullScreen ? 1 : 0) == 1;
+        
+        Screen.SetResolution(resolution.width, resolution.height, isFullscreen);
+        Debug.Log($"[SettingsManager] Đã đặt độ phân giải thành: {resolution.width}x{resolution.height}, Fullscreen: {isFullscreen}");
+
+        PlayerPrefs.SetInt("ResolutionIndex", resolutionIndex);
+        PlayerPrefs.Save();
+    }
+
     public void SetFullscreen(bool isFullscreen)
     {
-        Screen.fullScreen = isFullscreen;
         PlayerPrefs.SetInt("Fullscreen", isFullscreen ? 1 : 0);
         PlayerPrefs.Save();
+
+        // Đồng bộ và áp dụng ngay cùng độ phân giải hiện tại
+        int savedResIndex = PlayerPrefs.GetInt("ResolutionIndex", -1);
+        if (savedResIndex != -1 && resolutions != null && savedResIndex < resolutions.Length)
+        {
+            Resolution resolution = resolutions[savedResIndex];
+            Screen.SetResolution(resolution.width, resolution.height, isFullscreen);
+        }
+        else
+        {
+            Screen.SetResolution(Screen.width, Screen.height, isFullscreen);
+        }
+        
+        Debug.Log($"[SettingsManager] Đã đặt chế độ màn hình: Fullscreen = {isFullscreen}");
     }
 
     private void InitializeResolutionDropdown()
@@ -116,17 +225,6 @@ public class SettingsManager : MonoBehaviour
         }
     }
 
-    public void SetResolution(int resolutionIndex)
-    {
-        if (resolutions == null || resolutionIndex >= resolutions.Length) return;
-
-        Resolution resolution = resolutions[resolutionIndex];
-        Screen.SetResolution(resolution.width, resolution.height, Screen.fullScreen);
-        
-        PlayerPrefs.SetInt("ResolutionIndex", resolutionIndex);
-        PlayerPrefs.Save();
-    }
-
     // ==========================================
     // 3. CÀI ĐẶT ĐIỀU KHIỂN (CONTROLS SETTINGS)
     // ==========================================
@@ -142,14 +240,26 @@ public class SettingsManager : MonoBehaviour
     // ==========================================
     private void LoadSettings()
     {
-        // Load Audio
-        float musicVol = PlayerPrefs.GetFloat("MusicVolume", 0.75f);
-        float sfxVol = PlayerPrefs.GetFloat("SFXVolume", 0.8f);
+        // Load Audio - default settings matching the design defaults (85%, 60%, 100%)
+        float musicVol = PlayerPrefs.GetFloat("MusicVolume", 1.0f);
+        float sfxVol = PlayerPrefs.GetFloat("SFXVolume", 1.0f);
         float voiceVol = PlayerPrefs.GetFloat("VoiceVolume", 1.0f);
 
-        if (musicVolumeSlider != null) musicVolumeSlider.value = musicVol;
-        if (sfxVolumeSlider != null) sfxVolumeSlider.value = sfxVol;
-        if (voiceVolumeSlider != null) voiceVolumeSlider.value = voiceVol;
+        if (musicVolumeSlider != null)
+        {
+            musicVolumeSlider.value = musicVol;
+            UpdateMusicVolumeText(musicVol);
+        }
+        if (sfxVolumeSlider != null)
+        {
+            sfxVolumeSlider.value = sfxVol;
+            UpdateSFXVolumeText(sfxVol);
+        }
+        if (voiceVolumeSlider != null)
+        {
+            voiceVolumeSlider.value = voiceVol;
+            UpdateVoiceVolumeText(voiceVol);
+        }
 
         // Load Graphics Quality
         int qualityIndex = PlayerPrefs.GetInt("QualityIndex", QualitySettings.GetQualityLevel());
