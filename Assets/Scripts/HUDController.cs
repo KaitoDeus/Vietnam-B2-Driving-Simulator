@@ -34,6 +34,9 @@ public class HUDController : MonoBehaviour
     public GameObject settingsPanel;
     private bool isPaused = false;
 
+    [Header("Notifications")]
+    public NotificationController notificationPanel;
+
     [Header("Colors (Aesthetics)")]
     public Color activeColor = new Color(0.12f, 0.8f, 0.2f);      // Xanh lá sáng
     public Color inactiveColor = new Color(0.4f, 0.4f, 0.4f);    // Xám
@@ -76,6 +79,21 @@ public class HUDController : MonoBehaviour
         {
             Transform settingsTrans = FindDeepChild(canvasTrans, "Panel_Settings");
             if (settingsTrans != null) settingsPanel = settingsTrans.gameObject;
+        }
+
+        if (notificationPanel == null)
+        {
+            Transform notifTrans = FindDeepChild(canvasTrans, "Panel_Notification");
+            if (notifTrans != null)
+            {
+                notificationPanel = notifTrans.GetComponent<NotificationController>();
+            }
+            else
+            {
+                Transform rootTrans = canvasTrans.Find("HUD_Root");
+                Transform parentTrans = (rootTrans != null) ? rootTrans : canvasTrans;
+                notificationPanel = NotificationController.Create(parentTrans);
+            }
         }
     }
 
@@ -406,5 +424,32 @@ public class HUDController : MonoBehaviour
     {
         Time.timeScale = 1f;
         UnityEngine.SceneManagement.SceneManager.LoadScene("MainMenu");
+    }
+
+    // ==========================================
+    // CÁC HÀM HIỂN THỊ THÔNG BÁO (NOTIFICATION)
+    // ==========================================
+
+    public void ShowNotification(string message, bool isSuccess, float duration = 3f)
+    {
+        if (notificationPanel != null)
+        {
+            var state = isSuccess ? NotificationController.NotificationState.Success : NotificationController.NotificationState.Warning;
+            notificationPanel.Show(message, state, duration);
+        }
+        else
+        {
+            Debug.LogWarning($"[HUDController] Chưa gán notificationPanel! Tin nhắn: {message}");
+        }
+    }
+
+    public void ShowWarningNotification(string message, float duration = 3f)
+    {
+        ShowNotification(message, false, duration);
+    }
+
+    public void ShowSuccessNotification(string message, float duration = 3f)
+    {
+        ShowNotification(message, true, duration);
     }
 }
