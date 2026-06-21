@@ -31,6 +31,7 @@ public class HUDController : MonoBehaviour
 
     [Header("Pause Menu")]
     public GameObject pausePanel;
+    public GameObject settingsPanel;
     private bool isPaused = false;
 
     [Header("Colors (Aesthetics)")]
@@ -42,6 +43,63 @@ public class HUDController : MonoBehaviour
 
     private CarController targetCar;
 
+    private void Awake()
+    {
+        // Tự động tìm kiếm các tham chiếu UI tại runtime nếu chưa được gán trong Inspector
+        Transform canvasTrans = transform;
+        
+        if (scoreText == null) scoreText = FindComponentInDescendants<TMP_Text>(canvasTrans, "Txt_ScoreVal");
+        if (timerText == null) timerText = FindComponentInDescendants<TMP_Text>(canvasTrans, "Txt_TimeVal");
+        
+        if (stepTitleText == null) stepTitleText = FindComponentInDescendants<TMP_Text>(canvasTrans, "Txt_StepTitle");
+        if (stepDescText == null) stepDescText = FindComponentInDescendants<TMP_Text>(canvasTrans, "Txt_StepDesc");
+        
+        if (carNumberText == null)
+        {
+            carNumberText = FindComponentInDescendants<TMP_Text>(canvasTrans, "Txt_CarNumber");
+            if (carNumberText == null) carNumberText = FindComponentInDescendants<TMP_Text>(canvasTrans, "Badge_CarNumber");
+        }
+        
+        if (leftBlinkerText == null) leftBlinkerText = FindComponentInDescendants<TMP_Text>(canvasTrans, "Txt_BlinkerL");
+        if (rightBlinkerText == null) rightBlinkerText = FindComponentInDescendants<TMP_Text>(canvasTrans, "Txt_BlinkerR");
+        if (lowBeamText == null) lowBeamText = FindComponentInDescendants<TMP_Text>(canvasTrans, "Txt_LightCos");
+        if (highBeamText == null) highBeamText = FindComponentInDescendants<TMP_Text>(canvasTrans, "Txt_LightPha");
+        if (hazardText == null) hazardText = FindComponentInDescendants<TMP_Text>(canvasTrans, "Txt_Hazard");
+        
+        if (pausePanel == null)
+        {
+            Transform pauseTrans = FindDeepChild(canvasTrans, "Panel_Pause");
+            if (pauseTrans != null) pausePanel = pauseTrans.gameObject;
+        }
+
+        if (settingsPanel == null)
+        {
+            Transform settingsTrans = FindDeepChild(canvasTrans, "Panel_Settings");
+            if (settingsTrans != null) settingsPanel = settingsTrans.gameObject;
+        }
+    }
+
+    private T FindComponentInDescendants<T>(Transform parent, string name) where T : Component
+    {
+        Transform child = FindDeepChild(parent, name);
+        if (child != null)
+        {
+            return child.GetComponent<T>();
+        }
+        return null;
+    }
+
+    private Transform FindDeepChild(Transform parent, string name)
+    {
+        if (parent.name == name) return parent;
+        for (int i = 0; i < parent.childCount; i++)
+        {
+            Transform result = FindDeepChild(parent.GetChild(i), name);
+            if (result != null) return result;
+        }
+        return null;
+    }
+
     private void Start()
     {
         FindCarInstance();
@@ -51,9 +109,9 @@ public class HUDController : MonoBehaviour
             pausePanel.SetActive(false);
         }
 
-        if (carNumberText != null)
+        if (settingsPanel != null)
         {
-            carNumberText.text = "1"; // Mặc định số xe là 1
+            settingsPanel.SetActive(false);
         }
     }
 
@@ -72,7 +130,14 @@ public class HUDController : MonoBehaviour
         // Phím ESC để Pause nhanh
         if (Input.GetKeyDown(KeyCode.Escape))
         {
-            TogglePause();
+            if (isPaused && settingsPanel != null && settingsPanel.activeSelf)
+            {
+                CloseSettings();
+            }
+            else
+            {
+                TogglePause();
+            }
         }
     }
 
@@ -121,7 +186,7 @@ public class HUDController : MonoBehaviour
                 break;
             case ExamStep.XuatPhat:
                 stepTitleText.text = "Bài 1: Xuất phát";
-                stepDescText.text = "Bật xi-nhan trái (Q), vào số 1 (phím 1) và cho xe di chuyển qua vạch xuất phát.";
+                stepDescText.text = "Vào số 1 (phím 1) và cho xe di chuyển qua vạch xuất phát.";
                 break;
             case ExamStep.DungNhuongDuongDiBo:
                 stepTitleText.text = "Bài 2: Dừng xe nhường đường";
@@ -169,6 +234,23 @@ public class HUDController : MonoBehaviour
     private void UpdateDashboard()
     {
         if (targetCar == null) return;
+
+        // Cập nhật hiển thị hộp số/gear (D -> 1, N -> N, R -> R) ở ô kế bên Số xe
+        if (carNumberText != null)
+        {
+            switch (targetCar.currentGear)
+            {
+                case CarController.GearState.N:
+                    carNumberText.text = "N";
+                    break;
+                case CarController.GearState.D:
+                    carNumberText.text = "1";
+                    break;
+                case CarController.GearState.R:
+                    carNumberText.text = "R";
+                    break;
+            }
+        }
 
         // Tính toán trạng thái nhấp nháy (Blink) bằng tần số 0.5s
         bool isBlinking = (Time.time % 1.0f) < 0.5f;
@@ -256,9 +338,22 @@ public class HUDController : MonoBehaviour
         isPaused = !isPaused;
         Time.timeScale = isPaused ? 0f : 1f;
 
-        if (pausePanel != null)
+        if (isPaused)
         {
-            pausePanel.SetActive(isPaused);
+            if (pausePanel != null) pausePanel.SetActive(true);
+            if (settingsPanel != null) settingsPanel.SetActive(false);
+
+            // Hiện con trỏ chuột khi tạm dừng
+            Cursor.lockState = CursorLockMode.None;
+            Cursor.visible = true;
+        }
+        else
+        {
+            if (pausePanel != null) pausePanel.SetActive(false);
+            if (settingsPanel != null) settingsPanel.SetActive(false);
+
+            // Ẩn con trỏ chuột khi tiếp tục game (nếu muốn)
+            // Cursor.visible = false;
         }
 
         // Tạm dừng/Bật tiếp âm thanh thi sát hạch
@@ -275,5 +370,41 @@ public class HUDController : MonoBehaviour
                 else ExamManager.Instance.sfxSource.UnPause();
             }
         }
+    }
+
+    // ==========================================
+    // CÁC HÀM CLICK CHO BUTTON TRÊN PAUSE MENU
+    // ==========================================
+
+    public void ResumeGame()
+    {
+        if (isPaused)
+        {
+            TogglePause();
+        }
+    }
+
+    public void RestartGame()
+    {
+        Time.timeScale = 1f;
+        UnityEngine.SceneManagement.SceneManager.LoadScene(UnityEngine.SceneManagement.SceneManager.GetActiveScene().buildIndex);
+    }
+
+    public void OpenSettings()
+    {
+        if (settingsPanel != null) settingsPanel.SetActive(true);
+        if (pausePanel != null) pausePanel.SetActive(false);
+    }
+
+    public void CloseSettings()
+    {
+        if (settingsPanel != null) settingsPanel.SetActive(false);
+        if (pausePanel != null) pausePanel.SetActive(true);
+    }
+
+    public void GoToMainMenu()
+    {
+        Time.timeScale = 1f;
+        UnityEngine.SceneManagement.SceneManager.LoadScene("MainMenu");
     }
 }

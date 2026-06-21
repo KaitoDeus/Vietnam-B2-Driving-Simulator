@@ -105,6 +105,17 @@ public class CarController : MonoBehaviour
     private System.Collections.Generic.List<BlinkerLightState> leftBlinkerRenderers = new System.Collections.Generic.List<BlinkerLightState>();
     private System.Collections.Generic.List<BlinkerLightState> rightBlinkerRenderers = new System.Collections.Generic.List<BlinkerLightState>();
 
+    private struct HeadlightState
+    {
+        public Renderer renderer;
+        public Color originalEmission;
+        public bool wasEmissionEnabled;
+        public Light spotlight;
+        public bool isLeft;
+    }
+
+    private System.Collections.Generic.List<HeadlightState> headlightStates = new System.Collections.Generic.List<HeadlightState>();
+
     private void Start()
     {
         rb = GetComponent<Rigidbody>();
@@ -144,6 +155,9 @@ public class CarController : MonoBehaviour
 
         // Tìm toàn bộ Renderer đèn của xe để gán hiệu ứng nhấp nháy trực tiếp lên chất liệu
         FindAndRegisterBlinkerRenderers(transform);
+
+        // Tìm toàn bộ Renderer đèn pha/cos của xe để gán hiệu ứng chiếu sáng và tự động tạo Spotlight
+        FindAndRegisterHeadlights(transform);
     }
 
     private void Update()
@@ -227,6 +241,9 @@ public class CarController : MonoBehaviour
 
         // Cập nhật nhấp nháy đèn tín hiệu
         UpdateBlinkers();
+
+        // Cập nhật đèn pha/cos (Emission và Spotlight)
+        UpdateHeadlights();
 
         UpdateAllWheels();
     }
@@ -509,6 +526,109 @@ public class CarController : MonoBehaviour
             {
                 state.pointLight.enabled = false;
             }
+        }
+    }
+
+    private void UpdateHeadlights()
+    {
+        for (int i = 0; i < headlightStates.Count; i++)
+        {
+            HeadlightState state = headlightStates[i];
+            if (state.renderer == null || state.renderer.material == null) continue;
+
+            if (isLowBeamOn)
+            {
+                // Bật Emission cho chất liệu đèn pha/cos sáng trắng ấm
+                state.renderer.material.EnableKeyword("_EMISSION");
+                float emissionIntensity = isHighBeamOn ? 4.5f : 2.2f;
+                state.renderer.material.SetColor("_EmissionColor", new Color(1.0f, 0.95f, 0.85f) * emissionIntensity);
+
+                // Cấu hình Spotlight chiếu sáng đường đi phía trước
+                if (state.spotlight != null)
+                {
+                    state.spotlight.enabled = true;
+                    if (isHighBeamOn)
+                    {
+                        state.spotlight.range = 45f;
+                        state.spotlight.intensity = 5.0f;
+                        state.spotlight.spotAngle = 40f;
+                        state.spotlight.transform.localRotation = Quaternion.Euler(2f, 0f, 0f);
+                    }
+                    else
+                    {
+                        state.spotlight.range = 22f;
+                        state.spotlight.intensity = 2.5f;
+                        state.spotlight.spotAngle = 55f;
+                        state.spotlight.transform.localRotation = Quaternion.Euler(8f, state.isLeft ? -5f : 5f, 0f);
+                    }
+                }
+            }
+            else
+            {
+                // Tắt Emission
+                state.renderer.material.SetColor("_EmissionColor", state.originalEmission);
+                if (!state.wasEmissionEnabled)
+                {
+                    state.renderer.material.DisableKeyword("_EMISSION");
+                }
+
+                // Tắt Spotlight
+                if (state.spotlight != null)
+                {
+                    state.spotlight.enabled = false;
+                }
+            }
+        }
+    }
+
+    private void FindAndRegisterHeadlights(Transform parent)
+    {
+        Renderer r = parent.GetComponent<Renderer>();
+        if (r != null)
+        {
+            string nameLower = parent.name.ToLower();
+            // Tìm cụm đèn trước: tên chứa "light" và "front" (ví dụ Tocus_Light_Front_Left)
+            if (nameLower.Contains("light") && nameLower.Contains("front"))
+            {
+                bool isLeft = nameLower.Contains("left") || nameLower.Contains("_l");
+                AddHeadlightRenderer(r, isLeft);
+            }
+        }
+
+        for (int i = 0; i < parent.childCount; i++)
+        {
+            FindAndRegisterHeadlights(parent.GetChild(i));
+        }
+    }
+
+    private void AddHeadlightRenderer(Renderer r, bool isLeft)
+    {
+        HeadlightState state = new HeadlightState();
+        state.renderer = r;
+        state.isLeft = isLeft;
+        if (r.material != null)
+        {
+            state.originalEmission = r.material.HasProperty("_EmissionColor") ? r.material.GetColor("_EmissionColor") : Color.black;
+            state.wasEmissionEnabled = r.material.IsKeywordEnabled("_EMISSION");
+
+            // Tạo Spotlight phụ phát sáng về phía trước, đặt làm con của Car để di chuyển theo xe
+            GameObject lightGo = new GameObject(r.name + "_SpotLight");
+            lightGo.transform.SetParent(transform, false);
+            
+            // Lấy vị trí trung tâm của cụm đèn trong không gian cục bộ của xe
+            Vector3 worldCenter = r.bounds.center;
+            Vector3 localCenter = transform.InverseTransformPoint(worldCenter);
+            localCenter.z += 0.2f; // Đẩy đèn ra trước một chút tránh tự đổ bóng hoặc bị che bởi cản trước
+            lightGo.transform.localPosition = localCenter;
+
+            Light l = lightGo.AddComponent<Light>();
+            l.type = LightType.Spot;
+            l.color = new Color(1.0f, 0.95f, 0.85f); // Sáng trắng ấm tự nhiên
+            l.shadows = LightShadows.Soft; // Đổ bóng mềm
+            l.enabled = false;
+
+            state.spotlight = l;
+            headlightStates.Add(state);
         }
     }
 
