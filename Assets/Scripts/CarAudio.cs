@@ -34,6 +34,11 @@ public class CarAudio : MonoBehaviour
     {
         carController = GetComponent<CarController>();
         
+        // Đồng bộ âm lượng SFX từ cài đặt
+        float masterSFX = PlayerPrefs.GetFloat("SFXVolume", 0.8f);
+        minVolume *= masterSFX;
+        maxVolume *= masterSFX;
+
         // Cấu hình nguồn phát lặp
         if (engineLoopSource != null)
         {
@@ -47,6 +52,7 @@ public class CarAudio : MonoBehaviour
         {
             startupSource.playOnAwake = false;
             startupSource.loop = false;
+            startupSource.volume *= masterSFX;
         }
     }
 
