@@ -45,6 +45,12 @@ public class CarController : MonoBehaviour
     public KeyCode gearNeutralKey = KeyCode.Alpha2;
     public KeyCode gearReverseKey = KeyCode.Alpha3;
 
+    [Header("Automatic Transmission Settings")]
+    [HideInInspector] public int currentAutomaticGear = 1;
+    [HideInInspector] public float engineRPM = 1000f;
+    public float maxRPM = 6000f;
+    public float minRPM = 1000f;
+
     [Header("Indicators & Blinker Keys")]
     public KeyCode leftBlinkerKey = KeyCode.Q;
     public KeyCode rightBlinkerKey = KeyCode.E;
@@ -71,6 +77,10 @@ public class CarController : MonoBehaviour
     }
 #endif
 
+    [Header("Scale Settings")]
+    [Tooltip("Tự động thay đổi kích thước của xe khi bắt đầu (1.35 = phóng to 35%)")]
+    public float autoScaleFactor = 1.35f;
+
     [HideInInspector]
     public bool isEngineOn = false; // Trạng thái nổ/tắt máy xe (Phím I)
     [HideInInspector] public bool isLeftBlinkerOn = false;
@@ -78,6 +88,10 @@ public class CarController : MonoBehaviour
     [HideInInspector] public bool isHazardOn = false;
     [HideInInspector] public bool isLowBeamOn = false;
     [HideInInspector] public bool isHighBeamOn = false;
+
+    [Header("B2 Exam Settings")]
+    public bool isSeatbeltFastened = true;
+    public bool isHandbrakeOn = false;
 
     public float CurrentSpeed => rb != null ? rb.linearVelocity.magnitude * 3.6f : 0f;
 
@@ -91,6 +105,9 @@ public class CarController : MonoBehaviour
     private float blinkTimer = 0f;
     private bool blinkState = false;
     private AudioSource blinkerAudioSource;
+    private AudioSource seatbeltAudioSource;
+    private AudioClip seatbeltClickSound;
+    private AudioClip handbrakeClickSound;
 
     private struct BlinkerLightState
     {
@@ -118,10 +135,28 @@ public class CarController : MonoBehaviour
 
     private void Start()
     {
+        // Tự động scale kích thước xe và điều chỉnh các WheelCollider tương ứng tỉ lệ
+        if (autoScaleFactor > 0.01f && autoScaleFactor != 1.0f)
+        {
+            transform.localScale = new Vector3(autoScaleFactor, autoScaleFactor, autoScaleFactor);
+            if (frontLeftCollider != null) frontLeftCollider.radius *= autoScaleFactor;
+            if (frontRightCollider != null) frontRightCollider.radius *= autoScaleFactor;
+            if (rearLeftCollider != null) rearLeftCollider.radius *= autoScaleFactor;
+            if (rearRightCollider != null) rearRightCollider.radius *= autoScaleFactor;
+
+            if (frontLeftCollider != null) frontLeftCollider.suspensionDistance *= autoScaleFactor;
+            if (frontRightCollider != null) frontRightCollider.suspensionDistance *= autoScaleFactor;
+            if (rearLeftCollider != null) rearLeftCollider.suspensionDistance *= autoScaleFactor;
+            if (rearRightCollider != null) rearRightCollider.suspensionDistance *= autoScaleFactor;
+        }
+
+        // Tự động gắn thêm component xử lý va chạm trừ điểm
+        gameObject.AddComponent<CarCollisionHandler>();
+
         rb = GetComponent<Rigidbody>();
         if (rb != null)
         {
-            rb.centerOfMass += centerOfMassOffset;
+            rb.centerOfMass += centerOfMassOffset * autoScaleFactor;
         }
 
         // Lưu lại ma sát ngang mặc định của bánh sau
@@ -152,6 +187,15 @@ public class CarController : MonoBehaviour
         {
             blinkerSound = CreateProceduralBlinkerSound();
         }
+
+        seatbeltAudioSource = gameObject.AddComponent<AudioSource>();
+        seatbeltAudioSource.playOnAwake = false;
+        seatbeltAudioSource.loop = false;
+        seatbeltAudioSource.spatialBlend = 0f;
+        seatbeltAudioSource.volume = 0.8f * PlayerPrefs.GetFloat("SFXVolume", 0.8f);
+
+        seatbeltClickSound = CreateProceduralSeatbeltSound();
+        handbrakeClickSound = CreateProceduralHandbrakeSound();
 
         // Tìm toàn bộ Renderer đèn của xe để gán hiệu ứng nhấp nháy trực tiếp lên chất liệu
         FindAndRegisterBlinkerRenderers(transform);
@@ -237,7 +281,14 @@ public class CarController : MonoBehaviour
             currentGear = GearState.N;
         }
 
-        brakeInput = Input.GetKey(KeyCode.Space) ? 1f : 0f;
+
+        // Phím Space để kích hoạt phanh tay đã bị vô hiệu hóa
+
+        // Cập nhật tắt máy đột ngột
+        UpdateEngineStall();
+
+        // Cập nhật hệ thống số tự động và RPM động cơ
+        UpdateAutomaticTransmission();
 
         // Cập nhật nhấp nháy đèn tín hiệu
         UpdateBlinkers();
@@ -278,14 +329,42 @@ public class CarController : MonoBehaviour
 
         float throttle = Mathf.Max(0f, moveInput);
         float torque = 0f;
+        float speedKmh = CurrentSpeed;
+        bool isBraking = (moveInput < 0f) || isHandbrakeOn;
 
         if (currentGear == GearState.D)
         {
-            torque = throttle * maxMotorTorque;
+            if (throttle > 0f)
+            {
+                // Mô-men xoắn phụ thuộc vào chân ga và cấp số tự động hiện tại (số thấp kéo khỏe hơn)
+                float gearFactor = 1f;
+                switch (currentAutomaticGear)
+                {
+                    case 1: gearFactor = 1.0f; break;
+                    case 2: gearFactor = 0.8f; break;
+                    case 3: gearFactor = 0.65f; break;
+                    case 4: gearFactor = 0.5f; break;
+                    case 5: gearFactor = 0.4f; break;
+                }
+                torque = throttle * maxMotorTorque * gearFactor;
+            }
+            else if (!isBraking && speedKmh < 8f)
+            {
+                // Bò tự động (Creep Torque) khi nhả phanh ở số D
+                torque = 180f * (1f - (speedKmh / 8f));
+            }
         }
         else if (currentGear == GearState.R)
         {
-            torque = -throttle * maxMotorTorque;
+            if (throttle > 0f)
+            {
+                torque = -throttle * maxMotorTorque * 0.8f; // Số lùi có giới hạn lực kéo
+            }
+            else if (!isBraking && speedKmh < 6f)
+            {
+                // Bò lùi tự động khi nhả phanh ở số R
+                torque = -140f * (1f - (speedKmh / 6f));
+            }
         }
         else // Neutral (N)
         {
@@ -301,10 +380,10 @@ public class CarController : MonoBehaviour
     {
         float currentBrake = 0f;
 
-        // Space bar: phanh tay
-        if (brakeInput > 0f)
+        // Phanh tay gài dứt khoát
+        if (isHandbrakeOn)
         {
-            currentBrake = brakeInput * maxBrakeTorque;
+            currentBrake = maxBrakeTorque;
         }
         // Phím lùi (S / Down Arrow) đóng vai trò phanh chân chân thực
         else if (moveInput < 0f)
@@ -315,12 +394,6 @@ public class CarController : MonoBehaviour
         else if (moveInput == 0f)
         {
             currentBrake = engineBrakeTorque;
-        }
-
-        // Tự động kích hoạt phanh đỗ (Handbrake) khi xe dừng hẳn để tránh bị trôi dốc ảo
-        if (moveInput == 0f && brakeInput == 0f && rb != null && rb.linearVelocity.magnitude < 0.15f)
-        {
-            currentBrake = parkingBrakeTorque;
         }
 
         if (frontLeftCollider != null) frontLeftCollider.brakeTorque = currentBrake;
@@ -402,8 +475,8 @@ public class CarController : MonoBehaviour
     {
         if (rearLeftCollider == null || rearRightCollider == null) return;
 
-        // Nếu đang nhấn phanh tay (Space)
-        bool isHandbraking = Input.GetKey(KeyCode.Space);
+        // Nếu đang nhấn phanh tay (Space) - đã vô hiệu hóa
+        bool isHandbraking = false;
 
         if (isHandbraking)
         {
@@ -722,5 +795,160 @@ public class CarController : MonoBehaviour
             if (result != null) return result;
         }
         return null;
+    }
+
+    // Logic tắt máy đột ngột (Engine Stall)
+    private void UpdateEngineStall()
+    {
+        // Đối với xe số tự động, việc dừng xe khi vẫn cài số D/R không làm chết máy
+        // do hệ thống biến mô thủy lực (torque converter) tự động trượt slip.
+    }
+
+    private void UpdateAutomaticTransmission()
+    {
+        if (!isEngineOn)
+        {
+            engineRPM = 0f;
+            currentAutomaticGear = 1;
+            return;
+        }
+
+        if (currentGear == GearState.N)
+        {
+            currentAutomaticGear = 1;
+            // Thả ga ở N: Vòng tua về mức Garanty (idle) cộng một chút khi nháy ga
+            float targetIdle = 900f + (Mathf.Max(0f, moveInput) * 3500f);
+            engineRPM = Mathf.Lerp(engineRPM, targetIdle, Time.deltaTime * 6f);
+            return;
+        }
+
+        if (currentGear == GearState.R)
+        {
+            currentAutomaticGear = 1;
+            float targetR = 900f + (CurrentSpeed * 180f) + (Mathf.Max(0f, moveInput) * 1200f);
+            engineRPM = Mathf.Lerp(engineRPM, Mathf.Min(targetR, maxRPM), Time.deltaTime * 5f);
+            return;
+        }
+
+        // --- Cấu hình tự động chuyển số (D) ---
+        float speed = CurrentSpeed;
+        int targetGear = 1;
+
+        if (speed > 52f) targetGear = 5;
+        else if (speed > 38f) targetGear = 4;
+        else if (speed > 24f) targetGear = 3;
+        else if (speed > 10f) targetGear = 2;
+        else targetGear = 1;
+
+        // Tránh giật nhảy số liên tục khi đi mấp mé giới hạn (Hysteresis)
+        if (targetGear < currentAutomaticGear && speed > 0.1f)
+        {
+            float lowerThreshold = 0f;
+            if (currentAutomaticGear == 5) lowerThreshold = 48f;
+            else if (currentAutomaticGear == 4) lowerThreshold = 34f;
+            else if (currentAutomaticGear == 3) lowerThreshold = 20f;
+            else if (currentAutomaticGear == 2) lowerThreshold = 8f;
+
+            if (speed > lowerThreshold)
+            {
+                targetGear = currentAutomaticGear;
+            }
+        }
+
+        if (targetGear != currentAutomaticGear)
+        {
+            // Hiệu ứng hẫng nhẹ vòng tua máy khi chuyển cấp số
+            engineRPM = Mathf.Max(minRPM + 200f, engineRPM - 900f);
+            currentAutomaticGear = targetGear;
+            Debug.Log($"[Automatic Transmission] Shifting to D{currentAutomaticGear} (Speed: {speed:F1} km/h)");
+        }
+
+        // Tính toán RPM thực tế dựa trên tốc độ và cấp số hiện tại
+        float gearFactor = 1f;
+        switch (currentAutomaticGear)
+        {
+            case 1: gearFactor = 230f; break;
+            case 2: gearFactor = 140f; break;
+            case 3: gearFactor = 95f; break;
+            case 4: gearFactor = 70f; break;
+            case 5: gearFactor = 50f; break;
+        }
+
+        float calculatedRPM = 900f + (speed * gearFactor) + (Mathf.Max(0f, moveInput) * 1500f);
+        engineRPM = Mathf.Lerp(engineRPM, Mathf.Clamp(calculatedRPM, minRPM, maxRPM), Time.deltaTime * 7f);
+    }
+
+    private void StallEngine(string reason)
+    {
+        isEngineOn = false;
+        Debug.Log($"[Tắt máy] Xe bị chết máy! Lý do: {reason}");
+        
+        if (ExamManager.Instance != null && ExamManager.Instance.isExamActive)
+        {
+            ExamManager.Instance.DeductPoints(5, $"Chết máy xe: {reason}");
+        }
+    }
+
+    private AudioClip CreateProceduralSeatbeltSound()
+    {
+        int sampleRate = 44100;
+        float duration = 0.15f;
+        int sampleCount = (int)(sampleRate * duration);
+        float[] samples = new float[sampleCount];
+
+        for (int i = 0; i < sampleCount; i++)
+        {
+            float t = (float)i / sampleRate;
+            float freq1 = 1500f;
+            float envelope1 = Mathf.Exp(-t * 200f);
+            
+            float freq2 = 250f;
+            float envelope2 = Mathf.Exp(-t * 30f);
+
+            samples[i] = (Mathf.Sin(2f * Mathf.PI * freq1 * t) * envelope1 * 0.3f) +
+                         (Mathf.Sin(2f * Mathf.PI * freq2 * t) * envelope2 * 0.4f);
+        }
+
+        AudioClip clip = AudioClip.Create("SeatbeltClick", sampleCount, 1, sampleRate, false);
+        clip.SetData(samples, 0);
+        return clip;
+    }
+
+    private AudioClip CreateProceduralHandbrakeSound()
+    {
+        int sampleRate = 44100;
+        float duration = 0.25f;
+        int sampleCount = (int)(sampleRate * duration);
+        float[] samples = new float[sampleCount];
+
+        for (int i = 0; i < sampleCount; i++)
+        {
+            float t = (float)i / sampleRate;
+            
+            float ratchet = 0f;
+            for (int click = 0; click < 4; click++)
+            {
+                float clickTime = click * 0.05f;
+                if (t >= clickTime)
+                {
+                    float clickT = t - clickTime;
+                    ratchet += Mathf.Sin(2f * Mathf.PI * 1000f * clickT) * Mathf.Exp(-clickT * 150f) * 0.25f;
+                }
+            }
+
+            float thudTime = 0.18f;
+            float thud = 0f;
+            if (t >= thudTime)
+            {
+                float thudT = t - thudTime;
+                thud = Mathf.Sin(2f * Mathf.PI * 120f * thudT) * Mathf.Exp(-thudT * 40f) * 0.5f;
+            }
+
+            samples[i] = ratchet + thud;
+        }
+
+        AudioClip clip = AudioClip.Create("HandbrakeClick", sampleCount, 1, sampleRate, false);
+        clip.SetData(samples, 0);
+        return clip;
     }
 }

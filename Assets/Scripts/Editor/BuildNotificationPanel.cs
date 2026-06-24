@@ -96,7 +96,7 @@ public class BuildNotificationPanel : EditorWindow
             textComp.font = mainFont;
         }
 
-        textComp.text = "ⓘ  Đi sai làn đường  ⓘ";
+        textComp.text = "Đi sai làn đường";
         textComp.fontSize = 16f;
         textComp.fontStyle = FontStyles.Bold;
         textComp.color = Color.white;

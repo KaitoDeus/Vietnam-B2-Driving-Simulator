@@ -23,6 +23,9 @@ public class MainMenuController : MonoBehaviour
 
     private void Start()
     {
+        // Khôi phục trạng thái âm thanh toàn cục
+        AudioListener.pause = false;
+
         // Thiết lập trạng thái mặc định của các Panel khi bắt đầu
         if (mainMenuPanel != null) mainMenuPanel.SetActive(true);
         if (settingsPanel != null) settingsPanel.SetActive(false);

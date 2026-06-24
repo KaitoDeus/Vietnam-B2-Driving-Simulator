@@ -118,22 +118,23 @@ public class CarAudio : MonoBehaviour
     {
         if (engineLoopSource == null || !engineLoopSource.isPlaying) return;
 
-        // Lấy vận tốc tuyệt đối (km/h) từ xe
-        float speed = Mathf.Abs(carController.GetLocalForwardVelocity() * 3.6f);
-        
-        // Tính tỷ lệ tốc độ từ 0 đến 1
-        float speedRatio = Mathf.Clamp01(speed / maxSpeedForPitch);
+        // Đọc thông số RPM trực tiếp từ hộp số tự động của CarController
+        float rpm = carController.engineRPM;
+        float maxRPM = carController.maxRPM;
+        float minRPM = carController.minRPM;
 
-        // 1. Điều chỉnh Pitch (độ cao tần số) của âm thanh loop
-        // Pitch tăng dần từ minPitch đến maxPitch tương ứng với tốc độ xe chạy
-        engineLoopSource.pitch = Mathf.Lerp(minPitch, maxPitch, speedRatio);
+        // Tính tỷ lệ vòng tua máy từ 0 đến 1
+        float rpmRatio = Mathf.Clamp01((rpm - minRPM) / (maxRPM - minRPM));
 
-        // 2. Điều chỉnh Volume (âm lượng) dựa trên việc nhấn ga
-        // Khi người chơi ấn phím tiến (Vertical input > 0), âm lượng tăng mạnh để mô phỏng đạp ga
+        // 1. Điều chỉnh Pitch (độ cao tần số) theo vòng tua máy (RPM)
+        // Độ cao sẽ nhấp nhô tăng giảm sinh động khi xe sang số (D1 -> D2 -> D3...)
+        engineLoopSource.pitch = Mathf.Lerp(minPitch, maxPitch, rpmRatio);
+
+        // 2. Điều chỉnh Volume (âm lượng) dựa trên ga (accelInput) và vòng tua máy
         float accelInput = Mathf.Clamp01(Input.GetAxis("Vertical"));
-        float targetVolume = Mathf.Lerp(minVolume, maxVolume, accelInput * 0.4f + speedRatio * 0.6f);
+        float targetVolume = Mathf.Lerp(minVolume, maxVolume, accelInput * 0.5f + rpmRatio * 0.5f);
         
         // Làm mượt sự thay đổi âm lượng giữa các frame
-        engineLoopSource.volume = Mathf.MoveTowards(engineLoopSource.volume, targetVolume, Time.deltaTime * 2.5f);
+        engineLoopSource.volume = Mathf.MoveTowards(engineLoopSource.volume, targetVolume, Time.deltaTime * 3.0f);
     }
 }

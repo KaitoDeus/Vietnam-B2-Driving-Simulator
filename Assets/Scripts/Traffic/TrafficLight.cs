@@ -38,6 +38,7 @@ public class TrafficLight : MonoBehaviour
     public Mesh yellowMesh;
     public Mesh greenMesh;
 
+    public TrafficLightState CurrentState => currentState;
     private TrafficLightState currentState = TrafficLightState.Off;
     private bool isInitialized = false;
 

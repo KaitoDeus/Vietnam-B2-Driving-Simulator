@@ -21,6 +21,7 @@ public class HUDController : MonoBehaviour
     public TMP_Text lowBeamText;
     public TMP_Text highBeamText;
     public TMP_Text hazardText;
+    public TMP_Text seatbeltText;
 
     [Header("Bottom Right (Speedometer)")]
     public RectTransform speedometerNeedle;
@@ -36,6 +37,10 @@ public class HUDController : MonoBehaviour
 
     [Header("Notifications")]
     public NotificationController notificationPanel;
+    public ResultPanelController resultPanel;
+    
+    [Header("Countdown")]
+    public TMP_Text countdownText;
 
     [Header("Colors (Aesthetics)")]
     public Color activeColor = new Color(0.12f, 0.8f, 0.2f);      // Xanh lá sáng
@@ -68,6 +73,7 @@ public class HUDController : MonoBehaviour
         if (lowBeamText == null) lowBeamText = FindComponentInDescendants<TMP_Text>(canvasTrans, "Txt_LightCos");
         if (highBeamText == null) highBeamText = FindComponentInDescendants<TMP_Text>(canvasTrans, "Txt_LightPha");
         if (hazardText == null) hazardText = FindComponentInDescendants<TMP_Text>(canvasTrans, "Txt_Hazard");
+        if (seatbeltText == null) seatbeltText = FindComponentInDescendants<TMP_Text>(canvasTrans, "Txt_Seatbelt");
         
         if (pausePanel == null)
         {
@@ -81,19 +87,49 @@ public class HUDController : MonoBehaviour
             if (settingsTrans != null) settingsPanel = settingsTrans.gameObject;
         }
 
-        if (notificationPanel == null)
+        // Tìm kiếm các thực thể trong Canvas của Scene để tránh tham chiếu nhầm vào Prefab
+        Transform notifTrans = FindDeepChild(canvasTrans, "Panel_Notification");
+        if (notifTrans != null)
         {
-            Transform notifTrans = FindDeepChild(canvasTrans, "Panel_Notification");
-            if (notifTrans != null)
-            {
-                notificationPanel = notifTrans.GetComponent<NotificationController>();
-            }
-            else
-            {
-                Transform rootTrans = canvasTrans.Find("HUD_Root");
-                Transform parentTrans = (rootTrans != null) ? rootTrans : canvasTrans;
-                notificationPanel = NotificationController.Create(parentTrans);
-            }
+            notificationPanel = notifTrans.GetComponent<NotificationController>();
+        }
+        else if (notificationPanel == null || !notificationPanel.gameObject.scene.IsValid())
+        {
+            Transform rootTrans = canvasTrans.Find("HUD_Root");
+            Transform parentTrans = (rootTrans != null) ? rootTrans : canvasTrans;
+            notificationPanel = NotificationController.Create(parentTrans);
+        }
+
+        Transform resultTrans = FindDeepChild(canvasTrans, "Panel_Result");
+        if (resultTrans != null)
+        {
+            resultPanel = resultTrans.GetComponent<ResultPanelController>();
+        }
+
+        if (countdownText == null)
+        {
+            countdownText = FindComponentInDescendants<TMP_Text>(canvasTrans, "Txt_Countdown");
+        }
+        if (countdownText == null)
+        {
+            GameObject countdownGo = new GameObject("Txt_Countdown");
+            countdownGo.transform.SetParent(canvasTrans, false);
+            
+            RectTransform rect = countdownGo.AddComponent<RectTransform>();
+            rect.anchorMin = new Vector2(0.5f, 0.5f);
+            rect.anchorMax = new Vector2(0.5f, 0.5f);
+            rect.pivot = new Vector2(0.5f, 0.5f);
+            rect.anchoredPosition = new Vector2(0f, 150f);
+            rect.sizeDelta = new Vector2(300f, 100f);
+            
+            countdownText = countdownGo.AddComponent<TextMeshProUGUI>();
+            countdownText.fontSize = 72;
+            countdownText.fontWeight = FontWeight.Bold;
+            countdownText.alignment = TextAlignmentOptions.Center;
+            countdownText.color = errorColor;
+            countdownText.text = "";
+            countdownText.outlineColor = Color.black;
+            countdownText.outlineWidth = 0.2f;
         }
     }
 
@@ -131,6 +167,9 @@ public class HUDController : MonoBehaviour
         {
             settingsPanel.SetActive(false);
         }
+
+        // Đảm bảo âm thanh toàn cục không bị pause khi bắt đầu cảnh mới
+        AudioListener.pause = false;
     }
 
     private void Update()
@@ -190,6 +229,36 @@ public class HUDController : MonoBehaviour
 
         // Cập nhật Bài thi hiện tại và mô tả
         UpdateStepTexts(em.currentStep);
+
+        // Hiển thị đếm ngược ở giữa màn hình đối với Bài 3: Khởi hành ngang dốc
+        if (countdownText != null)
+        {
+            if (em.currentStep == ExamStep.DungAndKhoiHanhNgangDoc)
+            {
+                float elapsed = Time.time - em.GetStepStartTime();
+                float limit = em.GetTimeLimitForStep(ExamStep.DungAndKhoiHanhNgangDoc);
+                float timeLeft = Mathf.Max(0f, limit - elapsed);
+                
+                countdownText.text = Mathf.CeilToInt(timeLeft).ToString();
+                
+                if (timeLeft <= 5f)
+                {
+                    bool blink = (Time.time * 4f % 2) < 1;
+                    countdownText.color = blink ? errorColor : new Color(0.6f, 0f, 0f);
+                    countdownText.fontSize = 90;
+                }
+                else
+                {
+                    countdownText.color = warningColor;
+                    countdownText.fontSize = 72;
+                }
+                countdownText.gameObject.SetActive(true);
+            }
+            else
+            {
+                countdownText.gameObject.SetActive(false);
+            }
+        }
     }
 
     private void UpdateStepTexts(ExamStep step)
@@ -204,7 +273,7 @@ public class HUDController : MonoBehaviour
                 break;
             case ExamStep.XuatPhat:
                 stepTitleText.text = "Bài 1: Xuất phát";
-                stepDescText.text = "Vào số 1 (phím 1) và cho xe di chuyển qua vạch xuất phát.";
+                stepDescText.text = "Vào số D (phím 1) và cho xe di chuyển qua vạch xuất phát.";
                 break;
             case ExamStep.DungNhuongDuongDiBo:
                 stepTitleText.text = "Bài 2: Dừng xe nhường đường";
@@ -235,8 +304,8 @@ public class HUDController : MonoBehaviour
                 stepDescText.text = "Dừng xe đúng khoảng cách trước vạch giới hạn có đường sắt chạy qua.";
                 break;
             case ExamStep.ThayDoiSoDuongBang:
-                stepTitleText.text = "Bài 9: Thay đổi số trên đường bằng";
-                stepDescText.text = "Tăng lên số 2 (tốc độ > 24 km/h) và giảm về số 1 (tốc độ < 20 km/h) đúng biển báo.";
+                stepTitleText.text = "Bài 9: Thay đổi tốc độ trên đường bằng";
+                stepDescText.text = "Tăng tốc độ lên trên 24 km/h và sau đó giảm tốc độ xuống dưới 20 km/h đúng biển báo.";
                 break;
             case ExamStep.GhepNgangVaoNoiDo:
                 stepTitleText.text = "Bài 10: Ghép xe ngang vào nơi đỗ";
@@ -253,7 +322,7 @@ public class HUDController : MonoBehaviour
     {
         if (targetCar == null) return;
 
-        // Cập nhật hiển thị hộp số/gear (D -> 1, N -> N, R -> R) ở ô kế bên Số xe
+        // Cập nhật hiển thị hộp số/gear (D -> D1/D2/..., N -> N, R -> R) ở ô kế bên Số xe
         if (carNumberText != null)
         {
             switch (targetCar.currentGear)
@@ -262,7 +331,7 @@ public class HUDController : MonoBehaviour
                     carNumberText.text = "N";
                     break;
                 case CarController.GearState.D:
-                    carNumberText.text = "1";
+                    carNumberText.text = "D" + targetCar.currentAutomaticGear;
                     break;
                 case CarController.GearState.R:
                     carNumberText.text = "R";
@@ -323,6 +392,7 @@ public class HUDController : MonoBehaviour
                 hazardText.color = inactiveColor;
             }
         }
+
     }
 
     private void UpdateSpeedometer()
@@ -364,6 +434,8 @@ public class HUDController : MonoBehaviour
             // Hiện con trỏ chuột khi tạm dừng
             Cursor.lockState = CursorLockMode.None;
             Cursor.visible = true;
+
+            AudioListener.pause = true; // Mute tất cả âm thanh khi tạm dừng
         }
         else
         {
@@ -372,6 +444,8 @@ public class HUDController : MonoBehaviour
 
             // Ẩn con trỏ chuột khi tiếp tục game (nếu muốn)
             // Cursor.visible = false;
+
+            AudioListener.pause = false; // Bật lại âm thanh khi tiếp tục
         }
 
         // Tạm dừng/Bật tiếp âm thanh thi sát hạch
@@ -404,6 +478,7 @@ public class HUDController : MonoBehaviour
 
     public void RestartGame()
     {
+        AudioListener.pause = false; // Bật lại âm thanh
         Time.timeScale = 1f;
         UnityEngine.SceneManagement.SceneManager.LoadScene(UnityEngine.SceneManagement.SceneManager.GetActiveScene().buildIndex);
     }
@@ -422,6 +497,7 @@ public class HUDController : MonoBehaviour
 
     public void GoToMainMenu()
     {
+        AudioListener.pause = false; // Bật lại âm thanh
         Time.timeScale = 1f;
         UnityEngine.SceneManagement.SceneManager.LoadScene("MainMenu");
     }
@@ -452,4 +528,42 @@ public class HUDController : MonoBehaviour
     {
         ShowNotification(message, true, duration);
     }
+
+    // ==========================================
+    // CÁC HÀM HIỂN THỊ MÀN HÌNH KẾT QUẢ (RESULT SCREEN)
+    // ==========================================
+
+    public void ShowResultScreen(bool isPass, string finalStepName, int finalScore, List<ExamManager.DeductionRecord> mistakes)
+    {
+        // Kiểm tra xem tham chiếu có hợp lệ trong scene không, nếu không thì tìm lại thực thể trong scene
+        if (resultPanel == null || resultPanel.gameObject == null || !resultPanel.gameObject.scene.IsValid())
+        {
+            Transform resultTrans = FindDeepChild(transform, "Panel_Result");
+            if (resultTrans != null)
+            {
+                resultPanel = resultTrans.GetComponent<ResultPanelController>();
+            }
+        }
+
+        if (resultPanel != null)
+        {
+            // Kích hoạt tất cả các object cha (ví dụ HUD_Root, HUD_Canvas) nếu chúng bị tắt
+            Transform parentTrans = resultPanel.transform.parent;
+            while (parentTrans != null)
+            {
+                if (!parentTrans.gameObject.activeSelf)
+                {
+                    parentTrans.gameObject.SetActive(true);
+                }
+                parentTrans = parentTrans.parent;
+            }
+
+            resultPanel.Setup(isPass, finalStepName, finalScore, mistakes);
+        }
+        else
+        {
+            Debug.LogWarning("[HUDController] Chưa gán resultPanel!");
+        }
+    }
 }
+

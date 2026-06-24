@@ -55,8 +55,7 @@ public class NotificationController : MonoBehaviour
         
         if (notificationText != null)
         {
-            // Thêm biểu tượng ⓘ ở đầu và cuối như thiết kế
-            notificationText.text = $"ⓘ  {message}  ⓘ";
+            notificationText.text = message;
         }
 
         if (backgroundImage != null)
@@ -133,7 +132,7 @@ public class NotificationController : MonoBehaviour
 
         if (notificationText != null)
         {
-            notificationText.text = $"ⓘ  {message}  ⓘ";
+            notificationText.text = message;
         }
 
         if (backgroundImage != null)
@@ -224,7 +223,7 @@ public class NotificationController : MonoBehaviour
             textComp.font = mainFont;
         }
 
-        textComp.text = "ⓘ  Đi sai làn đường  ⓘ";
+        textComp.text = "Đi sai làn đường";
         textComp.fontSize = 16f;
         textComp.fontStyle = FontStyles.Bold;
         textComp.color = Color.white;
