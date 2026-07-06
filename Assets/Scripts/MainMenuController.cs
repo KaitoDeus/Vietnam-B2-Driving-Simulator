@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using TMPro;
 
 public class MainMenuController : MonoBehaviour
 {
@@ -35,6 +36,67 @@ public class MainMenuController : MonoBehaviour
         // Đảm bảo con trỏ chuột hiển thị và không bị khóa khi ở Menu chính
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;
+
+        // Tự động tìm và gán sự kiện cho các nút bấm
+        BindMenuButtons();
+    }
+
+    private void BindMenuButtons()
+    {
+        if (mainMenuPanel == null)
+        {
+            // Thử tìm Panel_MainMenu nếu biến bị null
+            Transform panelTrans = transform.Find("Panel_MainMenu");
+            if (panelTrans == null) panelTrans = transform.Find("MainMenuPanel");
+            if (panelTrans != null) mainMenuPanel = panelTrans.gameObject;
+        }
+
+        if (mainMenuPanel == null) return;
+
+        Button[] buttons = mainMenuPanel.GetComponentsInChildren<Button>(true);
+        foreach (Button btn in buttons)
+        {
+            string btnText = "";
+            TMP_Text tmp = btn.GetComponentInChildren<TMP_Text>(true);
+            if (tmp != null)
+            {
+                btnText = tmp.text;
+            }
+            else
+            {
+                Text legacyText = btn.GetComponentInChildren<Text>(true);
+                if (legacyText != null) btnText = legacyText.text;
+            }
+
+            btnText = btnText.ToUpper().Trim();
+            if (string.IsNullOrEmpty(btnText)) continue;
+
+            if (btnText.Contains("LÝ THUYẾT") || btnText.Contains("LY THUYET"))
+            {
+                btn.onClick.RemoveListener(StartTheoryExam);
+                btn.onClick.AddListener(StartTheoryExam);
+            }
+            else if (btnText.Contains("THỰC HÀNH") || btnText.Contains("THUC HANH"))
+            {
+                btn.onClick.RemoveListener(StartPracticalExam);
+                btn.onClick.AddListener(StartPracticalExam);
+            }
+            else if (btnText.Contains("CÀI ĐẶT") || btnText.Contains("CAI DAT") || btnText.Contains("SETTINGS"))
+            {
+                btn.onClick.RemoveListener(OpenSettings);
+                btn.onClick.AddListener(OpenSettings);
+            }
+            else if (btnText.Contains("GIỚI THIỆU") || btnText.Contains("GIOI THIEU") || btnText.Contains("ABOUT"))
+            {
+                btn.onClick.RemoveListener(OpenAbout);
+                btn.onClick.AddListener(OpenAbout);
+            }
+            else if (btnText.Contains("THOÁT") || btnText.Contains("THOAT") || btnText.Contains("EXIT"))
+            {
+                btn.onClick.RemoveListener(ShowExitConfirmation);
+                btn.onClick.AddListener(ShowExitConfirmation);
+            }
+        }
     }
 
     // ==========================================
@@ -58,8 +120,8 @@ public class MainMenuController : MonoBehaviour
     // ==========================================
     public void StartTheoryExam()
     {
-        Debug.Log("[MainMenu] Khởi chạy bài thi lý thuyết (Tính năng đang phát triển)...");
-        // Có thể mở một panel thông báo hoặc load cảnh thi lý thuyết tại đây
+        Debug.Log("[MainMenu] Khởi chạy bài thi lý thuyết...");
+        SceneManager.LoadScene("TheoryExam");
     }
 
     // ==========================================
