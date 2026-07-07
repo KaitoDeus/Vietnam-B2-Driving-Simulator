@@ -817,8 +817,8 @@ public class TheoryExamManager : MonoBehaviour
         }
         else
         {
-            // Chế độ thi bình thường: Tô màu xanh dương nhạt (Figma style #C2EEF9) khi được chọn
-            Color selectedColor = new Color(0.76f, 0.93f, 0.98f);
+            // Chế độ thi bình thường: Tô màu xanh dương rõ ràng (#4AA3DF) khi được chọn
+            Color selectedColor = new Color(0.29f, 0.64f, 0.87f);
             if (saved == 0 && answerA != null && answerA.image != null) answerA.image.color = selectedColor;
             if (saved == 1 && answerB != null && answerB.image != null) answerB.image.color = selectedColor;
             if (saved == 2 && answerC != null && answerC.image != null) answerC.image.color = selectedColor;
