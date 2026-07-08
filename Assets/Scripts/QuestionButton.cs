@@ -43,7 +43,7 @@ public class QuestionButton : MonoBehaviour
 
         if (isCurrent)
         {
-            if (img != null) img.color = new Color(0.12f, 0.53f, 0.9f); // Màu xanh dương #1F87E6
+            if (img != null) img.color = new Color(0.12f, 0.65f, 0.35f); // Màu xanh lá cây #1FA659
             if (txt != null)
             {
                 txt.color = Color.white;
