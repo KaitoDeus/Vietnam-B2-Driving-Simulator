@@ -273,7 +273,7 @@ public class HUDController : MonoBehaviour
                 break;
             case ExamStep.XuatPhat:
                 stepTitleText.text = "Bài 1: Xuất phát";
-                stepDescText.text = "Vào số D (phím 1) và cho xe di chuyển qua vạch xuất phát.";
+                stepDescText.text = "Nhấn ga (phím W) và cho xe di chuyển qua vạch xuất phát.";
                 break;
             case ExamStep.DungNhuongDuongDiBo:
                 stepTitleText.text = "Bài 2: Dừng xe nhường đường";

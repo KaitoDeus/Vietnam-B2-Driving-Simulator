@@ -91,6 +91,7 @@ public class ExamManager : MonoBehaviour
     private bool slowedDownAfterTargetSpeed = false;
     private bool parkedSuccessfully = false;
     private bool hasPassedBridgeMid = false;
+    private bool isCurrentStepValidated = false;
 
     // Quản lý thời gian của từng bài thi riêng lẻ
     private float stepStartTime = 0f;
@@ -385,6 +386,8 @@ public class ExamManager : MonoBehaviour
     private void ValidatePreviousStepCompletion()
     {
         if (targetCar == null) return;
+        if (isCurrentStepValidated) return;
+        isCurrentStepValidated = true;
 
         switch (currentStep)
         {
@@ -675,6 +678,27 @@ public class ExamManager : MonoBehaviour
         }
     }
 
+    // Hàm gọi từ trigger báo kết thúc bài thi (ExamEndTrigger)
+    public void TriggerStepEnd(ExamStep step)
+    {
+        if (!isExamActive) return;
+        if (currentStep != step) return;
+        if (isCurrentStepValidated) return;
+
+        int scoreBefore = currentScore;
+        ValidatePreviousStepCompletion();
+
+        // Hiển thị thông báo hoàn thành bài thi đúng luật ngay lập tức
+        if (currentScore == scoreBefore)
+        {
+            var hud = Object.FindFirstObjectByType<HUDController>();
+            if (hud != null)
+            {
+                hud.ShowSuccessNotification($"Hoàn thành Bài: {GetStepNameVi(step)} đúng luật!", 3.0f);
+            }
+        }
+    }
+
     // Hàm gọi khi xe chạm vào Trigger của một bài thi mới
     public void EnterExamStep(ExamStep newStep)
     {
@@ -708,15 +732,20 @@ public class ExamManager : MonoBehaviour
         int scoreBefore = currentScore;
         bool wasActiveBefore = isExamActive;
 
-        ValidatePreviousStepCompletion();
+        bool alreadyValidated = isCurrentStepValidated;
+        if (!alreadyValidated)
+        {
+            ValidatePreviousStepCompletion();
+        }
 
         // Chuyển sang bài mới
         currentStep = newStep;
         sequenceIndex++;
         completedSteps.Add(newStep);
+        isCurrentStepValidated = false; // Reset trạng thái xác thực cho bài mới
 
-        // Hiển thị thông báo hoàn thành bài thi cũ đúng luật
-        if (wasActiveBefore && isExamActive && prevStep != ExamStep.None)
+        // Hiển thị thông báo hoàn thành bài thi cũ đúng luật (nếu chưa được báo bởi ExamEndTrigger)
+        if (wasActiveBefore && isExamActive && prevStep != ExamStep.None && !alreadyValidated)
         {
             if (currentScore == scoreBefore)
             {

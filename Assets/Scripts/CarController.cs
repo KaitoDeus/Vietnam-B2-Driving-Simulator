@@ -23,7 +23,7 @@ public class CarController : MonoBehaviour
     
     [Header("Deceleration & Anti-Roll")]
     public float antiRollForce = 5000f;       // Lực của thanh cân bằng chống lật (Anti-roll bar force)
-    public float engineBrakeTorque = 15f;     // Lực phanh động cơ nhẹ khi thả ga (giúp xe trôi được trớn xa hơn)
+    public float engineBrakeTorque = 30f;     // Lực phanh động cơ vừa phải khi thả ga để xe giảm tốc tự nhiên và mượt mà
     public float parkingBrakeTorque = 1000f;   // Lực phanh tay tự động khóa bánh khi dừng hẳn
 
     [Header("Drift & Downforce")]
@@ -156,6 +156,8 @@ public class CarController : MonoBehaviour
         rb = GetComponent<Rigidbody>();
         if (rb != null)
         {
+            rb.mass = 1800f; // Khôi phục khối lượng chuẩn 1.8 tấn giúp xe đủ công suất vượt dốc đề-ba dễ dàng
+            rb.linearDamping = 0.05f; // Khôi phục lực cản không khí tiêu chuẩn
             rb.centerOfMass += centerOfMassOffset * autoScaleFactor;
         }
 
@@ -217,21 +219,58 @@ public class CarController : MonoBehaviour
             moveInput = Input.GetAxis("Vertical");
             turnInput = Input.GetAxis("Horizontal");
 
-            // Điều khiển hộp số (D/R/N)
+            // Cho phép chuyển số thủ công bằng các phím Alpha1 (1 - D), Alpha2 (2 - N), Alpha3 (3 - R)
             if (Input.GetKeyDown(gearDriveKey))
             {
                 currentGear = GearState.D;
-                Debug.Log("[Hộp số] Chuyển sang số TIẾN (D)");
+                Debug.Log("[Hộp số] Chuyển thủ công sang số D (Tiến)");
             }
             else if (Input.GetKeyDown(gearNeutralKey))
             {
                 currentGear = GearState.N;
-                Debug.Log("[Hộp số] Chuyển sang số MO (N)");
+                Debug.Log("[Hộp số] Chuyển thủ công sang số N (Mo)");
             }
             else if (Input.GetKeyDown(gearReverseKey))
             {
                 currentGear = GearState.R;
-                Debug.Log("[Hộp số] Chuyển sang số LÙI (R)");
+                Debug.Log("[Hộp số] Chuyển thủ công sang số R (Lùi)");
+            }
+
+            // Tự động điều khiển hộp số (D/R) dựa trên hướng di chuyển và phím bấm (W/S)
+            float localForwardVel = GetLocalForwardVelocity();
+            if (moveInput > 0.05f)
+            {
+                // Chỉ chuyển sang số D khi xe đã gần dừng hẳn để tránh bị khựng/dừng đột ngột
+                if (localForwardVel < -0.05f)
+                {
+                    currentGear = GearState.R;
+                }
+                else
+                {
+                    currentGear = GearState.D;
+                }
+            }
+            else if (moveInput < -0.05f)
+            {
+                // Chỉ chuyển sang số R khi xe đã gần dừng hẳn để tránh bị khựng/dừng đột ngột
+                if (localForwardVel > 0.05f)
+                {
+                    currentGear = GearState.D;
+                }
+                else
+                {
+                    currentGear = GearState.R;
+                }
+            }
+            else
+            {
+                // Khi thả phím điều khiển (moveInput == 0):
+                // GIỮ NGUYÊN số hiện tại (D hoặc R) để xe tiếp tục trôi và bò tự động (creep).
+                // Chỉ tự động trả về số N nếu tắt động cơ.
+                if (!isEngineOn)
+                {
+                    currentGear = GearState.N;
+                }
             }
 
             // Điều khiển xi-nhan và Hazard
@@ -327,13 +366,18 @@ public class CarController : MonoBehaviour
             return;
         }
 
-        float throttle = Mathf.Max(0f, moveInput);
+        // Xác định xe có đang phanh hay không (đối với bò tự động Creep Torque)
+        bool isBraking = isHandbrakeOn;
+        if (currentGear == GearState.D && moveInput < 0f) isBraking = true;
+        if (currentGear == GearState.R && moveInput > 0f) isBraking = true;
+
+        float throttle = 0f;
         float torque = 0f;
         float speedKmh = CurrentSpeed;
-        bool isBraking = (moveInput < 0f) || isHandbrakeOn;
 
         if (currentGear == GearState.D)
         {
+            throttle = Mathf.Max(0f, moveInput);
             if (throttle > 0f)
             {
                 // Mô-men xoắn phụ thuộc vào chân ga và cấp số tự động hiện tại (số thấp kéo khỏe hơn)
@@ -356,6 +400,7 @@ public class CarController : MonoBehaviour
         }
         else if (currentGear == GearState.R)
         {
+            throttle = Mathf.Max(0f, -moveInput);
             if (throttle > 0f)
             {
                 torque = -throttle * maxMotorTorque * 0.8f; // Số lùi có giới hạn lực kéo
@@ -385,15 +430,60 @@ public class CarController : MonoBehaviour
         {
             currentBrake = maxBrakeTorque;
         }
-        // Phím lùi (S / Down Arrow) đóng vai trò phanh chân chân thực
-        else if (moveInput < 0f)
+        else
         {
-            currentBrake = -moveInput * maxBrakeTorque;
-        }
-        // Thả phím ga: phanh động cơ nhẹ
-        else if (moveInput == 0f)
-        {
-            currentBrake = engineBrakeTorque;
+            if (currentGear == GearState.D)
+            {
+                // Khi đang ở số tiến, nhấn lùi (moveInput < 0) là phanh
+                if (moveInput < 0f)
+                {
+                    currentBrake = -moveInput * maxBrakeTorque;
+                }
+            }
+            else if (currentGear == GearState.R)
+            {
+                // Khi đang ở số lùi, nhấn tiến (moveInput > 0) là phanh
+                if (moveInput > 0f)
+                {
+                    currentBrake = moveInput * maxBrakeTorque;
+                }
+            }
+            else // GearState.N
+            {
+                // Ở số N, nhấn phím nào cũng là phanh nếu xe đang trôi
+                if (moveInput < 0f)
+                {
+                    currentBrake = -moveInput * maxBrakeTorque;
+                }
+                else if (moveInput > 0f)
+                {
+                    currentBrake = moveInput * maxBrakeTorque;
+                }
+            }
+
+            // Thả phím ga/lùi: chỉ áp dụng phanh dừng đỗ (parkingBrakeTorque) nếu xe ở số N hoặc tắt máy.
+            // Nếu ở số D hoặc R, xe phải được phép trôi và bò tự động (creep) tự nhiên mà không bị phanh tay cản trở.
+            if (moveInput == 0f)
+            {
+                if (currentGear == GearState.N || !isEngineOn)
+                {
+                    if (CurrentSpeed < 1.0f)
+                    {
+                        // Nội suy tuyến tính mượt mà từ lực phanh động cơ nhẹ (engineBrakeTorque) lên phanh dừng đỗ (parkingBrakeTorque) để tránh khựng giật
+                        float t = 1f - (CurrentSpeed / 1.0f);
+                        currentBrake = Mathf.Lerp(engineBrakeTorque, parkingBrakeTorque, t);
+                    }
+                    else
+                    {
+                        currentBrake = engineBrakeTorque;
+                    }
+                }
+                else
+                {
+                    // Ở số D hoặc R và nổ máy, không dùng phanh đỗ hay phanh động cơ để xe bò tự nhiên
+                    currentBrake = 0f;
+                }
+            }
         }
 
         if (frontLeftCollider != null) frontLeftCollider.brakeTorque = currentBrake;
