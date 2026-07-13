@@ -83,6 +83,9 @@ public class ExamManager : MonoBehaviour
     private Vector3 slopeStopPosition;
     private float maxSlopeRollback = 0f;
     private bool hasDeductedForRollback = false;
+    private float slopeStopDuration = 0f;
+    private bool hasSlopeStoppedLongEnough = false;
+    private bool isInsideCurrentTrigger = false;
 
     private int ngaTuVisitCount = 0;
 
@@ -116,6 +119,20 @@ public class ExamManager : MonoBehaviour
     private void Start()
     {
         UpdateAudioVolumes();
+    }
+
+    public float PedestrianStopDuration => pedestrianStopStartTime;
+    public bool HasPedestrianStoppedLongEnough => hasPedestrianStoppedLongEnough;
+    public float SlopeStopDuration => slopeStopDuration;
+    public bool HasSlopeStoppedLongEnough => hasSlopeStoppedLongEnough;
+    public bool IsInsideCurrentTrigger => isInsideCurrentTrigger;
+
+    public void SetInsideTrigger(ExamStep step, bool isInside)
+    {
+        if (step == currentStep)
+        {
+            isInsideCurrentTrigger = isInside;
+        }
     }
 
     public void StartExam()
@@ -271,8 +288,6 @@ public class ExamManager : MonoBehaviour
 
                 if (!xuatPhatBlinkerOffChecked)
                 {
-
-
                     if (Time.time - xuatPhatStartTime > 5f)
                     {
                         if (targetCar.isLeftBlinkerOn)
@@ -287,24 +302,58 @@ public class ExamManager : MonoBehaviour
             case ExamStep.DungNhuongDuongDiBo:
                 if (targetCar.CurrentSpeed < 0.1f)
                 {
-                    if (!stoppedInPedestrianTrigger)
-                    {
-                        stoppedInPedestrianTrigger = true;
-                        pedestrianStopStartTime = Time.time;
-                    }
-                    else if (Time.time - pedestrianStopStartTime >= 2f)
+                    stoppedInPedestrianTrigger = true;
+                    pedestrianStopStartTime += Time.deltaTime;
+                    if (pedestrianStopStartTime >= 2f && !hasPedestrianStoppedLongEnough)
                     {
                         hasPedestrianStoppedLongEnough = true;
+                        PlaySFX(soundBinhBoong);
+                        var hud = Object.FindFirstObjectByType<HUDController>();
+                        if (hud != null)
+                        {
+                            hud.ShowSuccessNotification("Đã dừng đủ thời gian! Hãy tiếp tục di chuyển.", 2f);
+                        }
+                    }
+                }
+                else
+                {
+                    if (!hasPedestrianStoppedLongEnough)
+                    {
+                        pedestrianStopStartTime = 0f;
+                        stoppedInPedestrianTrigger = false;
                     }
                 }
                 break;
 
             case ExamStep.DungAndKhoiHanhNgangDoc:
-                if (targetCar.CurrentSpeed < 0.1f && !stoppedOnSlope)
+                if (targetCar.CurrentSpeed < 0.1f)
                 {
-                    stoppedOnSlope = true;
-                    slopeStopPosition = targetCar.transform.position;
-                    maxSlopeRollback = 0f;
+                    if (!stoppedOnSlope)
+                    {
+                        stoppedOnSlope = true;
+                        slopeStopPosition = targetCar.transform.position;
+                        maxSlopeRollback = 0f;
+                    }
+
+                    slopeStopDuration += Time.deltaTime;
+                    if (slopeStopDuration >= 5f && !hasSlopeStoppedLongEnough)
+                    {
+                        hasSlopeStoppedLongEnough = true;
+                        PlaySFX(soundBinhBoong);
+                        var hud = Object.FindFirstObjectByType<HUDController>();
+                        if (hud != null)
+                        {
+                            hud.ShowSuccessNotification("Đã dừng đủ thời gian! Hãy khởi hành qua dốc.", 2f);
+                        }
+                    }
+                }
+                else
+                {
+                    if (!hasSlopeStoppedLongEnough)
+                    {
+                        slopeStopDuration = 0f;
+                        stoppedOnSlope = false;
+                    }
                 }
 
                 if (stoppedOnSlope)
@@ -417,6 +466,10 @@ public class ExamManager : MonoBehaviour
                 {
                     FailExam("Không dừng xe trên dốc (Đề-pa)!");
                 }
+                else if (!hasSlopeStoppedLongEnough)
+                {
+                    DeductPoints(5, "Dừng xe chưa đủ 5 giây trên dốc (Đề-pa)");
+                }
                 break;
 
             case ExamStep.VetBanhXeAndDuongVuongGoc:
@@ -457,6 +510,7 @@ public class ExamManager : MonoBehaviour
     private void InitializeStepStates(ExamStep step)
     {
         ResetStepTimer();
+        isInsideCurrentTrigger = true;
 
         switch (step)
         {
@@ -469,6 +523,7 @@ public class ExamManager : MonoBehaviour
             case ExamStep.DungNhuongDuongDiBo:
                 stoppedInPedestrianTrigger = false;
                 hasPedestrianStoppedLongEnough = false;
+                pedestrianStopStartTime = 0f;
                 break;
 
             case ExamStep.DungAndKhoiHanhNgangDoc:
@@ -477,6 +532,8 @@ public class ExamManager : MonoBehaviour
                 slopeStopPosition = targetCar.transform.position;
                 maxSlopeRollback = 0f;
                 hasDeductedForRollback = false;
+                slopeStopDuration = 0f;
+                hasSlopeStoppedLongEnough = false;
                 break;
 
             case ExamStep.VetBanhXeAndDuongVuongGoc:

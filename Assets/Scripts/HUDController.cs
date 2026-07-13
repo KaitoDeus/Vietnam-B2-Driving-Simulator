@@ -233,6 +233,42 @@ public class HUDController : MonoBehaviour
         // Cập nhật Bài thi hiện tại và mô tả
         UpdateStepTexts(em.currentStep);
 
+        // Hiển thị tiến trình dừng nhường đường đi bộ trên HUD
+        if (em.currentStep == ExamStep.DungNhuongDuongDiBo)
+        {
+            if (em.HasPedestrianStoppedLongEnough)
+            {
+                stepDescText.text = "<color=#1FA659><b>Đạt 2s!</b> Tiếp tục di chuyển sang bài tiếp theo.</color>";
+            }
+            else if (em.PedestrianStopDuration > 0f)
+            {
+                float remaining = Mathf.Max(0f, 2f - em.PedestrianStopDuration);
+                stepDescText.text = $"<color=#0078D4><b>Đang dừng:</b> {em.PedestrianStopDuration:F1}s/2.0s. Giữ phanh!</color>";
+            }
+            else
+            {
+                stepDescText.text = "Dừng trước vạch trắng và giữ đứng yên <b>2 giây</b>.";
+            }
+        }
+
+        // Hiển thị tiến trình dừng dốc (Đề-pa) trên HUD
+        if (em.currentStep == ExamStep.DungAndKhoiHanhNgangDoc)
+        {
+            if (em.HasSlopeStoppedLongEnough)
+            {
+                stepDescText.text = "<color=#1FA659><b>Đạt 5s!</b> Hãy khởi hành vượt dốc ngay.</color>";
+            }
+            else if (em.SlopeStopDuration > 0f)
+            {
+                float remaining = Mathf.Max(0f, 5f - em.SlopeStopDuration);
+                stepDescText.text = $"<color=#0078D4><b>Đang dừng:</b> {em.SlopeStopDuration:F1}s/5.0s. Giữ phanh/phanh tay!</color>";
+            }
+            else
+            {
+                stepDescText.text = "Dừng trên dốc đúng vị trí và giữ đứng yên <b>5 giây</b>.";
+            }
+        }
+
         // Hiển thị đếm ngược ở giữa màn hình đối với Bài 3: Khởi hành ngang dốc
         if (countdownText != null)
         {
@@ -272,51 +308,51 @@ public class HUDController : MonoBehaviour
         {
             case ExamStep.None:
                 stepTitleText.text = "Chuẩn bị thi";
-                stepDescText.text = "Thắt dây an toàn, nổ máy (phím I) và chờ hiệu lệnh xuất phát.";
+                stepDescText.text = "Thắt dây an toàn, nổ máy (phím I) và chờ xuất phát.";
                 break;
             case ExamStep.XuatPhat:
                 stepTitleText.text = "Bài 1: Xuất phát";
-                stepDescText.text = "Nhấn ga (phím W) và cho xe di chuyển qua vạch xuất phát.";
+                stepDescText.text = "Bật xi-nhan trái, nhấn ga (W) qua vạch xuất phát.";
                 break;
             case ExamStep.DungNhuongDuongDiBo:
                 stepTitleText.text = "Bài 2: Dừng xe nhường đường";
-                stepDescText.text = "Dừng xe trước vạch trắng nhường đường cho người đi bộ (khoảng cách quy định).";
+                stepDescText.text = "Dừng trước vạch trắng và giữ đứng yên 2 giây.";
                 break;
             case ExamStep.DungAndKhoiHanhNgangDoc:
                 stepTitleText.text = "Bài 3: Dừng & Khởi hành ngang dốc";
-                stepDescText.text = "Dừng xe trên dốc đúng vị trí, không trôi dốc và khởi hành qua dốc trong 30 giây.";
+                stepDescText.text = "Dừng trên dốc, giữ yên 5 giây và vượt dốc (<30s).";
                 break;
             case ExamStep.VetBanhXeAndDuongVuongGoc:
                 stepTitleText.text = "Bài 4: Qua vệt bánh xe";
-                stepDescText.text = "Lái bánh xe bên phụ đi qua vệt bánh xe và đường hẹp vuông góc. Tránh đè vạch.";
+                stepDescText.text = "Lái bánh xe bên phụ qua vệt bánh xe, tránh đè vạch.";
                 break;
             case ExamStep.QuaNgaTuDenTinHieu:
                 stepTitleText.text = "Bài 5: Qua ngã tư có đèn";
-                stepDescText.text = "Dừng trước vạch khi đèn đỏ, di chuyển qua ngã tư khi đèn xanh và tuân thủ xi-nhan.";
+                stepDescText.text = "Dừng khi đèn đỏ, đi khi đèn xanh và xi-nhan đúng.";
                 break;
             case ExamStep.DuongVongQuanhCo:
                 stepTitleText.text = "Bài 6: Đường vòng quanh co";
-                stepDescText.text = "Lái xe đi qua đường chữ S uốn lượn liên tục mà không đè lên vạch giới hạn.";
+                stepDescText.text = "Lái xe qua đường chữ S uốn lượn, không đè vạch.";
                 break;
             case ExamStep.GhepDocVaoNoiDo:
                 stepTitleText.text = "Bài 7: Ghép dọc vào nơi đỗ";
-                stepDescText.text = "Lùi xe ghép dọc vào chuồng dọc, nghe tín hiệu nhận bài rồi đánh xe đi ra ngoài.";
+                stepDescText.text = "Lùi xe vào chuồng dọc đúng quy định và đi ra.";
                 break;
             case ExamStep.TamDungNoiDuongSat:
                 stepTitleText.text = "Bài 8: Tạm dừng nơi đường sắt";
-                stepDescText.text = "Dừng xe đúng khoảng cách trước vạch giới hạn có đường sắt chạy qua.";
+                stepDescText.text = "Dừng trước vạch đường sắt và giữ xe đứng yên.";
                 break;
             case ExamStep.ThayDoiSoDuongBang:
-                stepTitleText.text = "Bài 9: Thay đổi tốc độ trên đường bằng";
-                stepDescText.text = "Tăng tốc độ lên trên 24 km/h và sau đó giảm tốc độ xuống dưới 20 km/h đúng biển báo.";
+                stepTitleText.text = "Bài 9: Thay đổi tốc độ";
+                stepDescText.text = "Tăng tốc >24 km/h và giảm tốc <20 km/h theo biển.";
                 break;
             case ExamStep.GhepNgangVaoNoiDo:
-                stepTitleText.text = "Bài 10: Ghép xe ngang vào nơi đỗ";
-                stepDescText.text = "Ghép xe song song vào chuồng ngang bên lề đường, nghe tín hiệu nhận bài rồi đi ra.";
+                stepTitleText.text = "Bài 10: Ghép xe ngang";
+                stepDescText.text = "Lái xe ghép vào chuồng ngang đúng quy định và đi ra.";
                 break;
             case ExamStep.KetThuc:
                 stepTitleText.text = "Bài 11: Kết thúc";
-                stepDescText.text = "Bật xi-nhan phải (E) trước khi lái xe đi qua vạch kết thúc bài thi sát hạch.";
+                stepDescText.text = "Bật xi-nhan phải và lái xe qua vạch kết thúc.";
                 break;
         }
     }

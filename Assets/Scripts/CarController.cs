@@ -135,19 +135,26 @@ public class CarController : MonoBehaviour
 
     private void Start()
     {
-        // Tự động scale kích thước xe và điều chỉnh các WheelCollider tương ứng tỉ lệ
-        if (autoScaleFactor > 0.01f && autoScaleFactor != 1.0f)
+        // Tự động scale kích thước xe và điều chỉnh các WheelCollider tương ứng tỉ lệ.
+        // Nếu tỉ lệ scale ở Transform Inspector đã được người dùng chỉnh sửa khác 1, ta ưu tiên sử dụng scale đó.
+        float currentScale = transform.localScale.x;
+        if (Mathf.Approximately(currentScale, 1.0f) && autoScaleFactor > 0.01f && autoScaleFactor != 1.0f)
         {
-            transform.localScale = new Vector3(autoScaleFactor, autoScaleFactor, autoScaleFactor);
-            if (frontLeftCollider != null) frontLeftCollider.radius *= autoScaleFactor;
-            if (frontRightCollider != null) frontRightCollider.radius *= autoScaleFactor;
-            if (rearLeftCollider != null) rearLeftCollider.radius *= autoScaleFactor;
-            if (rearRightCollider != null) rearRightCollider.radius *= autoScaleFactor;
+            currentScale = autoScaleFactor;
+            transform.localScale = new Vector3(currentScale, currentScale, currentScale);
+        }
 
-            if (frontLeftCollider != null) frontLeftCollider.suspensionDistance *= autoScaleFactor;
-            if (frontRightCollider != null) frontRightCollider.suspensionDistance *= autoScaleFactor;
-            if (rearLeftCollider != null) rearLeftCollider.suspensionDistance *= autoScaleFactor;
-            if (rearRightCollider != null) rearRightCollider.suspensionDistance *= autoScaleFactor;
+        if (currentScale > 0.01f && currentScale != 1.0f)
+        {
+            if (frontLeftCollider != null) frontLeftCollider.radius *= currentScale;
+            if (frontRightCollider != null) frontRightCollider.radius *= currentScale;
+            if (rearLeftCollider != null) rearLeftCollider.radius *= currentScale;
+            if (rearRightCollider != null) rearRightCollider.radius *= currentScale;
+
+            if (frontLeftCollider != null) frontLeftCollider.suspensionDistance *= currentScale;
+            if (frontRightCollider != null) frontRightCollider.suspensionDistance *= currentScale;
+            if (rearLeftCollider != null) rearLeftCollider.suspensionDistance *= currentScale;
+            if (rearRightCollider != null) rearRightCollider.suspensionDistance *= currentScale;
         }
 
         // Tự động gắn thêm component xử lý va chạm trừ điểm
@@ -158,7 +165,7 @@ public class CarController : MonoBehaviour
         {
             rb.mass = 1800f; // Khôi phục khối lượng chuẩn 1.8 tấn giúp xe đủ công suất vượt dốc đề-ba dễ dàng
             rb.linearDamping = 0.05f; // Khôi phục lực cản không khí tiêu chuẩn
-            rb.centerOfMass += centerOfMassOffset * autoScaleFactor;
+            rb.centerOfMass += centerOfMassOffset * currentScale;
         }
 
         // Lưu lại ma sát ngang mặc định của bánh sau

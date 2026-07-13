@@ -245,6 +245,13 @@ public class CameraController : MonoBehaviour
         transform.rotation = Quaternion.Slerp(transform.rotation, rotation, Time.deltaTime * rotationDamping);
     }
 
+    public void UpdateSensitivitySettings()
+    {
+        float savedSens = PlayerPrefs.GetFloat("MouseSensitivity", 3.0f);
+        mouseSensitivityX = savedSens;
+        mouseSensitivityY = savedSens * 0.67f; // Giữ tỷ lệ X/Y xấp xỉ 3:2
+    }
+
     private Transform FindDeepChild(Transform parent, string name)
     {
         if (parent.name.ToLower().Contains(name.ToLower())) return parent;

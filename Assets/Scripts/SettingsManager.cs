@@ -58,14 +58,130 @@ public class SettingsManager : MonoBehaviour
     private void Awake()
     {
         Instance = this;
+        AutoFindReferences();
     }
 
     private void Start()
     {
+        AutoFindReferences();
         LoadSettings();
         InitializeResolutionDropdown();
         CreateApplyButtonProgrammatically();
         RegisterListeners();
+    }
+
+    public void AutoFindReferences()
+    {
+        GameObject settingsPanel = FindObjectIncludingInactive("Panel_Settings");
+        if (settingsPanel == null) return;
+
+        // Auto find sliders
+        Slider[] sliders = settingsPanel.GetComponentsInChildren<Slider>(true);
+        foreach (var sl in sliders)
+        {
+            string searchContext = sl.name.ToLower();
+            Transform t = sl.transform.parent;
+            while (t != null && t != settingsPanel.transform)
+            {
+                searchContext += " " + t.name.ToLower();
+                t = t.parent;
+            }
+
+            if (searchContext.Contains("music") || searchContext.Contains("nhac") || searchContext.Contains("nhạc") || searchContext.Contains("master") || searchContext.Contains("tong") || searchContext.Contains("tổng"))
+            {
+                if (musicVolumeSlider == null) musicVolumeSlider = sl;
+            }
+            else if (searchContext.Contains("sfx") || searchContext.Contains("amthanh") || searchContext.Contains("âm thanh") || searchContext.Contains("effects") || searchContext.Contains("hieuung") || searchContext.Contains("hiệu ứng"))
+            {
+                if (sfxVolumeSlider == null) sfxVolumeSlider = sl;
+            }
+            else if (searchContext.Contains("voice") || searchContext.Contains("giong") || searchContext.Contains("giọng") || searchContext.Contains("huongdan") || searchContext.Contains("hướng dẫn"))
+            {
+                if (voiceVolumeSlider == null) voiceVolumeSlider = sl;
+            }
+            else if (searchContext.Contains("sens") || searchContext.Contains("nhay") || searchContext.Contains("nhạy"))
+            {
+                if (sensitivitySlider == null) sensitivitySlider = sl;
+            }
+        }
+
+        // Auto find texts (labels / percentage values)
+        TMP_Text[] texts = settingsPanel.GetComponentsInChildren<TMP_Text>(true);
+        foreach (var txt in texts)
+        {
+            string txtName = txt.name.ToLower();
+            if (!(txtName.Contains("val") || txtName.Contains("percent"))) continue;
+
+            string searchContext = txtName;
+            Transform t = txt.transform.parent;
+            while (t != null && t != settingsPanel.transform)
+            {
+                searchContext += " " + t.name.ToLower();
+                t = t.parent;
+            }
+
+            if (searchContext.Contains("music") || searchContext.Contains("nhac") || searchContext.Contains("nhạc") || searchContext.Contains("master") || searchContext.Contains("tong") || searchContext.Contains("tổng"))
+            {
+                if (musicVolumeText == null) musicVolumeText = txt;
+            }
+            else if (searchContext.Contains("sfx") || searchContext.Contains("amthanh") || searchContext.Contains("âm thanh") || searchContext.Contains("effects") || searchContext.Contains("hieuung") || searchContext.Contains("hiệu ứng"))
+            {
+                if (sfxVolumeText == null) sfxVolumeText = txt;
+            }
+            else if (searchContext.Contains("voice") || searchContext.Contains("giong") || searchContext.Contains("giọng") || searchContext.Contains("huongdan") || searchContext.Contains("hướng dẫn"))
+            {
+                if (voiceVolumeText == null) voiceVolumeText = txt;
+            }
+        }
+
+        // Auto find dropdowns
+        TMP_Dropdown[] dropdowns = settingsPanel.GetComponentsInChildren<TMP_Dropdown>(true);
+        foreach (var dd in dropdowns)
+        {
+            string ddName = dd.name.ToLower();
+            if (ddName.Contains("res") || ddName.Contains("dophan") || ddName.Contains("phân giải"))
+            {
+                if (resolutionDropdown == null) resolutionDropdown = dd;
+            }
+            else if (ddName.Contains("qual") || ddName.Contains("chatluong") || ddName.Contains("chất lượng") || ddName.Contains("preset"))
+            {
+                if (qualityDropdown == null) qualityDropdown = dd;
+            }
+        }
+
+        // Auto find toggles
+        Toggle[] toggles = settingsPanel.GetComponentsInChildren<Toggle>(true);
+        foreach (var tg in toggles)
+        {
+            string tgName = tg.name.ToLower();
+            if (tgName.Contains("full") || tgName.Contains("toanman") || tgName.Contains("toàn màn hình"))
+            {
+                if (fullscreenToggle == null) fullscreenToggle = tg;
+            }
+        }
+
+        // Auto find apply button
+        if (applyButton == null)
+        {
+            Transform applyTrans = settingsPanel.transform.Find("Btn_Apply") ?? settingsPanel.transform.Find("ApplyButton");
+            if (applyTrans != null)
+            {
+                applyButton = applyTrans.GetComponent<Button>();
+            }
+            else
+            {
+                Button[] panelButtons = settingsPanel.GetComponentsInChildren<Button>(true);
+                foreach (var btn in panelButtons)
+                {
+                    string btnName = btn.name.ToLower();
+                    if (btnName.Contains("apply") || btnName.Contains("apdung") || btnName.Contains("áp dụng"))
+                    {
+                        applyButton = btn;
+                        break;
+                    }
+                }
+            }
+        }
     }
 
     private void OnEnable()
@@ -529,7 +645,7 @@ public class SettingsManager : MonoBehaviour
             Transform[] allChildren = root.GetComponentsInChildren<Transform>(true);
             foreach (var child in allChildren)
             {
-                if (child.name == name)
+                if (child.name.Trim() == name)
                 {
                     return child.gameObject;
                 }
@@ -691,6 +807,13 @@ public class SettingsManager : MonoBehaviour
     {
         PlayerPrefs.SetFloat("MouseSensitivity", sensitivity);
         PlayerPrefs.Save();
+
+        // Cập nhật real-time độ nhạy chuột của camera
+        CameraController camCtrl = Object.FindObjectOfType<CameraController>();
+        if (camCtrl != null)
+        {
+            camCtrl.UpdateSensitivitySettings();
+        }
     }
 
     // ==========================================
