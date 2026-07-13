@@ -53,7 +53,7 @@ public class TheoryExamManager : MonoBehaviour
     // Trạng thái chế độ
     private bool isPracticeMode = false;
     private int selectedSetIndex = 0;
-    private bool isReviewMode = false;
+    public bool isReviewMode = false;
     private TheoryQuestionData examData;
     public List<QuestionButton> questionButtons = new List<QuestionButton>();
 
@@ -356,10 +356,10 @@ public class TheoryExamManager : MonoBehaviour
         if (questionListPanel != null) questionListPanel.gameObject.SetActive(true);
 
         // Kích hoạt lại các nút lựa chọn
-        if (answerA != null) answerA.interactable = true;
-        if (answerB != null) answerB.interactable = true;
-        if (answerC != null) answerC.interactable = true;
-        if (answerD != null) answerD.interactable = true;
+        if (answerA != null) { answerA.interactable = true; answerA.enabled = true; }
+        if (answerB != null) { answerB.interactable = true; answerB.enabled = true; }
+        if (answerC != null) { answerC.interactable = true; answerC.enabled = true; }
+        if (answerD != null) { answerD.interactable = true; answerD.enabled = true; }
 
         // Dựng danh sách các nút câu hỏi bên phải
         CreateQuestionButtons();
@@ -773,10 +773,10 @@ public class TheoryExamManager : MonoBehaviour
     {
         // Reset màu nền các nút đáp án về màu trắng xanh dịu theo Figma
         Color normalColor = new Color(0.93f, 0.98f, 0.99f);
-        if (answerA != null) { if (answerA.image != null) answerA.image.color = normalColor; answerA.interactable = !isReviewMode; }
-        if (answerB != null) { if (answerB.image != null) answerB.image.color = normalColor; answerB.interactable = !isReviewMode; }
-        if (answerC != null) { if (answerC.image != null) answerC.image.color = normalColor; answerC.interactable = !isReviewMode; }
-        if (answerD != null) { if (answerD.image != null) answerD.image.color = normalColor; answerD.interactable = !isReviewMode; }
+        if (answerA != null) { if (answerA.image != null) answerA.image.color = normalColor; answerA.interactable = true; answerA.enabled = !isReviewMode; }
+        if (answerB != null) { if (answerB.image != null) answerB.image.color = normalColor; answerB.interactable = true; answerB.enabled = !isReviewMode; }
+        if (answerC != null) { if (answerC.image != null) answerC.image.color = normalColor; answerC.interactable = true; answerC.enabled = !isReviewMode; }
+        if (answerD != null) { if (answerD.image != null) answerD.image.color = normalColor; answerD.interactable = true; answerD.enabled = !isReviewMode; }
 
         int saved = selectedAnswers[currentQuestionIndex];
         TheoryQuestion q = questions[currentQuestionIndex];
@@ -784,11 +784,11 @@ public class TheoryExamManager : MonoBehaviour
         if (isReviewMode)
         {
             // Trong chế độ xem lại:
-            // - Đáp án đúng có màu xanh lá nhạt
-            // - Đáp án người dùng chọn sai có màu đỏ nhạt
-            Color correctColor = new Color(0.8f, 1.0f, 0.8f); // Xanh lá nhạt
-            Color incorrectColor = new Color(1.0f, 0.8f, 0.8f); // Đỏ nhạt
-            Color correctSelectedColor = new Color(0.7f, 0.95f, 0.7f); // Xanh lá đậm hơn một chút
+            // - Đáp án đúng có màu xanh lá rõ ràng
+            // - Đáp án người dùng chọn sai có màu đỏ rõ ràng
+            Color correctColor = new Color(0.55f, 0.90f, 0.55f); // Xanh lá rõ ràng
+            Color incorrectColor = new Color(0.95f, 0.60f, 0.60f); // Đỏ rõ ràng
+            Color correctSelectedColor = new Color(0.40f, 0.85f, 0.40f); // Xanh lá đậm nổi bật
 
             // Highlight đáp án đúng
             if (q.correctAnswer == 0 && answerA != null && answerA.image != null) answerA.image.color = correctColor;
@@ -826,6 +826,12 @@ public class TheoryExamManager : MonoBehaviour
         }
     }
 
+    public bool IsQuestionCorrect(int index)
+    {
+        if (index < 0 || index >= questions.Count || index >= selectedAnswers.Count) return false;
+        return selectedAnswers[index] == questions[index].correctAnswer;
+    }
+
     public void ShowSubmitPopup()
     {
         if (submitPopup != null)
@@ -856,10 +862,10 @@ public class TheoryExamManager : MonoBehaviour
 
         CalculateResult();
 
-        if (answerA != null) answerA.interactable = false;
-        if (answerB != null) answerB.interactable = false;
-        if (answerC != null) answerC.interactable = false;
-        if (answerD != null) answerD.interactable = false;
+        if (answerA != null) { answerA.interactable = true; answerA.enabled = false; }
+        if (answerB != null) { answerB.interactable = true; answerB.enabled = false; }
+        if (answerC != null) { answerC.interactable = true; answerC.enabled = false; }
+        if (answerD != null) { answerD.interactable = true; answerD.enabled = false; }
     }
 
     private void UpdateWarningContainerStyle(bool passed, string text, Color primaryColor, Color bgColor)
@@ -1041,10 +1047,10 @@ public class TheoryExamManager : MonoBehaviour
         if (examPanel != null) examPanel.SetActive(true);
         if (questionListPanel != null) questionListPanel.gameObject.SetActive(true);
 
-        if (answerA != null) answerA.interactable = false;
-        if (answerB != null) answerB.interactable = false;
-        if (answerC != null) answerC.interactable = false;
-        if (answerD != null) answerD.interactable = false;
+        if (answerA != null) { answerA.interactable = true; answerA.enabled = false; }
+        if (answerB != null) { answerB.interactable = true; answerB.enabled = false; }
+        if (answerC != null) { answerC.interactable = true; answerC.enabled = false; }
+        if (answerD != null) { answerD.interactable = true; answerD.enabled = false; }
 
         currentQuestionIndex = 0;
         ShowQuestion();

@@ -7,6 +7,14 @@ public class SettingsManager : MonoBehaviour
 {
     public static SettingsManager Instance { get; private set; }
 
+    [System.Serializable]
+    public struct CustomResolution
+    {
+        public int width;
+        public int height;
+        public string label;
+    }
+
     [Header("Audio UI Elements")]
     public Slider musicVolumeSlider;
     public TMP_Text musicVolumeText;
@@ -19,34 +27,65 @@ public class SettingsManager : MonoBehaviour
     public TMP_Dropdown qualityDropdown;
     public Toggle fullscreenToggle;
     public TMP_Dropdown resolutionDropdown;
+    public Button applyButton;
 
     [Header("Controls UI Elements")]
     public Slider sensitivitySlider;
 
-    private Resolution[] resolutions;
+    [Header("Custom Hardcoded Resolutions")]
+    public List<CustomResolution> customResolutions = new List<CustomResolution>()
+    {
+        new CustomResolution { width = 3840, height = 2160, label = "3840 x 2160" },
+        new CustomResolution { width = 2560, height = 1440, label = "2560 x 1440" },
+        new CustomResolution { width = 1920, height = 1080, label = "1920 x 1080" },
+        new CustomResolution { width = 1600, height = 900,  label = "1600 x 900" },
+        new CustomResolution { width = 1366, height = 768,  label = "1366 x 768" },
+        new CustomResolution { width = 1280, height = 720,  label = "1280 x 720" },
+        new CustomResolution { width = 1024, height = 768,  label = "1024 x 768" }
+    };
+
+    // Runtime active resolutions filtered by monitor capability
+    private List<CustomResolution> activeResolutions = new List<CustomResolution>();
+
+    // Graphics Pending States
+    private int pendingQualityIndex;
+    private bool pendingFullscreen;
+    private int pendingResolutionIndex;
+
+    private GameObject graphicsTabPanel;
+    private bool isShowingFeedback = false;
 
     private void Awake()
     {
-        if (Instance == null)
-        {
-            Instance = this;
-            DontDestroyOnLoad(gameObject);
-        }
-        else
-        {
-            Destroy(gameObject);
-        }
+        Instance = this;
     }
 
     private void Start()
     {
         LoadSettings();
         InitializeResolutionDropdown();
+        CreateApplyButtonProgrammatically();
         RegisterListeners();
+    }
+
+    private void OnEnable()
+    {
+        if (activeResolutions == null || activeResolutions.Count == 0)
+        {
+            InitializeResolutionDropdown();
+        }
+        SyncUIWithSavedSettings();
+        DefaultToAudioTab();
+    }
+
+    private void Update()
+    {
+        CheckPendingChanges();
     }
 
     private void RegisterListeners()
     {
+        // 1. Audio listeners (Apply and save immediately)
         if (musicVolumeSlider != null)
         {
             musicVolumeSlider.onValueChanged.RemoveAllListeners();
@@ -74,28 +113,46 @@ public class SettingsManager : MonoBehaviour
             });
         }
 
+        // 2. Control listeners (Apply and save immediately)
+        if (sensitivitySlider != null)
+        {
+            sensitivitySlider.onValueChanged.RemoveAllListeners();
+            sensitivitySlider.onValueChanged.AddListener(SetSensitivity);
+        }
+
+        // 3. Graphics listeners (Only update pending state, click Apply to save)
         if (qualityDropdown != null)
         {
             qualityDropdown.onValueChanged.RemoveAllListeners();
-            qualityDropdown.onValueChanged.AddListener(SetQuality);
+            qualityDropdown.onValueChanged.AddListener(val => {
+                pendingQualityIndex = val;
+                CheckPendingChanges();
+            });
         }
 
         if (fullscreenToggle != null)
         {
             fullscreenToggle.onValueChanged.RemoveAllListeners();
-            fullscreenToggle.onValueChanged.AddListener(SetFullscreen);
+            fullscreenToggle.onValueChanged.AddListener(val => {
+                pendingFullscreen = val;
+                CheckPendingChanges();
+            });
         }
 
         if (resolutionDropdown != null)
         {
             resolutionDropdown.onValueChanged.RemoveAllListeners();
-            resolutionDropdown.onValueChanged.AddListener(SetResolution);
+            resolutionDropdown.onValueChanged.AddListener(val => {
+                pendingResolutionIndex = val;
+                CheckPendingChanges();
+            });
         }
 
-        if (sensitivitySlider != null)
+        // 4. Apply button listener (Reset onClick completely to avoid persistent listener cloning)
+        if (applyButton != null)
         {
-            sensitivitySlider.onValueChanged.RemoveAllListeners();
-            sensitivitySlider.onValueChanged.AddListener(SetSensitivity);
+            applyButton.onClick = new Button.ButtonClickedEvent();
+            applyButton.onClick.AddListener(ApplyGraphicsSettings);
         }
     }
 
@@ -106,21 +163,43 @@ public class SettingsManager : MonoBehaviour
     {
         PlayerPrefs.SetFloat("MusicVolume", volume);
         PlayerPrefs.Save();
-        // Áp dụng âm lượng nhạc nền ở đây nếu có hệ thống MusicManager
+        AudioListener.volume = volume;
     }
 
     public void SetSFXVolume(float volume)
     {
         PlayerPrefs.SetFloat("SFXVolume", volume);
         PlayerPrefs.Save();
-        // CarAudio hoặc các nguồn âm thanh hiệu ứng khác sẽ đọc giá trị này
+
+        // Cập nhật real-time âm lượng các hiệu ứng âm thanh (SFX) trong màn chơi
+        if (ExamManager.Instance != null)
+        {
+            ExamManager.Instance.UpdateAudioVolumes();
+        }
+
+        CarController car = Object.FindObjectOfType<CarController>();
+        if (car != null)
+        {
+            car.UpdateAudioVolumes();
+        }
+
+        CarAudio carAudio = Object.FindObjectOfType<CarAudio>();
+        if (carAudio != null)
+        {
+            carAudio.UpdateVolumeSettings();
+        }
     }
 
     public void SetVoiceVolume(float volume)
     {
         PlayerPrefs.SetFloat("VoiceVolume", volume);
         PlayerPrefs.Save();
-        // ExamManager sẽ đọc giá trị này để điều chỉnh âm lượng giọng đọc
+
+        // Cập nhật real-time giọng đọc hướng dẫn thi
+        if (ExamManager.Instance != null)
+        {
+            ExamManager.Instance.UpdateAudioVolumes();
+        }
     }
 
     private void UpdateMusicVolumeText(float volume)
@@ -150,64 +229,252 @@ public class SettingsManager : MonoBehaviour
     // ==========================================
     // 2. CÀI ĐẶT ĐỒ HỌA (GRAPHICS SETTINGS)
     // ==========================================
-    public void SetQuality(int qualityIndex)
+    public void ApplyGraphicsSettings()
     {
-        QualitySettings.SetQualityLevel(qualityIndex);
-        PlayerPrefs.SetInt("QualityIndex", qualityIndex);
+        PlayerPrefs.SetInt("QualityIndex", pendingQualityIndex);
+        PlayerPrefs.SetInt("Fullscreen", pendingFullscreen ? 1 : 0);
+        PlayerPrefs.SetInt("ResolutionIndex", pendingResolutionIndex);
+        
+        if (activeResolutions != null && activeResolutions.Count > 0 && pendingResolutionIndex < activeResolutions.Count)
+        {
+            CustomResolution targetRes = activeResolutions[pendingResolutionIndex];
+            PlayerPrefs.SetInt("SavedResWidth", targetRes.width);
+            PlayerPrefs.SetInt("SavedResHeight", targetRes.height);
+        }
         PlayerPrefs.Save();
+
+        QualitySettings.SetQualityLevel(pendingQualityIndex);
+
+        if (activeResolutions != null && activeResolutions.Count > 0 && pendingResolutionIndex < activeResolutions.Count)
+        {
+            CustomResolution targetRes = activeResolutions[pendingResolutionIndex];
+            FullScreenMode mode = pendingFullscreen ? FullScreenMode.FullScreenWindow : FullScreenMode.Windowed;
+            
+            Screen.SetResolution(targetRes.width, targetRes.height, mode);
+            Debug.Log($"[SettingsManager] Đã áp dụng cài đặt: {targetRes.width}x{targetRes.height}, Mode: {mode}, Quality: {pendingQualityIndex}");
+        }
+
+        StartCoroutine(ShowApplyFeedback());
     }
 
-    public void SetResolution(int resolutionIndex)
+    private void CheckPendingChanges()
     {
-        if (resolutions == null || resolutionIndex >= resolutions.Length) return;
+        if (applyButton == null) return;
+        if (isShowingFeedback) return; // Giữ nút hiển thị khi đang chạy Feedback (ĐÃ ÁP DỤNG!)
 
-        Resolution resolution = resolutions[resolutionIndex];
-        bool isFullscreen = PlayerPrefs.GetInt("Fullscreen", Screen.fullScreen ? 1 : 0) == 1;
-        
-        Screen.SetResolution(resolution.width, resolution.height, isFullscreen);
-        Debug.Log($"[SettingsManager] Đã đặt độ phân giải thành: {resolution.width}x{resolution.height}, Fullscreen: {isFullscreen}");
+        // 1. Kiểm tra xem tab Đồ họa có đang active hay không
+        bool isGraphicsTabActive = false;
+        if (graphicsTabPanel == null)
+        {
+            graphicsTabPanel = FindGraphicsTabPanel();
+        }
 
-        PlayerPrefs.SetInt("ResolutionIndex", resolutionIndex);
-        PlayerPrefs.Save();
+        if (graphicsTabPanel != null)
+        {
+            isGraphicsTabActive = graphicsTabPanel.activeInHierarchy;
+        }
+
+        // 2. Kiểm tra thay đổi ở Fullscreen và Độ phân giải
+        bool savedFullscreen = PlayerPrefs.GetInt("Fullscreen", Screen.fullScreen ? 1 : 0) == 1;
+
+        int savedW = PlayerPrefs.GetInt("SavedResWidth", Screen.width);
+        int savedH = PlayerPrefs.GetInt("SavedResHeight", Screen.height);
+
+        int currentResIndex = 0;
+        if (activeResolutions != null)
+        {
+            for (int i = 0; i < activeResolutions.Count; i++)
+            {
+                if (activeResolutions[i].width == savedW &&
+                    activeResolutions[i].height == savedH)
+                {
+                    currentResIndex = i;
+                    break;
+                }
+            }
+        }
+        int savedResolutionIndex = PlayerPrefs.GetInt("ResolutionIndex", currentResIndex);
+
+        // Nút Áp dụng chỉ hiện khi có thay đổi ở Fullscreen HOẶC Resolution
+        bool hasChanges = (pendingFullscreen != savedFullscreen) ||
+                          (pendingResolutionIndex != savedResolutionIndex);
+
+        // Nút chỉ xuất hiện (active) khi và chỉ khi đang ở Tab Đồ họa VÀ có thay đổi
+        bool shouldShow = isGraphicsTabActive && hasChanges;
+        if (applyButton.gameObject.activeSelf != shouldShow)
+        {
+            applyButton.gameObject.SetActive(shouldShow);
+        }
     }
 
-    public void SetFullscreen(bool isFullscreen)
+    private System.Collections.IEnumerator ShowApplyFeedback()
     {
-        PlayerPrefs.SetInt("Fullscreen", isFullscreen ? 1 : 0);
-        PlayerPrefs.Save();
+        if (applyButton == null) yield break;
+        isShowingFeedback = true;
 
-        // Đồng bộ và áp dụng ngay cùng độ phân giải hiện tại
-        int savedResIndex = PlayerPrefs.GetInt("ResolutionIndex", -1);
-        if (savedResIndex != -1 && resolutions != null && savedResIndex < resolutions.Length)
+        TMP_Text tmpTxt = applyButton.GetComponentInChildren<TMP_Text>();
+        Text legacyText = applyButton.GetComponentInChildren<Text>();
+
+        string originalText = "";
+        if (tmpTxt != null)
         {
-            Resolution resolution = resolutions[savedResIndex];
-            Screen.SetResolution(resolution.width, resolution.height, isFullscreen);
+            originalText = tmpTxt.text;
+            tmpTxt.text = "ĐÃ ÁP DỤNG!";
         }
-        else
+        else if (legacyText != null)
         {
-            Screen.SetResolution(Screen.width, Screen.height, isFullscreen);
+            originalText = legacyText.text;
+            legacyText.text = "ĐÃ ÁP DỤNG!";
         }
-        
-        Debug.Log($"[SettingsManager] Đã đặt chế độ màn hình: Fullscreen = {isFullscreen}");
+
+        yield return new WaitForSecondsRealtime(1.5f);
+
+        if (tmpTxt != null) tmpTxt.text = originalText;
+        else if (legacyText != null) legacyText.text = originalText;
+
+        isShowingFeedback = false;
+        CheckPendingChanges();
+    }
+
+    private void SyncUIWithSavedSettings()
+    {
+        pendingQualityIndex = PlayerPrefs.GetInt("QualityIndex", QualitySettings.GetQualityLevel());
+        pendingFullscreen = PlayerPrefs.GetInt("Fullscreen", Screen.fullScreen ? 1 : 0) == 1;
+
+        int savedW = PlayerPrefs.GetInt("SavedResWidth", Screen.width);
+        int savedH = PlayerPrefs.GetInt("SavedResHeight", Screen.height);
+
+        int currentResIndex = 0;
+        if (activeResolutions != null)
+        {
+            for (int i = 0; i < activeResolutions.Count; i++)
+            {
+                if (activeResolutions[i].width == savedW &&
+                    activeResolutions[i].height == savedH)
+                {
+                    currentResIndex = i;
+                    break;
+                }
+            }
+        }
+        pendingResolutionIndex = PlayerPrefs.GetInt("ResolutionIndex", currentResIndex);
+
+        if (qualityDropdown != null)
+        {
+            qualityDropdown.value = pendingQualityIndex;
+            qualityDropdown.RefreshShownValue();
+        }
+        if (fullscreenToggle != null)
+        {
+            fullscreenToggle.isOn = pendingFullscreen;
+        }
+        if (resolutionDropdown != null && activeResolutions != null && pendingResolutionIndex < activeResolutions.Count)
+        {
+            resolutionDropdown.value = pendingResolutionIndex;
+            resolutionDropdown.RefreshShownValue();
+        }
+
+        CheckPendingChanges();
+    }
+
+    private string GetAspectRatioString(int width, int height)
+    {
+        int gcd = GetGCD(width, height);
+        int aspectWidth = width / gcd;
+        int aspectHeight = height / gcd;
+
+        // Điều chỉnh các tỉ lệ đặc biệt
+        if (aspectWidth == 8 && aspectHeight == 5) return "16:10";
+        if (aspectWidth == 43 && aspectHeight == 18) return "21:9";
+        if (aspectWidth == 64 && aspectHeight == 27) return "21:9";
+
+        return $"{aspectWidth}:{aspectHeight}";
+    }
+
+    private int GetGCD(int a, int b)
+    {
+        while (b != 0)
+        {
+            int temp = b;
+            b = a % b;
+            a = temp;
+        }
+        return a;
     }
 
     private void InitializeResolutionDropdown()
     {
         if (resolutionDropdown == null) return;
 
-        resolutions = Screen.resolutions;
-        resolutionDropdown.ClearOptions();
+        // 1. Tăng độ nhạy cuộn chuột (Scroll Sensitivity) của Dropdown
+        ScrollRect scrollRect = resolutionDropdown.GetComponentInChildren<ScrollRect>(true);
+        if (scrollRect != null)
+        {
+            scrollRect.scrollSensitivity = 25f; // Mặc định của Unity là 1f (rất chậm), 25f giúp cuộn mượt mà
+        }
 
+        // 2. Xác định độ phân giải cao nhất được hỗ trợ bởi màn hình hiện tại
+        int maxSupportedWidth = Screen.currentResolution.width;
+        int maxSupportedHeight = Screen.currentResolution.height;
+        if (Screen.resolutions != null && Screen.resolutions.Length > 0)
+        {
+            foreach (var res in Screen.resolutions)
+            {
+                if (res.width > maxSupportedWidth) maxSupportedWidth = res.width;
+                if (res.height > maxSupportedHeight) maxSupportedHeight = res.height;
+            }
+        }
+
+        // 3. Lọc danh sách Custom Resolutions để chỉ giữ lại các cấu hình màn hình hỗ trợ được
+        activeResolutions.Clear();
+        foreach (var customRes in customResolutions)
+        {
+            if (customRes.width <= maxSupportedWidth && customRes.height <= maxSupportedHeight)
+            {
+                CustomResolution updatedRes = customRes;
+                updatedRes.label = $"{customRes.width} x {customRes.height}";
+                activeResolutions.Add(updatedRes);
+            }
+        }
+
+        // 4. Đảm bảo độ phân giải hiện hành của máy người dùng luôn có mặt
+        bool currentResExists = false;
+        int currentW = Screen.width;
+        int currentH = Screen.height;
+        foreach (var res in activeResolutions)
+        {
+            if (res.width == currentW && res.height == currentH)
+            {
+                currentResExists = true;
+                break;
+            }
+        }
+
+        if (!currentResExists)
+        {
+            CustomResolution nativeRes = new CustomResolution
+            {
+                width = currentW,
+                height = currentH,
+                label = $"{currentW} x {currentH}"
+            };
+            activeResolutions.Add(nativeRes);
+        }
+
+        // 5. Sắp xếp danh sách giảm dần theo chiều rộng để hiển thị trực quan
+        activeResolutions.Sort((a, b) => b.width.CompareTo(a.width));
+
+        // 6. Cập nhật các tùy chọn vào UI Dropdown
+        resolutionDropdown.ClearOptions();
         List<string> options = new List<string>();
         int currentResolutionIndex = 0;
 
-        for (int i = 0; i < resolutions.Length; i++)
+        for (int i = 0; i < activeResolutions.Count; i++)
         {
-            string option = resolutions[i].width + " x " + resolutions[i].height + " @" + resolutions[i].refreshRateRatio.value.ToString("0") + "Hz";
-            options.Add(option);
+            options.Add(activeResolutions[i].label);
 
-            if (resolutions[i].width == Screen.currentResolution.width &&
-                resolutions[i].height == Screen.currentResolution.height)
+            if (activeResolutions[i].width == currentW &&
+                activeResolutions[i].height == currentH)
             {
                 currentResolutionIndex = i;
             }
@@ -215,13 +482,205 @@ public class SettingsManager : MonoBehaviour
 
         resolutionDropdown.AddOptions(options);
 
-        // Đọc cấu hình độ phân giải đã lưu
-        int savedResIndex = PlayerPrefs.GetInt("ResolutionIndex", currentResolutionIndex);
-        if (savedResIndex < resolutions.Length)
+        // 7. Đồng bộ với cài đặt đã lưu
+        int savedW = PlayerPrefs.GetInt("SavedResWidth", currentW);
+        int savedH = PlayerPrefs.GetInt("SavedResHeight", currentH);
+
+        int savedResIndex = currentResolutionIndex;
+        for (int i = 0; i < activeResolutions.Count; i++)
         {
+            if (activeResolutions[i].width == savedW && activeResolutions[i].height == savedH)
+            {
+                savedResIndex = i;
+                break;
+            }
+        }
+
+        if (savedResIndex < activeResolutions.Count)
+        {
+            pendingResolutionIndex = savedResIndex;
             resolutionDropdown.value = savedResIndex;
             resolutionDropdown.RefreshShownValue();
-            SetResolution(savedResIndex);
+
+            FullScreenMode mode = pendingFullscreen ? FullScreenMode.FullScreenWindow : FullScreenMode.Windowed;
+            if (Screen.width != activeResolutions[savedResIndex].width || Screen.height != activeResolutions[savedResIndex].height || Screen.fullScreenMode != mode)
+            {
+                Screen.SetResolution(activeResolutions[savedResIndex].width, activeResolutions[savedResIndex].height, mode);
+            }
+        }
+
+        CheckPendingChanges();
+    }
+
+    private GameObject FindGraphicsTabPanel()
+    {
+        if (resolutionDropdown != null) return resolutionDropdown.transform.parent.gameObject;
+        if (fullscreenToggle != null) return fullscreenToggle.transform.parent.gameObject;
+        if (qualityDropdown != null) return qualityDropdown.transform.parent.gameObject;
+
+        return FindObjectIncludingInactive("Panel_Graphics_Content");
+    }
+
+    private GameObject FindObjectIncludingInactive(string name)
+    {
+        var rootObjects = UnityEngine.SceneManagement.SceneManager.GetActiveScene().GetRootGameObjects();
+        foreach (var root in rootObjects)
+        {
+            Transform[] allChildren = root.GetComponentsInChildren<Transform>(true);
+            foreach (var child in allChildren)
+            {
+                if (child.name == name)
+                {
+                    return child.gameObject;
+                }
+            }
+        }
+        return null;
+    }
+
+    private void DefaultToAudioTab()
+    {
+        GameObject audioPanel = FindObjectIncludingInactive("Panel_Audio_Content");
+        GameObject graphicsPanel = FindObjectIncludingInactive("Panel_Graphics_Content");
+        GameObject controlsPanel = FindObjectIncludingInactive("Panel_Controls_Content");
+
+        if (audioPanel != null) audioPanel.SetActive(true);
+        if (graphicsPanel != null) graphicsPanel.SetActive(false);
+        if (controlsPanel != null) controlsPanel.SetActive(false);
+
+        // Kích hoạt click giả lập trên Tab Âm Thanh để cập nhật UI/Màu sắc của Tab
+        GameObject tabNav = FindObjectIncludingInactive("Tab_Navigation");
+        if (tabNav != null)
+        {
+            Button audioTabBtn = tabNav.transform.Find("Btn_Audio")?.GetComponent<Button>() ??
+                                 tabNav.transform.Find("AudioTab")?.GetComponent<Button>() ??
+                                 tabNav.transform.Find("Btn_Tab_Audio")?.GetComponent<Button>();
+            
+            if (audioTabBtn == null)
+            {
+                Button[] buttons = tabNav.GetComponentsInChildren<Button>(true);
+                foreach (var btn in buttons)
+                {
+                    string btnName = btn.name.ToLower();
+                    if (btnName.Contains("audio") || btnName.Contains("amthanh") || btnName.Contains("âm thanh"))
+                    {
+                        audioTabBtn = btn;
+                        break;
+                    }
+                }
+            }
+
+            if (audioTabBtn != null)
+            {
+                audioTabBtn.onClick.Invoke();
+            }
+        }
+    }
+
+    private void CreateApplyButtonProgrammatically()
+    {
+        if (applyButton != null) return;
+
+        GameObject settingsPanel = FindObjectIncludingInactive("Panel_Settings");
+        if (settingsPanel == null) return;
+
+        Button existingApplyButton = null;
+        Transform applyTrans = settingsPanel.transform.Find("Btn_Apply") ?? settingsPanel.transform.Find("ApplyButton");
+        if (applyTrans != null)
+        {
+            existingApplyButton = applyTrans.GetComponent<Button>();
+        }
+        else
+        {
+            Button[] panelButtons = settingsPanel.GetComponentsInChildren<Button>(true);
+            foreach (var btn in panelButtons)
+            {
+                string btnName = btn.name.ToLower();
+                if (btnName.Contains("apply") || btnName.Contains("apdung") || btnName.Contains("áp dụng"))
+                {
+                    existingApplyButton = btn;
+                }
+            }
+        }
+
+        GameObject applyGo = null;
+        if (existingApplyButton != null)
+        {
+            applyButton = existingApplyButton;
+            applyGo = existingApplyButton.gameObject;
+        }
+        else
+        {
+            Transform graphicsContentParent = null;
+            if (resolutionDropdown != null) graphicsContentParent = resolutionDropdown.transform.parent;
+            else if (fullscreenToggle != null) graphicsContentParent = fullscreenToggle.transform.parent;
+            else if (qualityDropdown != null) graphicsContentParent = qualityDropdown.transform.parent;
+
+            if (graphicsContentParent == null) return;
+
+            Button backButton = settingsPanel.transform.Find("Btn_Back")?.GetComponent<Button>();
+            if (backButton == null)
+            {
+                Button[] panelButtons = settingsPanel.GetComponentsInChildren<Button>(true);
+                foreach (var btn in panelButtons)
+                {
+                    string btnName = btn.name.ToLower();
+                    if (btnName.Contains("back") || btnName.Contains("quaylai") || btnName.Contains("quay_lai"))
+                    {
+                        backButton = btn;
+                        break;
+                    }
+                }
+            }
+
+            if (backButton != null)
+            {
+                applyGo = Instantiate(backButton.gameObject, graphicsContentParent);
+                applyGo.name = "ApplyButton";
+                applyButton = applyGo.GetComponent<Button>();
+
+                RectTransform backRT = backButton.GetComponent<RectTransform>();
+                RectTransform applyRT = applyGo.GetComponent<RectTransform>();
+
+                applyRT.anchorMin = new Vector2(0.5f, 0.5f);
+                applyRT.anchorMax = new Vector2(0.5f, 0.5f);
+                applyRT.pivot = new Vector2(0.5f, 0.5f);
+                applyRT.sizeDelta = backRT.sizeDelta;
+
+                UnityEngine.UI.LayoutGroup layoutGroup = graphicsContentParent.GetComponent<UnityEngine.UI.LayoutGroup>();
+                if (layoutGroup != null)
+                {
+                    applyGo.transform.SetAsLastSibling();
+                }
+                else
+                {
+                    if (fullscreenToggle != null)
+                    {
+                        RectTransform toggleRT = fullscreenToggle.GetComponent<RectTransform>();
+                        // Fallback position logic
+                        applyRT.anchoredPosition = toggleRT != null ? toggleRT.anchoredPosition + new Vector2(0f, -65f) : new Vector2(0f, -100f);
+                    }
+                    else
+                    {
+                        applyRT.anchoredPosition = new Vector2(0f, -100f);
+                    }
+                }
+            }
+        }
+
+        if (applyButton != null)
+        {
+            // Reset onClick hoàn toàn để xoá bỏ listener Quay Lại được clone từ Inspector
+            applyButton.onClick = new Button.ButtonClickedEvent();
+            applyButton.onClick.AddListener(ApplyGraphicsSettings);
+
+            TMP_Text tmpTxt = applyButton.GetComponentInChildren<TMP_Text>();
+            if (tmpTxt != null) tmpTxt.text = "ÁP DỤNG";
+
+            Text legacyText = applyButton.GetComponentInChildren<Text>();
+            if (legacyText != null) legacyText.text = "ÁP DỤNG";
+
+            CheckPendingChanges();
         }
     }
 
@@ -232,7 +691,6 @@ public class SettingsManager : MonoBehaviour
     {
         PlayerPrefs.SetFloat("MouseSensitivity", sensitivity);
         PlayerPrefs.Save();
-        // CameraController sẽ đọc giá trị này để điều chỉnh độ nhạy xoay chuột
     }
 
     // ==========================================
@@ -240,10 +698,11 @@ public class SettingsManager : MonoBehaviour
     // ==========================================
     private void LoadSettings()
     {
-        // Load Audio - default settings matching the design defaults (85%, 60%, 100%)
         float musicVol = PlayerPrefs.GetFloat("MusicVolume", 1.0f);
         float sfxVol = PlayerPrefs.GetFloat("SFXVolume", 1.0f);
         float voiceVol = PlayerPrefs.GetFloat("VoiceVolume", 1.0f);
+
+        AudioListener.volume = musicVol;
 
         if (musicVolumeSlider != null)
         {
@@ -261,21 +720,22 @@ public class SettingsManager : MonoBehaviour
             UpdateVoiceVolumeText(voiceVol);
         }
 
-        // Load Graphics Quality
-        int qualityIndex = PlayerPrefs.GetInt("QualityIndex", QualitySettings.GetQualityLevel());
-        QualitySettings.SetQualityLevel(qualityIndex);
+        pendingQualityIndex = PlayerPrefs.GetInt("QualityIndex", QualitySettings.GetQualityLevel());
+        QualitySettings.SetQualityLevel(pendingQualityIndex);
         if (qualityDropdown != null)
         {
-            qualityDropdown.value = qualityIndex;
+            qualityDropdown.value = pendingQualityIndex;
             qualityDropdown.RefreshShownValue();
         }
 
-        // Load Fullscreen
-        bool isFullscreen = PlayerPrefs.GetInt("Fullscreen", Screen.fullScreen ? 1 : 0) == 1;
-        Screen.fullScreen = isFullscreen;
-        if (fullscreenToggle != null) fullscreenToggle.isOn = isFullscreen;
+        pendingFullscreen = PlayerPrefs.GetInt("Fullscreen", Screen.fullScreen ? 1 : 0) == 1;
+        FullScreenMode mode = pendingFullscreen ? FullScreenMode.FullScreenWindow : FullScreenMode.Windowed;
+        if (Screen.fullScreenMode != mode)
+        {
+            Screen.fullScreenMode = mode;
+        }
+        if (fullscreenToggle != null) fullscreenToggle.isOn = pendingFullscreen;
 
-        // Load Sensitivity
         float sens = PlayerPrefs.GetFloat("MouseSensitivity", 3.0f);
         if (sensitivitySlider != null) sensitivitySlider.value = sens;
     }

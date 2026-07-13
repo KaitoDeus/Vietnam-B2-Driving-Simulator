@@ -115,19 +115,25 @@ public class ExamManager : MonoBehaviour
 
     private void Start()
     {
-        // Đồng bộ âm lượng từ Settings đã lưu
+        UpdateAudioVolumes();
+    }
+
+    public void StartExam()
+    {
+        StartCoroutine(StartExamDelayed());
+    }
+
+    public void UpdateAudioVolumes()
+    {
         float voiceVol = PlayerPrefs.GetFloat("VoiceVolume", 1.0f);
         float sfxVol = PlayerPrefs.GetFloat("SFXVolume", 0.8f);
         if (voiceSource != null) voiceSource.volume = voiceVol;
         if (sfxSource != null) sfxSource.volume = sfxVol;
-
-        // Tự động phát âm thanh mời khởi hành khi vào game
-        StartCoroutine(StartExamDelayed());
     }
 
     private IEnumerator StartExamDelayed()
     {
-        yield return new WaitForSeconds(1.5f);
+        yield return new WaitForSeconds(0.5f);
         PlayVoice(voiceStartExam);
         isExamActive = true;
         deductionsList.Clear();

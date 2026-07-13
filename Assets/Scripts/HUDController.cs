@@ -170,6 +170,9 @@ public class HUDController : MonoBehaviour
 
         // Đảm bảo âm thanh toàn cục không bị pause khi bắt đầu cảnh mới
         AudioListener.pause = false;
+
+        // Hiển thị Popup hướng dẫn phím lái xe
+        InstructionsPopup.Create(transform);
     }
 
     private void Update()

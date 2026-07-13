@@ -182,7 +182,6 @@ public class CarController : MonoBehaviour
         blinkerAudioSource.playOnAwake = false;
         blinkerAudioSource.loop = false;
         blinkerAudioSource.spatialBlend = 0f; // Âm thanh cabin 2D
-        blinkerAudioSource.volume = 0.4f * PlayerPrefs.GetFloat("SFXVolume", 0.8f);
 
         // Nếu chưa gán âm thanh trong Inspector, tự động tạo âm thanh tạch-tạch cơ học chất lượng cao
         if (blinkerSound == null)
@@ -194,7 +193,6 @@ public class CarController : MonoBehaviour
         seatbeltAudioSource.playOnAwake = false;
         seatbeltAudioSource.loop = false;
         seatbeltAudioSource.spatialBlend = 0f;
-        seatbeltAudioSource.volume = 0.8f * PlayerPrefs.GetFloat("SFXVolume", 0.8f);
 
         seatbeltClickSound = CreateProceduralSeatbeltSound();
         handbrakeClickSound = CreateProceduralHandbrakeSound();
@@ -204,6 +202,15 @@ public class CarController : MonoBehaviour
 
         // Tìm toàn bộ Renderer đèn pha/cos của xe để gán hiệu ứng chiếu sáng và tự động tạo Spotlight
         FindAndRegisterHeadlights(transform);
+
+        UpdateAudioVolumes();
+    }
+
+    public void UpdateAudioVolumes()
+    {
+        float sfxVol = PlayerPrefs.GetFloat("SFXVolume", 0.8f);
+        if (blinkerAudioSource != null) blinkerAudioSource.volume = 0.4f * sfxVol;
+        if (seatbeltAudioSource != null) seatbeltAudioSource.volume = 0.8f * sfxVol;
     }
 
     private void Update()
@@ -236,36 +243,8 @@ public class CarController : MonoBehaviour
                 Debug.Log("[Hộp số] Chuyển thủ công sang số R (Lùi)");
             }
 
-            // Tự động điều khiển hộp số (D/R) dựa trên hướng di chuyển và phím bấm (W/S)
-            float localForwardVel = GetLocalForwardVelocity();
-            if (moveInput > 0.05f)
+            if (moveInput == 0f)
             {
-                // Chỉ chuyển sang số D khi xe đã gần dừng hẳn để tránh bị khựng/dừng đột ngột
-                if (localForwardVel < -0.05f)
-                {
-                    currentGear = GearState.R;
-                }
-                else
-                {
-                    currentGear = GearState.D;
-                }
-            }
-            else if (moveInput < -0.05f)
-            {
-                // Chỉ chuyển sang số R khi xe đã gần dừng hẳn để tránh bị khựng/dừng đột ngột
-                if (localForwardVel > 0.05f)
-                {
-                    currentGear = GearState.D;
-                }
-                else
-                {
-                    currentGear = GearState.R;
-                }
-            }
-            else
-            {
-                // Khi thả phím điều khiển (moveInput == 0):
-                // GIỮ NGUYÊN số hiện tại (D hoặc R) để xe tiếp tục trôi và bò tự động (creep).
                 // Chỉ tự động trả về số N nếu tắt động cơ.
                 if (!isEngineOn)
                 {
@@ -320,8 +299,16 @@ public class CarController : MonoBehaviour
             currentGear = GearState.N;
         }
 
-
-        // Phím Space để kích hoạt phanh tay đã bị vô hiệu hóa
+        // Cập nhật trạng thái phanh tay theo việc giữ phím Space
+        isHandbrakeOn = Input.GetKey(KeyCode.Space);
+        if (Input.GetKeyDown(KeyCode.Space))
+        {
+            if (seatbeltAudioSource != null && handbrakeClickSound != null)
+            {
+                seatbeltAudioSource.PlayOneShot(handbrakeClickSound);
+            }
+            Debug.Log("[Phanh Tay] Đã kéo phanh tay (Space)");
+        }
 
         // Cập nhật tắt máy đột ngột
         UpdateEngineStall();
@@ -366,14 +353,8 @@ public class CarController : MonoBehaviour
             return;
         }
 
-        // Xác định xe có đang phanh hay không (đối với bò tự động Creep Torque)
-        bool isBraking = isHandbrakeOn;
-        if (currentGear == GearState.D && moveInput < 0f) isBraking = true;
-        if (currentGear == GearState.R && moveInput > 0f) isBraking = true;
-
         float throttle = 0f;
         float torque = 0f;
-        float speedKmh = CurrentSpeed;
 
         if (currentGear == GearState.D)
         {
@@ -392,11 +373,6 @@ public class CarController : MonoBehaviour
                 }
                 torque = throttle * maxMotorTorque * gearFactor;
             }
-            else if (!isBraking && speedKmh < 8f)
-            {
-                // Bò tự động (Creep Torque) khi nhả phanh ở số D
-                torque = 180f * (1f - (speedKmh / 8f));
-            }
         }
         else if (currentGear == GearState.R)
         {
@@ -404,11 +380,6 @@ public class CarController : MonoBehaviour
             if (throttle > 0f)
             {
                 torque = -throttle * maxMotorTorque * 0.8f; // Số lùi có giới hạn lực kéo
-            }
-            else if (!isBraking && speedKmh < 6f)
-            {
-                // Bò lùi tự động khi nhả phanh ở số R
-                torque = -140f * (1f - (speedKmh / 6f));
             }
         }
         else // Neutral (N)
@@ -480,7 +451,7 @@ public class CarController : MonoBehaviour
                 }
                 else
                 {
-                    // Ở số D hoặc R và nổ máy, không dùng phanh đỗ hay phanh động cơ để xe bò tự nhiên
+                    // Ở số D hoặc R và nổ máy, không dùng phanh đỗ hay phanh động cơ để xe trôi tự nhiên và giữ trớn như cũ
                     currentBrake = 0f;
                 }
             }
@@ -490,6 +461,43 @@ public class CarController : MonoBehaviour
         if (frontRightCollider != null) frontRightCollider.brakeTorque = currentBrake;
         if (rearLeftCollider != null) rearLeftCollider.brakeTorque = currentBrake;
         if (rearRightCollider != null) rearRightCollider.brakeTorque = currentBrake;
+
+        // Bắt buộc dừng hẳn không trôi nếu có phanh tay hoặc (thả hết phím và số N/tắt máy) khi tốc độ cực thấp
+        if (rb != null)
+        {
+            bool shouldLockVelocity = false;
+            
+            if (isHandbrakeOn)
+            {
+                // Nếu kéo phanh tay, không nhấn ga/lùi và tốc độ thấp (< 3.0 km/h), khóa hẳn xe lại để không bị lết dốc
+                if (moveInput == 0f && rb.linearVelocity.magnitude < 0.83f) // 0.83 m/s = 3.0 km/h
+                {
+                    shouldLockVelocity = true;
+                }
+            }
+            else if (moveInput == 0f || (currentGear == GearState.D && moveInput < 0f) || (currentGear == GearState.R && moveInput > 0f))
+            {
+                // Thả hết phím hoặc đang giữ phanh chân và xe đã dừng gần như hoàn toàn (< 0.5 km/h)
+                if (rb.linearVelocity.magnitude < 0.14f) // 0.14 m/s = 0.5 km/h
+                {
+                    shouldLockVelocity = true;
+                }
+            }
+            else if (!isEngineOn)
+            {
+                // Tắt máy và xe đã dừng gần như hoàn toàn (< 0.5 km/h)
+                if (rb.linearVelocity.magnitude < 0.14f)
+                {
+                    shouldLockVelocity = true;
+                }
+            }
+
+            if (shouldLockVelocity)
+            {
+                rb.linearVelocity = Vector3.zero;
+                rb.angularVelocity = Vector3.zero;
+            }
+        }
     }
 
     private void ApplyAntiRoll()
@@ -565,8 +573,8 @@ public class CarController : MonoBehaviour
     {
         if (rearLeftCollider == null || rearRightCollider == null) return;
 
-        // Nếu đang nhấn phanh tay (Space) - đã vô hiệu hóa
-        bool isHandbraking = false;
+        // Chỉ cho phép giảm ma sát để drift khi kéo phanh tay ở tốc độ cao (>5 km/h)
+        bool isHandbraking = isHandbrakeOn && CurrentSpeed > 5f;
 
         if (isHandbraking)
         {
