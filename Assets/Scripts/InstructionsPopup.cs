@@ -9,6 +9,9 @@ public class InstructionsPopup : MonoBehaviour
     private static InstructionsPopup activeInstance;
     private TextMeshProUGUI spaceHintText;
 
+    private Sprite roundedSprite;
+    private Sprite solidSprite;
+
     public static bool IsActive => activeInstance != null;
 
     public static void Create(Transform parent)
@@ -34,9 +37,64 @@ public class InstructionsPopup : MonoBehaviour
         activeInstance.BuildUI();
     }
 
+    private Sprite CreateRoundedSprite(int width, int height, int cornerRadius, Color color)
+    {
+        Texture2D tex = new Texture2D(width, height, TextureFormat.RGBA32, false);
+        tex.filterMode = FilterMode.Bilinear;
+        tex.wrapMode = TextureWrapMode.Clamp;
+
+        Color[] pixels = new Color[width * height];
+        float cx = width / 2f;
+        float cy = height / 2f;
+        float halfW = width / 2f;
+        float halfH = height / 2f;
+        float r = cornerRadius;
+
+        for (int y = 0; y < height; y++)
+        {
+            for (int x = 0; x < width; x++)
+            {
+                float px = x + 0.5f;
+                float py = y + 0.5f;
+
+                float dx = Mathf.Max(0f, Mathf.Abs(px - cx) - (halfW - r));
+                float dy = Mathf.Max(0f, Mathf.Abs(py - cy) - (halfH - r));
+                float dist = Mathf.Sqrt(dx * dx + dy * dy);
+
+                float alpha = 1f;
+                if (dist > r)
+                {
+                    alpha = 0f;
+                }
+                else if (dist > r - 1.5f)
+                {
+                    alpha = Mathf.Clamp01((r - dist) / 1.5f);
+                }
+
+                pixels[y * width + x] = new Color(color.r, color.g, color.b, color.a * alpha);
+            }
+        }
+
+        tex.SetPixels(pixels);
+        tex.Apply();
+
+        Vector4 border = new Vector4(cornerRadius, cornerRadius, cornerRadius, cornerRadius);
+        return Sprite.Create(tex, new Rect(0, 0, width, height), new Vector2(0.5f, 0.5f), 100f, 0, SpriteMeshType.FullRect, border);
+    }
+
+    private Sprite CreateSolidSprite(Color color)
+    {
+        Texture2D tex = new Texture2D(2, 2, TextureFormat.RGBA32, false);
+        Color[] pixels = new Color[4];
+        for (int i = 0; i < pixels.Length; i++) pixels[i] = color;
+        tex.SetPixels(pixels);
+        tex.Apply();
+        return Sprite.Create(tex, new Rect(0, 0, 2, 2), new Vector2(0.5f, 0.5f));
+    }
+
     private void BuildUI()
     {
-        // 1. Phân giải Font và Sprite bo góc mặc định của Unity
+        // 1. Phân giải Font mặc định của Unity
         TMP_FontAsset commonFont = null;
         TextMeshProUGUI[] allTmp = Object.FindObjectsByType<TextMeshProUGUI>(FindObjectsInactive.Include);
         foreach (var t in allTmp)
@@ -48,16 +106,9 @@ public class InstructionsPopup : MonoBehaviour
             }
         }
 
-        Sprite roundedSprite = null;
-        Sprite[] allSprites = Resources.FindObjectsOfTypeAll<Sprite>();
-        foreach (var s in allSprites)
-        {
-            if (s.name == "Background" || s.name == "UISprite" || s.name == "UIMask")
-            {
-                roundedSprite = s;
-                break;
-            }
-        }
+        // Tạo sprite bo góc và sprite đặc cứng procedurally để không bị lỗi thiếu tài nguyên khi đóng gói
+        roundedSprite = CreateRoundedSprite(64, 64, 12, Color.white);
+        solidSprite = CreateSolidSprite(Color.white);
 
         // Tạm dừng thời gian trong game khi đang xem hướng dẫn
         Time.timeScale = 0f;
@@ -71,6 +122,7 @@ public class InstructionsPopup : MonoBehaviour
         overlayRect.sizeDelta = Vector2.zero;
 
         Image overlayImg = overlayGo.AddComponent<Image>();
+        overlayImg.sprite = solidSprite;
         overlayImg.color = new Color(0.04f, 0.05f, 0.07f, 0.85f); // Dark charcoal transparent
 
         // 3. Tạo Main Card (Hộp thoại chính)
@@ -141,7 +193,12 @@ public class InstructionsPopup : MonoBehaviour
         RectTransform divRect = dividerGo.AddComponent<RectTransform>();
         divRect.sizeDelta = new Vector2(570f, 2f);
         Image divImg = dividerGo.AddComponent<Image>();
+        divImg.sprite = solidSprite;
         divImg.color = new Color(0.2f, 0.23f, 0.28f, 1f);
+
+        LayoutElement divLayout = dividerGo.AddComponent<LayoutElement>();
+        divLayout.minHeight = 2f;
+        divLayout.preferredHeight = 2f;
 
         // 8. Dòng chữ hướng dẫn nhấn SPACE để bắt đầu (Nhấp nháy nhẹ)
         GameObject hintGo = new GameObject("SpaceHintText");
@@ -277,5 +334,19 @@ public class InstructionsPopup : MonoBehaviour
 
         activeInstance = null;
         Destroy(gameObject);
+    }
+
+    private void OnDestroy()
+    {
+        if (roundedSprite != null)
+        {
+            if (roundedSprite.texture != null) Destroy(roundedSprite.texture);
+            Destroy(roundedSprite);
+        }
+        if (solidSprite != null)
+        {
+            if (solidSprite.texture != null) Destroy(solidSprite.texture);
+            Destroy(solidSprite);
+        }
     }
 }
