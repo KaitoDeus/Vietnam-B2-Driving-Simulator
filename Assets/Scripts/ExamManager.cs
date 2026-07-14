@@ -161,7 +161,7 @@ public class ExamManager : MonoBehaviour
     {
         if (targetCar == null)
         {
-            targetCar = Object.FindFirstObjectByType<CarController>();
+            targetCar = Object.FindAnyObjectByType<CarController>();
         }
     }
 
@@ -308,7 +308,7 @@ public class ExamManager : MonoBehaviour
                     {
                         hasPedestrianStoppedLongEnough = true;
                         PlaySFX(soundBinhBoong);
-                        var hud = Object.FindFirstObjectByType<HUDController>();
+                        var hud = Object.FindAnyObjectByType<HUDController>();
                         if (hud != null)
                         {
                             hud.ShowSuccessNotification("Đã dừng đủ thời gian! Hãy tiếp tục di chuyển.", 2f);
@@ -340,7 +340,7 @@ public class ExamManager : MonoBehaviour
                     {
                         hasSlopeStoppedLongEnough = true;
                         PlaySFX(soundBinhBoong);
-                        var hud = Object.FindFirstObjectByType<HUDController>();
+                        var hud = Object.FindAnyObjectByType<HUDController>();
                         if (hud != null)
                         {
                             hud.ShowSuccessNotification("Đã dừng đủ thời gian! Hãy khởi hành qua dốc.", 2f);
@@ -587,7 +587,7 @@ public class ExamManager : MonoBehaviour
 
     private TrafficLight FindClosestTrafficLight()
     {
-        TrafficLight[] lights = Object.FindObjectsByType<TrafficLight>(FindObjectsSortMode.None);
+        TrafficLight[] lights = Object.FindObjectsByType<TrafficLight>(FindObjectsInactive.Include);
         if (lights == null || lights.Length == 0) return null;
 
         TrafficLight closestLight = null;
@@ -754,7 +754,7 @@ public class ExamManager : MonoBehaviour
         // Hiển thị thông báo hoàn thành bài thi đúng luật ngay lập tức
         if (currentScore == scoreBefore)
         {
-            var hud = Object.FindFirstObjectByType<HUDController>();
+            var hud = Object.FindAnyObjectByType<HUDController>();
             if (hud != null)
             {
                 hud.ShowSuccessNotification($"Hoàn thành Bài: {GetStepNameVi(step)} đúng luật!", 3.0f);
@@ -812,7 +812,7 @@ public class ExamManager : MonoBehaviour
         {
             if (currentScore == scoreBefore)
             {
-                var hud = Object.FindFirstObjectByType<HUDController>();
+                var hud = Object.FindAnyObjectByType<HUDController>();
                 if (hud != null)
                 {
                     hud.ShowSuccessNotification($"Hoàn thành Bài: {GetStepNameVi(prevStep)} đúng luật!", 3.0f);
@@ -908,7 +908,7 @@ public class ExamManager : MonoBehaviour
         Debug.Log($"Bị trừ {points} điểm. Lý do: {reason}. Điểm hiện tại: {currentScore}");
 
         // Hiển thị thông báo màu đỏ (Warning) lên HUD
-        var hud = Object.FindFirstObjectByType<HUDController>();
+        var hud = Object.FindAnyObjectByType<HUDController>();
         if (hud != null)
         {
             hud.ShowWarningNotification($"Trừ {points}đ: {reason}", 4.0f);
@@ -930,7 +930,7 @@ public class ExamManager : MonoBehaviour
         Debug.Log($"THI TRƯỢT! Lý do: {reason}");
 
         // Hiển thị thông báo cảnh báo trượt lên HUD
-        var hud = Object.FindFirstObjectByType<HUDController>();
+        var hud = Object.FindAnyObjectByType<HUDController>();
         if (hud != null)
         {
             hud.ShowWarningNotification($"THI TRƯỢT: {reason}", 6.0f);
@@ -948,7 +948,7 @@ public class ExamManager : MonoBehaviour
         Debug.Log("CHÚC MỪNG BẠN ĐÃ THI ĐẠT!");
 
         // Hiển thị thông báo xanh lá (Success) lên HUD
-        var hud = Object.FindFirstObjectByType<HUDController>();
+        var hud = Object.FindAnyObjectByType<HUDController>();
         if (hud != null)
         {
             hud.ShowSuccessNotification("CHÚC MỪNG BẠN ĐÃ THI ĐẠT!", 6.0f);
@@ -960,7 +960,7 @@ public class ExamManager : MonoBehaviour
     private IEnumerator ShowResultScreenDelayed(bool isPass, float delay)
     {
         yield return new WaitForSeconds(delay);
-        var hud = Object.FindFirstObjectByType<HUDController>();
+        var hud = Object.FindAnyObjectByType<HUDController>();
         if (hud != null)
         {
             string finalStepName = (currentStep == ExamStep.None || currentStep == ExamStep.KetThuc) 
@@ -1018,7 +1018,7 @@ public class ExamManager : MonoBehaviour
         }
 
         // 2. Vẽ vùng quy định màu Cyan sáng cho các vật thể roadStraightBridgeMid trong Scene
-        GameObject[] allObjects = GameObject.FindObjectsByType<GameObject>(FindObjectsSortMode.None);
+        GameObject[] allObjects = Object.FindObjectsByType<GameObject>(FindObjectsInactive.Include);
         foreach (var go in allObjects)
         {
             if (go != null && go.name.ToLower().Contains("roadstraightbridgemid"))

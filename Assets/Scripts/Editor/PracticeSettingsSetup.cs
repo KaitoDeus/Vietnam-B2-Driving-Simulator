@@ -73,7 +73,7 @@ public class PracticeSettingsSetup
         EditorSceneManager.OpenScene(practicePath);
 
         // Find Canvas or HUD root
-        HUDController hud = Object.FindObjectOfType<HUDController>();
+        HUDController hud = Object.FindAnyObjectByType<HUDController>();
         if (hud == null)
         {
             if (interactive) EditorUtility.DisplayDialog("Error", "HUDController not found in Practice scene!", "OK");

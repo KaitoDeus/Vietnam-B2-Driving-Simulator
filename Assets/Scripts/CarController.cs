@@ -79,7 +79,7 @@ public class CarController : MonoBehaviour
 
     [Header("Scale Settings")]
     [Tooltip("Tự động thay đổi kích thước của xe khi bắt đầu (1.35 = phóng to 35%)")]
-    public float autoScaleFactor = 1.35f;
+    public float autoScaleFactor = 1.5f;
 
     [HideInInspector]
     public bool isEngineOn = false; // Trạng thái nổ/tắt máy xe (Phím I)
@@ -144,6 +144,9 @@ public class CarController : MonoBehaviour
             transform.localScale = new Vector3(currentScale, currentScale, currentScale);
         }
 
+        // Unity tự động scale bán kính và giảm xóc của WheelCollider theo localScale của GameObject cha,
+        // do đó ta không nhân thêm tỉ lệ scale ở đây để tránh lỗi double-scaling khiến bánh xe bị trôi lơ lửng.
+        /*
         if (currentScale > 0.01f && currentScale != 1.0f)
         {
             if (frontLeftCollider != null) frontLeftCollider.radius *= currentScale;
@@ -156,6 +159,7 @@ public class CarController : MonoBehaviour
             if (rearLeftCollider != null) rearLeftCollider.suspensionDistance *= currentScale;
             if (rearRightCollider != null) rearRightCollider.suspensionDistance *= currentScale;
         }
+        */
 
         // Tự động gắn thêm component xử lý va chạm trừ điểm
         gameObject.AddComponent<CarCollisionHandler>();
@@ -165,7 +169,7 @@ public class CarController : MonoBehaviour
         {
             rb.mass = 1800f; // Khôi phục khối lượng chuẩn 1.8 tấn giúp xe đủ công suất vượt dốc đề-ba dễ dàng
             rb.linearDamping = 0.05f; // Khôi phục lực cản không khí tiêu chuẩn
-            rb.centerOfMass += centerOfMassOffset * currentScale;
+            rb.centerOfMass += centerOfMassOffset;
         }
 
         // Lưu lại ma sát ngang mặc định của bánh sau

@@ -9,6 +9,8 @@ public class InstructionsPopup : MonoBehaviour
     private static InstructionsPopup activeInstance;
     private TextMeshProUGUI spaceHintText;
 
+    public static bool IsActive => activeInstance != null;
+
     public static void Create(Transform parent)
     {
         if (activeInstance != null)
@@ -36,7 +38,7 @@ public class InstructionsPopup : MonoBehaviour
     {
         // 1. Phân giải Font và Sprite bo góc mặc định của Unity
         TMP_FontAsset commonFont = null;
-        TextMeshProUGUI[] allTmp = Object.FindObjectsByType<TextMeshProUGUI>(FindObjectsSortMode.None);
+        TextMeshProUGUI[] allTmp = Object.FindObjectsByType<TextMeshProUGUI>(FindObjectsInactive.Include);
         foreach (var t in allTmp)
         {
             if (t.font != null)

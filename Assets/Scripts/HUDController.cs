@@ -190,6 +190,8 @@ public class HUDController : MonoBehaviour
         // Phím ESC để Pause nhanh
         if (Input.GetKeyDown(KeyCode.Escape))
         {
+            if (InstructionsPopup.IsActive) return;
+
             if (isPaused && settingsPanel != null && settingsPanel.activeSelf)
             {
                 CloseSettings();
@@ -203,7 +205,7 @@ public class HUDController : MonoBehaviour
 
     private void FindCarInstance()
     {
-        targetCar = FindFirstObjectByType<CarController>();
+        targetCar = Object.FindAnyObjectByType<CarController>();
     }
 
     private void UpdateExamStats()
