@@ -59,12 +59,12 @@ public class SettingsManager : MonoBehaviour
     {
         Instance = this;
         AutoFindReferences();
+        LoadSettings();
     }
 
     private void Start()
     {
         AutoFindReferences();
-        LoadSettings();
         InitializeResolutionDropdown();
         CreateApplyButtonProgrammatically();
         RegisterListeners();
@@ -293,13 +293,13 @@ public class SettingsManager : MonoBehaviour
             ExamManager.Instance.UpdateAudioVolumes();
         }
 
-        CarController car = Object.FindObjectOfType<CarController>();
+        CarController car = Object.FindAnyObjectByType<CarController>();
         if (car != null)
         {
             car.UpdateAudioVolumes();
         }
 
-        CarAudio carAudio = Object.FindObjectOfType<CarAudio>();
+        CarAudio carAudio = Object.FindAnyObjectByType<CarAudio>();
         if (carAudio != null)
         {
             carAudio.UpdateVolumeSettings();
@@ -618,6 +618,8 @@ public class SettingsManager : MonoBehaviour
             resolutionDropdown.value = savedResIndex;
             resolutionDropdown.RefreshShownValue();
 
+            // Load fullscreen state directly from PlayerPrefs to prevent uninitialized false values from resetting window mode
+            pendingFullscreen = PlayerPrefs.GetInt("Fullscreen", Screen.fullScreen ? 1 : 0) == 1;
             FullScreenMode mode = pendingFullscreen ? FullScreenMode.FullScreenWindow : FullScreenMode.Windowed;
             if (Screen.width != activeResolutions[savedResIndex].width || Screen.height != activeResolutions[savedResIndex].height || Screen.fullScreenMode != mode)
             {
@@ -809,7 +811,7 @@ public class SettingsManager : MonoBehaviour
         PlayerPrefs.Save();
 
         // Cập nhật real-time độ nhạy chuột của camera
-        CameraController camCtrl = Object.FindObjectOfType<CameraController>();
+        CameraController camCtrl = Object.FindAnyObjectByType<CameraController>();
         if (camCtrl != null)
         {
             camCtrl.UpdateSensitivitySettings();
