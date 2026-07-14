@@ -361,13 +361,33 @@ public class SettingsManager : MonoBehaviour
 
         QualitySettings.SetQualityLevel(pendingQualityIndex);
 
-        if (activeResolutions != null && activeResolutions.Count > 0 && pendingResolutionIndex < activeResolutions.Count)
+        bool isWebGL = false;
+#if UNITY_WEBGL
+        isWebGL = true;
+#endif
+#if UNITY_EDITOR
+        MainMenuController mainMenu = Object.FindAnyObjectByType<MainMenuController>();
+        if (mainMenu != null && mainMenu.simulateWebGLInEditor)
         {
-            CustomResolution targetRes = activeResolutions[pendingResolutionIndex];
-            FullScreenMode mode = pendingFullscreen ? FullScreenMode.FullScreenWindow : FullScreenMode.Windowed;
-            
-            Screen.SetResolution(targetRes.width, targetRes.height, mode);
-            Debug.Log($"[SettingsManager] Đã áp dụng cài đặt: {targetRes.width}x{targetRes.height}, Mode: {mode}, Quality: {pendingQualityIndex}");
+            isWebGL = true;
+        }
+#endif
+
+        if (isWebGL)
+        {
+            Screen.fullScreen = pendingFullscreen;
+            Debug.Log($"[SettingsManager] Đã áp dụng cài đặt WebGL: Fullscreen={pendingFullscreen}, Quality={pendingQualityIndex}");
+        }
+        else
+        {
+            if (activeResolutions != null && activeResolutions.Count > 0 && pendingResolutionIndex < activeResolutions.Count)
+            {
+                CustomResolution targetRes = activeResolutions[pendingResolutionIndex];
+                FullScreenMode mode = pendingFullscreen ? FullScreenMode.FullScreenWindow : FullScreenMode.Windowed;
+                
+                Screen.SetResolution(targetRes.width, targetRes.height, mode);
+                Debug.Log($"[SettingsManager] Đã áp dụng cài đặt: {targetRes.width}x{targetRes.height}, Mode: {mode}, Quality: {pendingQualityIndex}");
+            }
         }
 
         StartCoroutine(ShowApplyFeedback());
@@ -521,6 +541,42 @@ public class SettingsManager : MonoBehaviour
     private void InitializeResolutionDropdown()
     {
         if (resolutionDropdown == null) return;
+
+        bool isWebGL = false;
+#if UNITY_WEBGL
+        isWebGL = true;
+#endif
+#if UNITY_EDITOR
+        MainMenuController mainMenu = Object.FindAnyObjectByType<MainMenuController>();
+        if (mainMenu != null && mainMenu.simulateWebGLInEditor)
+        {
+            isWebGL = true;
+        }
+#endif
+
+        if (isWebGL)
+        {
+            resolutionDropdown.gameObject.SetActive(false);
+            
+            Transform parentRow = resolutionDropdown.transform.parent;
+            if (parentRow != null)
+            {
+                string pName = parentRow.name.ToLower();
+                if (pName.Contains("res") || pName.Contains("dophan") || pName.Contains("phân giải") || pName.Contains("row"))
+                {
+                    parentRow.gameObject.SetActive(false);
+                }
+                else
+                {
+                    TMP_Text labelText = parentRow.GetComponentInChildren<TMP_Text>();
+                    if (labelText != null && (labelText.text.Contains("phân giải") || labelText.text.Contains("Resolution")))
+                    {
+                        labelText.gameObject.SetActive(false);
+                    }
+                }
+            }
+            return;
+        }
 
         // 1. Tăng độ nhạy cuộn chuột (Scroll Sensitivity) của Dropdown
         ScrollRect scrollRect = resolutionDropdown.GetComponentInChildren<ScrollRect>(true);

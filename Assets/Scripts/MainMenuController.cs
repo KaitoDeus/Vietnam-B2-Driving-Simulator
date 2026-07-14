@@ -18,6 +18,10 @@ public class MainMenuController : MonoBehaviour
     [Tooltip("Panel hiển thị Xác nhận thoát (Exit Confirmation)")]
     public GameObject exitConfirmationPanel;
 
+    [Header("WebGL Test Settings")]
+    [Tooltip("Tích chọn để giả lập chế độ WebGL ngay trong Editor nhằm test ẩn nút Giới thiệu/Thoát")]
+    public bool simulateWebGLInEditor = false;
+
     [Header("Scene Settings")]
     [Tooltip("Tên của cảnh sa hình thực hành lái xe")]
     public string practiceSceneName = "Practice";
@@ -52,6 +56,14 @@ public class MainMenuController : MonoBehaviour
         }
 
         if (mainMenuPanel == null) return;
+
+        bool isWebGL = false;
+#if UNITY_WEBGL
+        isWebGL = true;
+#endif
+#if UNITY_EDITOR
+        if (simulateWebGLInEditor) isWebGL = true;
+#endif
 
         Button[] buttons = mainMenuPanel.GetComponentsInChildren<Button>(true);
         foreach (Button btn in buttons)
@@ -88,13 +100,27 @@ public class MainMenuController : MonoBehaviour
             }
             else if (btnText.Contains("GIỚI THIỆU") || btnText.Contains("GIOI THIEU") || btnText.Contains("ABOUT"))
             {
-                btn.onClick.RemoveListener(OpenAbout);
-                btn.onClick.AddListener(OpenAbout);
+                if (isWebGL)
+                {
+                    btn.gameObject.SetActive(false);
+                }
+                else
+                {
+                    btn.onClick.RemoveListener(OpenAbout);
+                    btn.onClick.AddListener(OpenAbout);
+                }
             }
             else if (btnText.Contains("THOÁT") || btnText.Contains("THOAT") || btnText.Contains("EXIT"))
             {
-                btn.onClick.RemoveListener(ShowExitConfirmation);
-                btn.onClick.AddListener(ShowExitConfirmation);
+                if (isWebGL)
+                {
+                    btn.gameObject.SetActive(false);
+                }
+                else
+                {
+                    btn.onClick.RemoveListener(ShowExitConfirmation);
+                    btn.onClick.AddListener(ShowExitConfirmation);
+                }
             }
         }
     }
