@@ -599,50 +599,23 @@ public class TheoryExamManager : MonoBehaviour
 
         if (hasImage)
         {
-            if (isReviewMode)
+            // Luôn chia làm 2 cột: câu hỏi bên trái, hình ảnh bên phải
+            // để bảo đảm hình ảnh hiển thị đúng chuẩn tỷ lệ và không chạm vào phần đáp án bên dưới.
+            if (rQContent != null)
             {
-                // Chế độ xem lại có hình: Chia đôi cột để tránh hình che mất phần giải thích dài
-                if (rQContent != null)
-                {
-                    rQContent.anchorMin = new Vector2(0.14f, questionMinY);
-                    rQContent.anchorMax = new Vector2(0.55f, 0.87f);
-                }
-                if (rQNum != null)
-                {
-                    rQNum.anchorMin = new Vector2(0.04f, 0.80f);
-                    rQNum.anchorMax = new Vector2(0.12f, 0.87f);
-                }
-                if (rImg != null)
-                {
-                    rImg.gameObject.SetActive(true);
-                    rImg.anchorMin = new Vector2(0.58f, questionMinY);
-                    rImg.anchorMax = new Vector2(0.96f, 0.87f);
-                }
+                rQContent.anchorMin = new Vector2(0.14f, questionMinY);
+                rQContent.anchorMax = new Vector2(0.54f, 0.87f);
             }
-            else
+            if (rQNum != null)
             {
-                // Chế độ thi bình thường có hình: Đặt hình lớn ở giữa, câu hỏi ở trên
-                float imageHeightRatio = 0.26f;
-                float imageMinY = questionMinY;
-                float imageMaxY = Mathf.Min(0.68f, imageMinY + imageHeightRatio);
-                float questionContentMinY = imageMaxY + 0.02f;
-
-                if (rQContent != null)
-                {
-                    rQContent.anchorMin = new Vector2(0.14f, questionContentMinY);
-                    rQContent.anchorMax = new Vector2(0.96f, 0.87f);
-                }
-                if (rQNum != null)
-                {
-                    rQNum.anchorMin = new Vector2(0.04f, 0.80f);
-                    rQNum.anchorMax = new Vector2(0.12f, 0.87f);
-                }
-                if (rImg != null)
-                {
-                    rImg.gameObject.SetActive(true);
-                    rImg.anchorMin = new Vector2(0.25f, imageMinY);
-                    rImg.anchorMax = new Vector2(0.75f, imageMaxY);
-                }
+                rQNum.anchorMin = new Vector2(0.04f, 0.80f);
+                rQNum.anchorMax = new Vector2(0.12f, 0.87f);
+            }
+            if (rImg != null)
+            {
+                rImg.gameObject.SetActive(true);
+                rImg.anchorMin = new Vector2(0.56f, questionMinY);
+                rImg.anchorMax = new Vector2(0.96f, 0.87f);
             }
         }
         else
