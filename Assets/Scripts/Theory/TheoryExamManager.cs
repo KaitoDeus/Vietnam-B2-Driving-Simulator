@@ -722,8 +722,8 @@ public class TheoryExamManager : MonoBehaviour
 
         TheoryQuestion q = questions[currentQuestionIndex];
 
-        // 1. Đánh dấu câu điểm liệt bằng chữ màu cam đỏ để người học chú ý
-        string prefix = q.isCritical ? "<color=#FF3B30>[CÂU ĐIỂM LIỆT]</color> " : "";
+        // 1. Đánh dấu câu điểm liệt bằng chữ màu cam đỏ để người học chú ý (chỉ hiển thị khi đang ở chế độ xem lại)
+        string prefix = (q.isCritical && isReviewMode) ? "<color=#FF3B30>[CÂU ĐIỂM LIỆT]</color> " : "";
         
         if (txtQuestionNumber != null)
             txtQuestionNumber.text = (currentQuestionIndex + 1).ToString();

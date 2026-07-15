@@ -10754,6 +10754,7 @@ MonoBehaviour:
   useMockData: 0
   questionButtonPrefab: {fileID: 8421107303803816122, guid: dee9b1bf9085f5543a23760b8421eeab, type: 3}
   questionListPanel: {fileID: 1171441526}
+  isReviewMode: 0
   questionButtons: []
 --- !u!4 &1644041218
 Transform:

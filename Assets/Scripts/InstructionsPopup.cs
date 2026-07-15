@@ -176,13 +176,12 @@ public class InstructionsPopup : MonoBehaviour
         contentLayout.childControlWidth = false;
         contentLayout.childForceExpandWidth = false;
 
-        // Thêm các dòng hướng dẫn
-        AddControlRow(contentGo.transform, new string[] { "I" }, "Khởi động / Tắt động cơ xe (Engine Start/Stop)", commonFont, roundedSprite);
+        AddControlRow(contentGo.transform, new string[] { "T" }, "Khởi động / Tắt động cơ xe (Engine Start/Stop)", commonFont, roundedSprite);
         AddControlRow(contentGo.transform, new string[] { "1", "2", "3" }, "Cài số D (Tiến) / N (Mo) / R (Lùi)", commonFont, roundedSprite);
         AddControlRow(contentGo.transform, new string[] { "W", "S" }, "Nhấn ga (khi ở số D) / Nhấn phanh chân (khi ở số D)", commonFont, roundedSprite);
         AddControlRow(contentGo.transform, new string[] { "A", "D" }, "Xoay vô lăng điều hướng sang Trái / Phải", commonFont, roundedSprite);
         AddControlRow(contentGo.transform, new string[] { "Space" }, "Phanh tay (Đè giữ để phanh xe, thả ra để nhả phanh)", commonFont, roundedSprite);
-        AddControlRow(contentGo.transform, new string[] { "C" }, "Thắt / mở Dây an toàn (Bắt buộc trước khi xuất phát)", commonFont, roundedSprite);
+        AddControlRow(contentGo.transform, new string[] { "C" }, "Đổi góc nhìn camera (Cabin / Ngoài xe)", commonFont, roundedSprite);
         AddControlRow(contentGo.transform, new string[] { "Q", "E" }, "Xi-nhan rẽ Trái / Phải", commonFont, roundedSprite);
         AddControlRow(contentGo.transform, new string[] { "F" }, "Đèn cảnh báo khẩn cấp (Hazard Light)", commonFont, roundedSprite);
         AddControlRow(contentGo.transform, new string[] { "L" }, "Bật / Tắt đèn pha cos", commonFont, roundedSprite);

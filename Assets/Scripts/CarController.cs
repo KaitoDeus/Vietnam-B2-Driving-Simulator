@@ -82,7 +82,7 @@ public class CarController : MonoBehaviour
     public float autoScaleFactor = 1.5f;
 
     [HideInInspector]
-    public bool isEngineOn = false; // Trạng thái nổ/tắt máy xe (Phím I)
+    public bool isEngineOn = false; // Trạng thái nổ/tắt máy xe (Phím T)
     [HideInInspector] public bool isLeftBlinkerOn = false;
     [HideInInspector] public bool isRightBlinkerOn = false;
     [HideInInspector] public bool isHazardOn = false;
@@ -226,8 +226,8 @@ public class CarController : MonoBehaviour
 
     private void Update()
     {
-        // Nhấn phím I để nổ/tắt máy
-        if (Input.GetKeyDown(KeyCode.I))
+        // Nhấn phím T để nổ/tắt máy
+        if (Input.GetKeyDown(KeyCode.T))
         {
             isEngineOn = !isEngineOn;
         }

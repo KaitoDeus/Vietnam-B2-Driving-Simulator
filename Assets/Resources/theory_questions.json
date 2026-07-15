@@ -13,7 +13,7 @@
           "correctAnswer": 1,
           "isCritical": true,
           "imageName": "",
-          "explanation": "Quy tắc an toàn và pháp luật cấm tuyệt đối hành vi/điều kiện nêu trong đáp án đúng: “Rải vật sắc nhọn, đổ chất gây trơn trượt trên đường bộ.”, nhằm phòng ngừa nguy hiểm và vi phạm. Các đáp án còn lại không bao trùm đầy đủ hoặc không phù hợp. (Câu điểm liệt – bắt buộc nắm chắc)."
+          "explanation": "Rải vật sắc nhọn hoặc đổ chất gây trơn trượt là hành vi bị cấm tuyệt đối để đảm bảo an toàn. (Câu điểm liệt)"
         },
         {
           "question": "Phần của đường bộ được sử dụng cho phương tiện giao thông đường bộ đi lại là gì?",
@@ -24,7 +24,7 @@
           "correctAnswer": 1,
           "isCritical": false,
           "imageName": "",
-          "explanation": "\"Phần đường xe chạy\" là định nghĩa chính xác nhất theo Luật Giao thông đường bộ, dùng để chỉ toàn bộ khu vực dành cho mọi phương tiện giao thông (cơ giới và thô sơ) di chuyển. Đáp án này bao quát chức năng sử dụng đường của tất cả các loại xe. Các lựa chọn khác như \"mặt đường và lề đường\" không đúng hoàn toàn, còn \"phần đường xe cơ giới\" chỉ dành riêng cho một số loại xe nhất định. Mẹo: Cứ thấy câu hỏi về \"phần đường bộ được sử dụng cho **phương tiện giao thông đường bộ đi lại**\", hãy chọn đáp án có cụm từ \"xe chạy\" vì nó bao hàm nghĩa rộng nhất, cho tất cả các loại xe."
+          "explanation": "Phần đường xe chạy là phần đường bộ được sử dụng cho các phương tiện giao thông đi lại."
         },
         {
           "question": "Làn đường là gì?",
@@ -35,7 +35,7 @@
           "correctAnswer": 1,
           "isCritical": false,
           "imageName": "",
-          "explanation": "Đáp án 1 là chính xác nhất, các bạn nhé! Làn đường không chỉ đơn thuần là một phần đường để xe chạy mà còn phải đảm bảo có đủ chiều rộng để phương tiện di chuyển an toàn. Yếu tố \"đủ chiều rộng\" và \"an toàn\" là điểm mấu chốt để phân biệt với các khái niệm khác và đảm bảo đúng theo quy định pháp luật. Mẹo: Khi gặp câu hỏi về \"Làn đường\", hãy tìm cụm từ khóa \"đủ chiều rộng\" và \"an toàn\" trong đáp án nhé!"
+          "explanation": "Làn đường là một phần của phần đường xe chạy, được chia theo chiều dọc và có đủ chiều rộng cho xe chạy an toàn."
         },
         {
           "question": "Khổ giới hạn của đường bộ được hiểu như thế nào là đúng?",
@@ -46,7 +46,7 @@
           "correctAnswer": 0,
           "isCritical": false,
           "imageName": "",
-          "explanation": "Đáp án 0 là chính xác nhất bởi vì khổ giới hạn của đường bộ bao gồm cả kích thước giới hạn về chiều rộng và chiều cao của toàn bộ tuyến đường. Điều này đảm bảo mọi phương tiện, kể cả hàng hóa xếp trên xe, đều có thể đi qua an toàn và được quy định rõ ràng theo các tiêu chuẩn kỹ thuật. Các đáp án còn lại đều thiếu một trong hai yếu tố quan trọng (chiều rộng hoặc chiều cao) hoặc chưa đủ bao quát toàn bộ khái niệm. Mẹo: Khi gặp định nghĩa \"khổ giới hạn\", hãy chọn đáp án nào bao gồm cả \"chiều rộng\" và \"chiều cao\", áp dụng cho \"đường bộ\" và có cụm từ \"quy chuẩn, tiêu chuẩn kỹ thuật\" để có câu trả lời chuẩn xác nhất."
+          "explanation": "Khổ giới hạn của đường bộ là giới hạn khoảng trống về chiều rộng và chiều cao của đường, cầu, hầm để xe đi qua an toàn."
         },
         {
           "question": "Dải phân cách được lắp đặt để làm gì?",
@@ -57,7 +57,7 @@
           "correctAnswer": 1,
           "isCritical": false,
           "imageName": "",
-          "explanation": "Dải phân cách có vai trò cốt lõi trong việc đảm bảo an toàn và trật tự giao thông. Chức năng chính của nó là phân chia rõ ràng hai chiều xe chạy riêng biệt, hoặc tách biệt các làn đường dành cho những loại phương tiện khác nhau (ví dụ xe cơ giới và xe thô sơ) ngay cả trên cùng một chiều đường. Điều này giúp giảm thiểu nguy cơ va chạm trực diện và tổ chức luồng giao thông một cách khoa học, hiệu quả. Mẹo: Hãy hình dung dải phân cách như một \"ranh giới cứng\" giúp \"chia ô\" trên mặt đường, đảm bảo các dòng xe không lấn chiếm nhau, đặc biệt là xe đi ngược chiều hoặc xe khác loại."
+          "explanation": "Dải phân cách dùng để phân chia đường thành hai chiều riêng biệt hoặc phân chia làn xe cơ giới và xe thô sơ."
         },
         {
           "question": "Vạch kẻ đường là gì?",
@@ -68,7 +68,7 @@
           "correctAnswer": 1,
           "isCritical": false,
           "imageName": "",
-          "explanation": "Vạch kẻ đường, đúng như đáp án đã nêu, chính là những đường vạch được vẽ trực tiếp trên mặt đường. Chúng có vai trò cụ thể là phân chia các làn đường, chỉ dẫn cho người lái xe về vị trí hoặc hướng đi cần tuân thủ, và xác định các vị trí dừng, đỗ xe an toàn. Đây là định nghĩa đầy đủ và chính xác nhất, mô tả đúng bản chất và chức năng chính của vạch kẻ đường trong quy chuẩn báo hiệu đường bộ. Mẹo: Cứ nhớ vạch kẻ đường là để \"chia\", \"chỉ\" và \"định vị\" mọi thứ trên mặt đường là đúng!"
+          "explanation": "Vạch kẻ đường là vạch trên mặt đường để phân chia làn, chỉ hướng đi hoặc vị trí dừng lại."
         },
         {
           "question": "Người điều khiển phương tiện tham gia giao thông đường bộ được hiểu như thế nào là đúng?",
@@ -79,7 +79,7 @@
           "correctAnswer": 0,
           "isCritical": false,
           "imageName": "",
-          "explanation": "Theo Luật Giao thông đường bộ, \"người điều khiển phương tiện tham gia giao thông đường bộ\" được hiểu là những người trực tiếp vận hành xe cơ giới, xe thô sơ và xe máy chuyên dùng trên đường. Đáp án này mô tả chính xác chủ thể điều khiển các loại phương tiện. Đáp án còn lại (người hướng dẫn giao thông) là định nghĩa của \"người điều khiển giao thông\", có vai trò khác biệt, không trực tiếp lái phương tiện. Mẹo: \"Điều khiển *phương tiện*\" là *lái xe*; \"Điều khiển *giao thông*\" là *hướng dẫn, điều tiết*."
+          "explanation": "Gồm người điều khiển xe cơ giới, xe thô sơ và xe máy chuyên dùng tham gia giao thông."
         },
         {
           "question": "Người lái xe được hiểu như thế nào là đúng?",
@@ -90,7 +90,7 @@
           "correctAnswer": 0,
           "isCritical": false,
           "imageName": "",
-          "explanation": "Theo Luật Giao thông đường bộ, khái niệm \"Người lái xe\" được quy định cụ thể là người điều khiển xe cơ giới. Điều này giúp phân biệt rõ ràng với người điều khiển xe thô sơ hoặc xe máy chuyên dùng, vốn có các định nghĩa riêng trong luật. Chỉ người điều khiển xe cơ giới mới được gọi là \"người lái xe\" và cần có Giấy phép lái xe. Mẹo: Hãy nhớ rằng \"Lái xe\" (hành động lái) luôn gắn liền với \"Cơ giới\" (loại xe có động cơ), còn các loại khác dùng từ \"điều khiển\" chung chung hơn."
+          "explanation": "Người lái xe được định nghĩa cụ thể là người điều khiển xe cơ giới."
         },
         {
           "question": "Trong nhóm các phương tiện giao thông đường bộ dưới đây, nhóm phương tiện nào là xe cơ giới?",
@@ -101,7 +101,7 @@
           "correctAnswer": 1,
           "isCritical": false,
           "imageName": "",
-          "explanation": "Các bạn nhớ nhé, đáp án 1 chính xác vì đã liệt kê đúng và đủ nhóm phương tiện được Luật Giao thông đường bộ quy định là xe cơ giới, bao gồm cả ô tô, mô tô, xe gắn máy và cả rơ moóc, sơ mi rơ moóc khi được kéo bởi xe cơ giới. Các xe chở người/hàng bốn bánh có động cơ cũng thuộc nhóm này. Đặc biệt lưu ý, xe đạp, xe đạp máy, xe đạp điện không phải là xe cơ giới đâu nhé! Mẹo: Cứ thấy \"xe đạp\", \"xe đạp điện\" trong danh sách là loại ngay khỏi nhóm xe cơ giới. Xe cơ giới là phải có động cơ mạnh mẽ để tự vận hành độc lập!"
+          "explanation": "Gồm ô tô, rơ moóc/sơ mi rơ moóc được kéo, xe bốn bánh có động cơ, mô tô, xe gắn máy và xe tương tự."
         },
         {
           "question": "Trong nhóm các phương tiện giao thông đường bộ dưới đây, nhóm phương tiện nào là xe thô sơ?",
@@ -112,7 +112,7 @@
           "correctAnswer": 0,
           "isCritical": false,
           "imageName": "",
-          "explanation": "Chào các bạn, đây là một câu hỏi rất quan trọng để phân biệt các loại phương tiện khi tham gia giao thông nhé! \"Xe thô sơ\" là nhóm phương tiện di chuyển chủ yếu bằng sức người, sức vật hoặc có động cơ với công suất rất nhỏ, không được xếp vào loại xe cơ giới. Đáp án 0 liệt kê chính xác các phương tiện này, bao gồm cả xe đạp máy và xe đạp điện vốn tuy có động cơ nhưng theo Luật Giao thông đường bộ vẫn thuộc nhóm xe thô sơ. Các đáp án còn lại đều chứa \"xe gắn máy\", \"xe ô tô\" hay \"máy chuyên dùng\" - những phương tiện này rõ ràng là xe cơ giới nên không đúng nhé! Mẹo: Cứ thấy \"thô sơ\" là nghĩ ngay đến \"ít sức mạnh\", đa phần do người hoặc vật kéo, hoặc động cơ cực yếu, không có máy móc phức tạp như xe máy, ô tô đâu nha."
+          "explanation": "Gồm xe đạp (kể cả xe đạp điện/đạp máy), xích lô, xe lăn khuyết tật, xe súc vật kéo và xe tương tự."
         },
         {
           "question": "Phương tiện giao thông đường bộ gồm những loại nào?",
@@ -123,7 +123,7 @@
           "correctAnswer": 2,
           "isCritical": false,
           "imageName": "",
-          "explanation": "Đúng vậy, đáp án 2 là hoàn toàn chính xác! Phương tiện giao thông đường bộ được định nghĩa rất rộng, bao gồm tất cả các loại phương tiện tham gia giao thông trên đường bộ. Cụ thể, chúng ta có **phương tiện giao thông cơ giới đường bộ** (như ô tô, xe máy) và **phương tiện giao thông thô sơ đường bộ** (như xe đạp, xe xích lô) cùng với **xe máy chuyên dùng**. Chỉ khi chọn cả hai ý trên mới bao quát đầy đủ khái niệm này theo Luật Giao thông đường bộ. Mẹo: Khi câu hỏi hỏi về các thành phần cấu tạo nên một khái niệm \"tổng thể\" (ví dụ: \"gồm những loại nào\"), nếu các đáp án nhỏ là các \"nhóm thành phần\" khác nhau và có lựa chọn \"Cả hai ý trên\" (hoặc \"Tất cả các ý trên\"), thì đó thường là đáp án đúng."
+          "explanation": "Gồm phương tiện cơ giới đường bộ, phương tiện thô sơ đường bộ và xe máy chuyên dùng."
         },
         {
           "question": "Người lái xe kinh doanh vận tải khi thực hiện tốt việc rèn luyện, nâng cao trách nhiệm, đạo đức nghề nghiệp sẽ thu được kết quả như thế nào dưới đây?",
@@ -134,7 +134,7 @@
           "correctAnswer": 0,
           "isCritical": false,
           "imageName": "",
-          "explanation": "Chọn đáp án đúng “Được khách hàng, xã hội tôn trọng; được đồng nghiệp quý mến, giúp đỡ; được doanh nghiệp tin dùng và đóng góp nhiều cho xã hội; thu hút được khách hàng, góp phần quan trọng trong xây dựng thương hiệu, kinh doanh có hiệu quả cao.” vì phù hợp với quy tắc/định nghĩa chính thức của Luật GTĐB và quy chuẩn báo hiệu. Các lựa chọn khác thiếu, sai hoặc trái quy tắc."
+          "explanation": "Giúp người lái xe được tôn trọng, doanh nghiệp tin dùng, kinh doanh hiệu quả và đóng góp cho xã hội."
         },
         {
           "question": "Khi vào số để khởi hành xe ô tô có số tự động, người lái xe phải thực hiện các thao tác nào để bảo đảm an toàn?",
@@ -145,7 +145,7 @@
           "correctAnswer": 0,
           "isCritical": false,
           "imageName": "",
-          "explanation": "Chọn đáp án đúng “Đạp bàn đạp phanh chân hết hành trình, vào số và nhả phanh đỗ, kiểm tra lại xem có bị nhầm số không rồi mới cho xe lăn bánh.” vì phù hợp với quy tắc/định nghĩa chính thức của Luật GTĐB và quy chuẩn báo hiệu. Các lựa chọn khác thiếu, sai hoặc trái quy tắc."
+          "explanation": "Đạp phanh chân hết hành trình, vào số, nhả phanh tay và kiểm tra số trước khi cho xe chạy."
         },
         {
           "question": "Khi nhả phanh đỗ cơ khí điều khiển bằng tay (phanh tay), người lái xe cần phải thực hiện các thao tác nào?",
@@ -156,7 +156,7 @@
           "correctAnswer": 1,
           "isCritical": false,
           "imageName": "",
-          "explanation": "Chọn đáp án đúng “Dùng lực tay phải bóp khóa hãm đẩy cần phanh tay về phía trước hết hành trình; nếu khóa hãm bị kẹt cứng phải kéo cần phanh tay về phía sau đồng thời bóp khóa hãm.” vì phù hợp với quy tắc/định nghĩa chính thức của Luật GTĐB và quy chuẩn báo hiệu. Các lựa chọn khác thiếu, sai hoặc trái quy tắc."
+          "explanation": "Bóp khóa hãm, đẩy phanh tay về trước hết hành trình. Nếu kẹt, kéo nhẹ về sau rồi bóp khóa hãm."
         },
         {
           "question": "Phương pháp kiểm tra mức dầu bôi trơn động cơ nào dưới đây là đúng?",
@@ -167,7 +167,7 @@
           "correctAnswer": 2,
           "isCritical": false,
           "imageName": "",
-          "explanation": "Chọn đáp án đúng “Rút que thăm dầu trên các-te, lau sạch que thăm sau đó cắm vào các-te và rút ra quan sát vệt dầu trên que thăm, mức dầu phải nằm trong khoảng vạch mức tối thiểu và tối đa được thể hiện trên que thăm.” vì phù hợp với quy tắc/định nghĩa chính thức của Luật GTĐB và quy chuẩn báo hiệu. Các lựa chọn khác thiếu, sai hoặc trái quy tắc."
+          "explanation": "Rút que thăm dầu, lau sạch, cắm lại rồi rút ra quan sát: mức dầu phải nằm giữa vạch Max và Min."
         },
         {
           "question": "Biển nào cấm các loại xe cơ giới đi vào, trừ xe máy hai bánh, xe gắn máy và các loại xe ưu tiên theo quy định?",
@@ -178,7 +178,7 @@
           "correctAnswer": 0,
           "isCritical": false,
           "imageName": "de1_q16",
-          "explanation": "Quy tắc an toàn và pháp luật cấm tuyệt đối hành vi/điều kiện nêu trong đáp án đúng: “Biển 1.”, nhằm phòng ngừa nguy hiểm và vi phạm. Các đáp án còn lại không bao trùm đầy đủ hoặc không phù hợp."
+          "explanation": "Biển 1 (Cấm xe ô tô) cấm tất cả xe cơ giới đi vào (trừ xe máy 2 bánh, gắn máy và xe ưu tiên)."
         },
         {
           "question": "Biển nào cấm xe ô tô tải?",
@@ -189,7 +189,7 @@
           "correctAnswer": 3,
           "isCritical": false,
           "imageName": "de1_q17",
-          "explanation": "Quy tắc an toàn và pháp luật cấm tuyệt đối hành vi/điều kiện nêu trong đáp án đúng: “Biển 1 và biển 2.”, nhằm phòng ngừa nguy hiểm và vi phạm. Các đáp án còn lại không bao trùm đầy đủ hoặc không phù hợp."
+          "explanation": "Biển 1 (Cấm ô tô) cấm cả xe tải. Biển 2 cấm trực tiếp xe tải. Vậy chọn Biển 1 và 2."
         },
         {
           "question": "Biển nào cấm máy kéo?",
@@ -200,7 +200,7 @@
           "correctAnswer": 1,
           "isCritical": false,
           "imageName": "de1_q18",
-          "explanation": "Quy tắc an toàn và pháp luật cấm tuyệt đối hành vi/điều kiện nêu trong đáp án đúng: “Biển 2 và biển 3.”, nhằm phòng ngừa nguy hiểm và vi phạm. Các đáp án còn lại không bao trùm đầy đủ hoặc không phù hợp"
+          "explanation": "Biển 2 (Cấm xe tải) và Biển 3 (Cấm máy kéo) đều cấm máy kéo đi vào."
         },
         {
           "question": "Biển nào báo hiệu cấm xe mô tô ba bánh chở hàng đi qua?",
@@ -211,7 +211,7 @@
           "correctAnswer": 0,
           "isCritical": false,
           "imageName": "de1_q19",
-          "explanation": "Quy tắc an toàn và pháp luật cấm tuyệt đối hành vi/điều kiện nêu trong đáp án đúng: “Biển 1 và biển 2.”, nhằm phòng ngừa nguy hiểm và vi phạm. Các đáp án còn lại không bao trùm đầy đủ hoặc không phù hợp."
+          "explanation": "Biển 1 (Cấm mô tô) và Biển 2 (Cấm ô tô) đều cấm xe mô tô ba bánh."
         },
         {
           "question": "Biển nào dưới đây xe gắn máy được phép đi vào?",
@@ -222,7 +222,7 @@
           "correctAnswer": 2,
           "isCritical": false,
           "imageName": "de1_q20",
-          "explanation": "Chọn đáp án đúng “Cả hai biển.” vì phù hợp với quy tắc/định nghĩa chính thức của Luật GTĐB và quy chuẩn báo hiệu. Các lựa chọn khác thiếu, sai hoặc trái quy tắc."
+          "explanation": "Biển 1 cấm mô tô và Biển 2 cấm ô tô đều không cấm xe gắn máy (dưới 50cc). Chọn cả hai biển."
         },
         {
           "question": "Biển nào báo hiệu cấm xe mô tô đi vào?",
@@ -233,7 +233,7 @@
           "correctAnswer": 0,
           "isCritical": false,
           "imageName": "de1_q21",
-          "explanation": "Quy tắc an toàn và pháp luật cấm tuyệt đối hành vi/điều kiện nêu trong đáp án đúng: “Biển 1.”, nhằm phòng ngừa nguy hiểm và vi phạm. Các đáp án còn lại không bao trùm đầy đủ hoặc không phù hợp."
+          "explanation": "Biển 1 là biển báo cấm xe mô tô đi vào."
         },
         {
           "question": "Khi gặp biển nào thì xe mô tô hai bánh được đi vào?",
@@ -244,7 +244,7 @@
           "correctAnswer": 2,
           "isCritical": false,
           "imageName": "de1_q22",
-          "explanation": "Chọn đáp án đúng “Biển 2 và biển 3.” vì phù hợp với quy tắc/định nghĩa chính thức của Luật GTĐB và quy chuẩn báo hiệu. Các lựa chọn khác thiếu, sai hoặc trái quy tắc."
+          "explanation": "Biển 1 cấm mô tô nên xe mô tô được phép đi vào Biển 2 (Cấm ô tô) và Biển 3 (Cấm xe tải)."
         },
         {
           "question": "Biển nào cho phép xe ô tô con được vượt?",
@@ -255,7 +255,7 @@
           "correctAnswer": 2,
           "isCritical": false,
           "imageName": "de1_q23",
-          "explanation": "Chọn đáp án đúng “Biển 1 và biển 3.” vì phù hợp với quy tắc/định nghĩa chính thức của Luật GTĐB và quy chuẩn báo hiệu. Các lựa chọn khác thiếu, sai hoặc trái quy tắc."
+          "explanation": "Biển 1 hết cấm vượt, Biển 3 cấm xe tải vượt (không cấm ô tô con vượt). Chọn Biển 1 và 3."
         },
         {
           "question": "Biển nào không cho phép xe ô tô con vượt?",
@@ -266,7 +266,7 @@
           "correctAnswer": 1,
           "isCritical": false,
           "imageName": "de1_q24",
-          "explanation": "Chọn đáp án đúng “Biển 2.” vì phù hợp với quy tắc/định nghĩa chính thức của Luật GTĐB và quy chuẩn báo hiệu. Các lựa chọn khác thiếu, sai hoặc trái quy tắc."
+          "explanation": "Biển 2 cấm tất cả các loại xe cơ giới vượt nhau (bao gồm xe ô tô con)."
         },
         {
           "question": "Biển nào cấm xe ô tô tải vượt?",
@@ -277,7 +277,7 @@
           "correctAnswer": 3,
           "isCritical": false,
           "imageName": "de1_q25",
-          "explanation": "Quy tắc an toàn và pháp luật cấm tuyệt đối hành vi/điều kiện nêu trong đáp án đúng: “Biển 2 và biển 3.”, nhằm phòng ngừa nguy hiểm và vi phạm. Các đáp án còn lại không bao trùm đầy đủ hoặc không phù hợp."
+          "explanation": "Biển 2 (Cấm ô tô vượt) cấm cả xe tải. Biển 3 cấm trực tiếp xe tải vượt. Chọn Biển 2 và 3."
         },
         {
           "question": "Theo hướng mũi tên, xe nào chấp hành đúng quy tắc giao thông?",
@@ -288,7 +288,7 @@
           "correctAnswer": 2,
           "isCritical": false,
           "imageName": "de1_q26",
-          "explanation": "Chọn đáp án đúng “Chỉ xe con.” vì phù hợp với quy tắc/định nghĩa chính thức của Luật GTĐB và quy chuẩn báo hiệu. Các lựa chọn khác thiếu, sai hoặc trái quy tắc."
+          "explanation": "Đèn đỏ cấm xe tải rẽ phải và xe khách đi thẳng. Chỉ xe con rẽ phải theo đèn xanh là đúng."
         },
         {
           "question": "Theo hướng mũi tên, thứ tự các xe đi như thế nào là đúng quy tắc giao thông?",
@@ -299,7 +299,7 @@
           "correctAnswer": 1,
           "isCritical": false,
           "imageName": "de1_q27",
-          "explanation": "Chọn đáp án đúng “Xe tải, xe mô tô, xe khách, xe con.” vì phù hợp với quy tắc/định nghĩa chính thức của Luật GTĐB và quy chuẩn báo hiệu. Các lựa chọn khác thiếu, sai hoặc trái quy tắc."
+          "explanation": "Xe tải và mô tô đi trước (đèn xanh), xe khách và xe con dừng lại (đèn đỏ)."
         },
         {
           "question": "Theo hướng mũi tên, thứ tự các xe đi như thế nào là đúng quy tắc giao thông?",
@@ -310,7 +310,7 @@
           "correctAnswer": 0,
           "isCritical": false,
           "imageName": "de1_q28",
-          "explanation": "Chọn đáp án đúng “Xe công an đi làm nhiệm vụ khẩn cấp, xe con, xe tải, xe khách.” vì phù hợp với quy tắc/định nghĩa chính thức của Luật GTĐB và quy chuẩn báo hiệu. Các lựa chọn khác thiếu, sai hoặc trái quy tắc."
+          "explanation": "Xe công an (xe ưu tiên) đi trước, sau đó đến xe con (đèn xanh), xe tải và xe khách dừng lại."
         },
         {
           "question": "Theo hướng mũi tên, thứ tự các xe đi như thế nào là đúng quy tắc giao thông?",
@@ -321,7 +321,7 @@
           "correctAnswer": 3,
           "isCritical": false,
           "imageName": "de1_q29",
-          "explanation": "Chọn đáp án đúng “Xe công an đi làm nhiệm vụ khẩn cấp, xe tải, xe khách, xe con.” vì phù hợp với quy tắc/định nghĩa chính thức của Luật GTĐB và quy chuẩn báo hiệu. Các lựa chọn khác thiếu, sai hoặc trái quy tắc."
+          "explanation": "Xe công an (xe ưu tiên) được đi trước, tiếp theo xe tải đi hướng đèn xanh, xe khách và xe con dừng."
         },
         {
           "question": "Theo hướng mũi tên, thứ tự các xe đi như thế nào là đúng quy tắc giao thông?",
@@ -332,7 +332,7 @@
           "correctAnswer": 2,
           "isCritical": false,
           "imageName": "de1_q30",
-          "explanation": "Chọn đáp án đúng “Xe mô tô, xe con, xe tải.” vì phù hợp với quy tắc/định nghĩa chính thức của Luật GTĐB và quy chuẩn báo hiệu. Các lựa chọn khác thiếu, sai hoặc trái quy tắc."
+          "explanation": "Thứ tự ưu tiên: Xe mô tô và xe con đi hướng đèn xanh trước, xe tải đi hướng đèn đỏ đi sau."
         },
         {
           "question": "Xe nào phải nhường đường trong trường hợp này?",
@@ -343,7 +343,7 @@
           "correctAnswer": 0,
           "isCritical": false,
           "imageName": "de1_q31",
-          "explanation": "Nguyên tắc nhường đường: ưu tiên an toàn, giữ phải, nhường cho xe ưu tiên, người đi bộ; tại chỗ hẹp thì xe gần nơi tránh hoặc theo quy tắc dốc lên/dốc xuống. Chọn đáp án: “Xe con.”."
+          "explanation": "Xe con gặp biển báo \"Phải nhường đường qua đường hẹp\" nên phải nhường đường cho xe tải."
         },
         {
           "question": "Trường hợp này xe nào được quyền đi trước?",
@@ -354,7 +354,7 @@
           "correctAnswer": 1,
           "isCritical": false,
           "imageName": "de1_q32",
-          "explanation": "Chọn đáp án đúng “Xe con.” vì phù hợp với quy tắc/định nghĩa chính thức của Luật GTĐB và quy chuẩn báo hiệu. Các lựa chọn khác thiếu, sai hoặc trái quy tắc."
+          "explanation": "Xe con nằm trên đường ưu tiên (biển báo bắt đầu đường ưu tiên) nên được đi trước xe mô tô."
         },
         {
           "question": "Thứ tự các xe đi như thế nào là đúng quy tắc giao thông?",
@@ -365,7 +365,7 @@
           "correctAnswer": 0,
           "isCritical": false,
           "imageName": "de1_q33",
-          "explanation": "Chọn đáp án đúng “Xe con (A), xe cứu thương đi làm nhiệm vụ cấp cứu, xe con (B).” vì phù hợp với quy tắc/định nghĩa chính thức của Luật GTĐB và quy chuẩn báo hiệu. Các lựa chọn khác thiếu, sai hoặc trái quy tắc."
+          "explanation": "Xe con A đã vào giao lộ được đi trước, tiếp theo xe cứu thương (xe ưu tiên), sau đó xe con B."
         },
         {
           "question": "Thứ tự các xe đi như thế nào là đúng quy tắc giao thông?",
@@ -376,7 +376,7 @@
           "correctAnswer": 1,
           "isCritical": false,
           "imageName": "de1_q34",
-          "explanation": "Chọn đáp án đúng “Xe chữa cháy đi làm nhiệm vụ chữa cháy, xe cứu thương đi làm nhiệm vụ cấp cứu, xe con.” vì phù hợp với quy tắc/định nghĩa chính thức của Luật GTĐB và quy chuẩn báo hiệu. Các lựa chọn khác thiếu, sai hoặc trái quy tắc."
+          "explanation": "Thứ tự ưu tiên xe khẩn cấp: Xe chữa cháy đi trước xe cứu thương, cuối cùng là xe con."
         },
         {
           "question": "Xe nào được quyền đi trước trong trường hợp này?",
@@ -387,7 +387,7 @@
           "correctAnswer": 1,
           "isCritical": false,
           "imageName": "de1_q35",
-          "explanation": "Chọn đáp án đúng “Xe cứu thương đi làm nhiệm vụ cấp cứu.” vì phù hợp với quy tắc/định nghĩa chính thức của Luật GTĐB và quy chuẩn báo hiệu. Các lựa chọn khác thiếu, sai hoặc trái quy tắc."
+          "explanation": "Xe cứu thương là xe ưu tiên nên được quyền đi trước xe mô tô tại ngã tư."
         }
       ]
     },
@@ -404,7 +404,7 @@
           "correctAnswer": 2,
           "isCritical": true,
           "imageName": "",
-          "explanation": "Quy tắc an toàn và pháp luật cấm tuyệt đối hành vi/điều kiện nêu trong đáp án đúng: “Cả hai ý trên.”, nhằm phòng ngừa nguy hiểm và vi phạm. Các đáp án còn lại không bao trùm đầy đủ hoặc không phù hợp. (Câu điểm liệt – bắt buộc nắm chắc)."
+          "explanation": "Hành vi đưa xe không có chứng nhận kiểm định hoặc hết niên hạn sử dụng tham gia giao thông bị cấm. (Câu điểm liệt)"
         },
         {
           "question": "Người tham gia giao thông đường bộ gồm những đối tượng nào?",
@@ -415,7 +415,7 @@
           "correctAnswer": 2,
           "isCritical": false,
           "imageName": "",
-          "explanation": "Người tham gia giao thông đường bộ là một khái niệm rất rộng, bao gồm tất cả những ai có mặt và di chuyển trên đường. Từ người điều khiển, người ngồi trên phương tiện đến người đi bộ hay người dẫn dắt vật nuôi, tất cả đều là người tham gia giao thông. Chính vì thế, cả hai ý trên đều đúng khi liệt kê các đối tượng này. Mẹo: Đối với các câu hỏi về khái niệm tổng quát như \"Người tham gia giao thông\", nếu các phương án nhỏ đều đúng và có lựa chọn \"Cả hai ý trên\", thì đó thường là đáp án chính xác."
+          "explanation": "Gồm người điều khiển, người ngồi trên phương tiện di chuyển và người đi bộ, dẫn dắt vật nuôi trên đường."
         },
         {
           "question": "Người điều khiển phương tiện tham gia giao thông đường bộ gồm những đối tượng nào dưới đây?",
@@ -426,7 +426,7 @@
           "correctAnswer": 2,
           "isCritical": false,
           "imageName": "",
-          "explanation": "Chào các bạn, đây là một câu hỏi cơ bản nhưng rất quan trọng về định nghĩa trong luật giao thông. Theo Luật Giao thông đường bộ, khái niệm \"người điều khiển phương tiện tham gia giao thông\" được hiểu rất rộng, bao gồm tất cả những ai đang điều khiển bất kỳ loại phương tiện nào trên đường. Điều này có nghĩa là bao gồm cả người lái xe cơ giới (ô tô, mô tô), người điều khiển xe thô sơ (như xe đạp, xe súc vật kéo) và cả người điều khiển xe máy chuyên dùng (ví dụ: máy kéo, xe lu, xe xúc). Do đó, để bao quát hết các đối tượng này, đáp án \"Cả hai ý trên\" là hoàn toàn chính xác. Mẹo: Với những câu hỏi liệt kê các thành phần rộng (như \"người điều khiển\", \"phương tiện\", \"người tham gia\") và có đáp án \"Cả hai ý trên\" hoặc \"Tất cả các ý trên\", khả năng rất cao đây là đáp án đúng vì luật thường bao quát toàn diện."
+          "explanation": "Gồm người điều khiển xe cơ giới, xe thô sơ và xe máy chuyên dùng trên đường bộ."
         },
         {
           "question": "Người điều khiển giao thông đường bộ được hiểu như thế nào là đúng?",
@@ -437,7 +437,7 @@
           "correctAnswer": 1,
           "isCritical": false,
           "imageName": "",
-          "explanation": "Người điều khiển giao thông\" theo quy định của pháp luật đường bộ chính là Cảnh sát giao thông và những người được cấp thẩm quyền giao nhiệm vụ hướng dẫn, điều tiết giao thông tại các giao lộ hay điểm ùn tắc. Họ có vai trò thiết yếu trong việc đảm bảo trật tự và an toàn giao thông, và hiệu lệnh của họ có giá trị ưu tiên cao nhất, thậm chí hơn cả đèn tín hiệu hay biển báo. Các đáp án khác mô tả những người tham gia giao thông, không phải người điều khiển, hướng dẫn giao thông. Mẹo: Khi nghĩ đến \"người điều khiển giao thông\", hãy nghĩ đến người có *quyền ra hiệu lệnh* và bạn phải *tuyệt đối tuân theo*."
+          "explanation": "Là Cảnh sát giao thông và người được giao nhiệm vụ hướng dẫn, điều tiết giao thông."
         },
         {
           "question": "Dừng xe được hiểu như thế nào là đúng?",
@@ -448,7 +448,7 @@
           "correctAnswer": 1,
           "isCritical": false,
           "imageName": "",
-          "explanation": "Câu về vị trí/thao tác dừng, đỗ, quay đầu, lùi. Đáp án đúng nêu đúng nguyên tắc: chỉ thực hiện ở nơi cho phép, bảo đảm tầm nhìn và an toàn; cấm tại cầu, đoạn cong, giao cắt đường sắt, phần đường người đi bộ, đường một chiều... Chọn: “Là trạng thái đứng yên tạm thời của xe trong một khoảng thời gian cần thiết đủ để cho người lên xe, xuống xe, xếp dỡ hàng hóa, kiểm tra kỹ thuật xe hoặc hoạt động khác. Khi dừng xe không được tắt máy và không được rời khỏi vị trí lái, trừ trường hợp rời khỏi vị trí lái để đóng, mở cửa xe, xếp dỡ hàng hóa, kiểm tra kỹ thuật xe nhưng phải sử dụng phanh đỗ xe hoặc thực hiện biện pháp an toàn khác.”."
+          "explanation": "Dừng xe là trạng thái đứng yên tạm thời của xe, không tắt máy và người lái không rời vị trí."
         },
         {
           "question": "Đỗ xe được hiểu như thế nào là đúng?",
@@ -459,7 +459,7 @@
           "correctAnswer": 1,
           "isCritical": false,
           "imageName": "",
-          "explanation": "Câu về vị trí/thao tác dừng, đỗ, quay đầu, lùi. Đáp án đúng nêu đúng nguyên tắc: chỉ thực hiện ở nơi cho phép, bảo đảm tầm nhìn và an toàn; cấm tại cầu, đoạn cong, giao cắt đường sắt, phần đường người đi bộ, đường một chiều... Chọn: “Là trạng thái đứng yên của xe không giới hạn thời gian. Khi đỗ xe, người điều khiển phương tiện tham gia giao thông đường bộ chỉ được rời khỏi xe khi đã sử dụng phanh đỗ xe hoặc thực hiện biện pháp an toàn khác. Xe đỗ trên đoạn đường dốc phải đánh lái về phía lề đường, chèn bánH."
+          "explanation": "Đỗ xe là trạng thái đứng yên không giới hạn thời gian, người lái chỉ rời xe khi đã phanh tay an toàn."
         },
         {
           "question": "Đường cao tốc được hiểu như thế nào là đúng?",
@@ -470,7 +470,7 @@
           "correctAnswer": 0,
           "isCritical": false,
           "imageName": "",
-          "explanation": "Đây là câu hỏi khái niệm/định nghĩa. Đáp án đúng chính là nội dung định nghĩa chuẩn: “Là một cấp kỹ thuật của đường bộ, chỉ dành cho một số loại xe cơ giới, xe máy chuyên dùng tham gia giao thông theo quy định của pháp luật. Có dải phân cách phân chia hai chiều xe chạy riêng biệt, không giao nhau cùng mức với một hoặc các đường khác, chỉ cho xe ra, vào ở những điểm nhất định. Có hàng rào bảo vệ, trang thiết bị phục vụ, bảo đảm giao thông liên tục, an toàn, rút ngắn thời gian hành trình.”. Hãy ghi nhớ từ khóa trong câu hỏi và so khớp với định nghĩa đầy đủ nhất."
+          "explanation": "Đường dành riêng cho xe cơ giới tốc độ cao, có dải phân cách riêng và không giao nhau cùng mức."
         },
         {
           "question": "Thiết bị an toàn cho trẻ em được hiểu như thế nào là đúng?",
@@ -481,7 +481,7 @@
           "correctAnswer": 0,
           "isCritical": false,
           "imageName": "",
-          "explanation": "Đây là câu hỏi khái niệm/định nghĩa. Đáp án đúng chính là nội dung định nghĩa chuẩn: “Là thiết bị có đủ khả năng bảo đảm an toàn cho trẻ em ở tư thế ngồi hoặc nằm trên xe ô tô, được thiết kế để giảm nguy cơ chấn thương cho người dùng trong trường hợp xảy ra va chạm hoặc xe ô tô giảm tốc độ đột ngột, bằng cách hạn chế sự di chuyển của cơ thể trẻ em.”. Hãy ghi nhớ từ khóa trong câu hỏi và so khớp với định nghĩa đầy đủ nhất."
+          "explanation": "Là thiết bị bảo đảm an toàn cho trẻ em ở tư thế ngồi/nằm để hạn chế chấn thương khi va chạm."
         },
         {
           "question": "Theo chức năng phục vụ thì đường bộ được phân loại như thế nào?",
@@ -492,7 +492,7 @@
           "correctAnswer": 0,
           "isCritical": false,
           "imageName": "",
-          "explanation": "Chọn đáp án đúng “Đường chính, đường nhánh, đường gom, đường bên, đường dành cho giao thông công cộng, đường nội bộ, đường dành riêng cho người đi bộ, người đi xe đạp và các đường khác.” vì phù hợp với quy tắc/định nghĩa chính thức của Luật GTĐB và quy chuẩn báo hiệu. Các lựa chọn khác thiếu, sai hoặc trái quy tắc."
+          "explanation": "Gồm đường chính, nhánh, gom, bên, giao thông công cộng, nội bộ, đường đi bộ và đường xe đạp."
         },
         {
           "question": "Các hành vi nào sau đây bị cấm đối với phương tiện tham gia giao thông đường bộ?",
@@ -503,7 +503,7 @@
           "correctAnswer": 1,
           "isCritical": false,
           "imageName": "",
-          "explanation": "Quy tắc an toàn và pháp luật cấm tuyệt đối hành vi/điều kiện nêu trong đáp án đúng: “Cải tạo trái phép; cố ý can thiệp làm sai lệch chỉ số trên đồng hồ báo quãng đường đã chạy của xe ô tô; cắt, hàn, tẩy xóa, đục sửa, đóng lại trái phép số khung, số động cơ của xe cơ giới, xe máy chuyên dùng.”, nhằm phòng ngừa nguy hiểm và vi phạm. Các đáp án còn lại không bao trùm đầy đủ hoặc không phù hợp."
+          "explanation": "Nghiêm cấm cải tạo trái phép, tua đồng hồ odo, đục sửa số khung số máy xe cơ giới."
         },
         {
           "question": "Việc sản xuất, sử dụng, mua, bán trái phép biển số xe có bị nghiêm cấm hay không?",
@@ -514,7 +514,7 @@
           "correctAnswer": 1,
           "isCritical": false,
           "imageName": "",
-          "explanation": "Biển số xe là vật chứng quan trọng để cơ quan chức năng quản lý phương tiện và đảm bảo an ninh trật tự giao thông. Mọi hành vi sản xuất, sử dụng, mua, bán trái phép biển số xe đều làm sai lệch thông tin quản lý, gây khó khăn cho công tác kiểm soát và có thể tiếp tay cho các hành vi vi phạm pháp luật khác. Vì vậy, đây là hành vi bị pháp luật nghiêm cấm tuyệt đối, không có trường hợp ngoại lệ nào. Mẹo: Hãy nhớ rằng, bất cứ hành vi nào liên quan đến việc làm giả, làm sai lệch hoặc giao dịch trái phép các vật phẩm quản lý của nhà nước như biển số xe đều mặc định là BỊ NGHIÊM CẤM tuyệt đối."
+          "explanation": "Nghiêm cấm mọi hành vi sản xuất, sử dụng, mua bán trái phép biển số xe."
         },
         {
           "question": "Những hành vi nào sau đây thể hiện là người có văn hóa giao thông?",
@@ -525,7 +525,7 @@
           "correctAnswer": 0,
           "isCritical": false,
           "imageName": "",
-          "explanation": "Chọn đáp án đúng “Luôn tuân thủ pháp luật về trật tự, an toàn giao thông đường bộ, nhường nhịn và giúp đỡ người khác.” vì phù hợp với quy tắc/định nghĩa chính thức của Luật GTĐB và quy chuẩn báo hiệu. Các lựa chọn khác thiếu, sai hoặc trái quy tắc."
+          "explanation": "Luôn tuân thủ luật trật tự an toàn giao thông, có tinh thần nhường nhịn và giúp đỡ người khác."
         },
         {
           "question": "Khi khởi hành ô tô sử dụng hộp số cơ khí trên đường bằng, người lái xe cần thực hiện các thao tác nào theo trình tự dưới đây?",
@@ -536,7 +536,7 @@
           "correctAnswer": 1,
           "isCritical": false,
           "imageName": "",
-          "explanation": "Chọn đáp án đúng “Kiểm tra an toàn xung quanh xe ô tô; đạp ly hợp (côn) hết hành trình; vào số 1; nhả hết phanh tay, báo hiệu bằng còi, đèn trước khi xuất phát; tăng ga đủ để xuất phát; nhả từ từ đến 1/2 hành trình bàn đạp côn và giữ trong khoảng 3 giây, sau đó vừa tăng ga vừa nhả hết côn để cho xe ô tô chuyển động.” vì phù hợp với quy tắc/định nghĩa chính thức của Luật GTĐB và quy chuẩn báo hiệu. Các lựa chọn khác thiếu, sai hoặc trái quy tắc."
+          "explanation": "Kiểm tra an toàn -> Đạp côn hết hành trình -> Vào số 1 -> Nhả phanh tay -> Báo tín hiệu -> Nhả 1/2 côn để khởi hành."
         },
         {
           "question": "Khi quay đầu xe, người lái xe cần phải quan sát và thực hiện các thao tác nào để bảo đảm an toàn giao thông?",
@@ -547,7 +547,7 @@
           "correctAnswer": 0,
           "isCritical": false,
           "imageName": "",
-          "explanation": "Câu về vị trí/thao tác dừng, đỗ, quay đầu, lùi. Đáp án đúng nêu đúng nguyên tắc: chỉ thực hiện ở nơi cho phép, bảo đảm tầm nhìn và an toàn; cấm tại cầu, đoạn cong, giao cắt đường sắt, phần đường người đi bộ, đường một chiều... Chọn: “Quan sát biển báo hiệu để biết nơi được phép quay đầu; quan sát kỹ địa hình nơi chọn để quay đầu; lựa chọn quỹ đạo quay đầu xe cho thích hợp; quay đầu xe với tốc độ thấp; thường xuyên báo tín hiệu để người, các phương tiện xung quanh được biết; nếu quay đầu xe ở nơi nguy hiểm thì đưa đầu xe về phía nguy hiểm, đưa đuôi xe về phía an toàn.”."
+          "explanation": "Bật tín hiệu, quay đầu với tốc độ thấp ở nơi được phép. Nếu nơi nguy hiểm, hướng đầu xe về phía nguy hiểm."
         },
         {
           "question": "Xe ô tô tham gia giao thông đường bộ phải bảo đảm các quy định về chất lượng, an toàn kỹ thuật và bảo vệ môi trường nào dưới đây?",
@@ -558,7 +558,7 @@
           "correctAnswer": 2,
           "isCritical": false,
           "imageName": "",
-          "explanation": "Chọn đáp án đúng “Cả hai ý trên.” vì phù hợp với quy tắc/định nghĩa chính thức của Luật GTĐB và quy chuẩn báo hiệu. Các lựa chọn khác thiếu, sai hoặc trái quy tắc."
+          "explanation": "Phải đảm bảo đủ phanh, lái, kính an toàn, còi và đầy đủ hệ thống đèn chiếu sáng, giảm thanh, giảm khói."
         },
         {
           "question": "Biển nào cấm xe tải vượt?",
@@ -569,7 +569,7 @@
           "correctAnswer": 2,
           "isCritical": false,
           "imageName": "de2_q16",
-          "explanation": "Quy tắc an toàn và pháp luật cấm tuyệt đối hành vi/điều kiện nêu trong đáp án đúng: “Cả hai biển.”, nhằm phòng ngừa nguy hiểm và vi phạm. Các đáp án còn lại không bao trùm đầy đủ hoặc không phù hợp."
+          "explanation": "Biển 1 (Cấm ô tô vượt) cấm cả xe tải. Biển 2 cấm trực tiếp xe tải vượt. Chọn cả hai biển."
         },
         {
           "question": "Biển nào xe ô tô con được phép vượt?",
@@ -580,7 +580,7 @@
           "correctAnswer": 1,
           "isCritical": false,
           "imageName": "de2_q17",
-          "explanation": "Chọn đáp án đúng “Biển 2.” vì phù hợp với quy tắc/định nghĩa chính thức của Luật GTĐB và quy chuẩn báo hiệu. Các lựa chọn khác thiếu, sai hoặc trái quy tắc."
+          "explanation": "Biển 1 cấm ô tô vượt. Biển 2 cấm xe tải vượt (không cấm ô tô con vượt). Chọn Biển 2."
         },
         {
           "question": "Biển nào cấm quay đầu xe?",
@@ -591,7 +591,7 @@
           "correctAnswer": 1,
           "isCritical": false,
           "imageName": "de2_q18",
-          "explanation": "Quy tắc an toàn và pháp luật cấm tuyệt đối hành vi/điều kiện nêu trong đáp án đúng: “Biển 2.”, nhằm phòng ngừa nguy hiểm và vi phạm. Các đáp án còn lại không bao trùm đầy đủ hoặc không phù hợp."
+          "explanation": "Biển 1 cấm rẽ trái (được quay đầu). Biển 2 cấm trực tiếp quay đầu xe. Chọn Biển 2."
         },
         {
           "question": "Biển nào cấm xe rẽ trái?",
@@ -602,7 +602,7 @@
           "correctAnswer": 0,
           "isCritical": false,
           "imageName": "de2_q19",
-          "explanation": "Quy tắc an toàn và pháp luật cấm tuyệt đối hành vi/điều kiện nêu trong đáp án đúng: “Biển 1.”, nhằm phòng ngừa nguy hiểm và vi phạm. Các đáp án còn lại không bao trùm đầy đủ hoặc không phù hợp."
+          "explanation": "Biển 1 cấm rẽ trái. Biển 2 cấm quay đầu (được rẽ trái). Chọn Biển 1."
         },
         {
           "question": "Khi gặp biển nào xe được rẽ trái?",
@@ -613,7 +613,7 @@
           "correctAnswer": 1,
           "isCritical": false,
           "imageName": "de2_q20",
-          "explanation": "Chọn đáp án đúng “Biển 2.” vì phù hợp với quy tắc/định nghĩa chính thức của Luật GTĐB và quy chuẩn báo hiệu. Các lựa chọn khác thiếu, sai hoặc trái quy tắc."
+          "explanation": "Biển 1 cấm rẽ trái. Biển 2 cấm quay đầu (được phép rẽ trái). Chọn Biển 2."
         },
         {
           "question": "Biển nào cấm xe ô tô rẽ trái?",
@@ -624,7 +624,7 @@
           "correctAnswer": 2,
           "isCritical": false,
           "imageName": "de2_q21",
-          "explanation": "Quy tắc an toàn và pháp luật cấm tuyệt đối hành vi/điều kiện nêu trong đáp án đúng: “Cả hai biển.”, nhằm phòng ngừa nguy hiểm và vi phạm. Các đáp án còn lại không bao trùm đầy đủ hoặc không phù hợp."
+          "explanation": "Biển 1 cấm rẽ trái. Biển 2 cấm rẽ trái và quay đầu. Cả hai biển đều cấm ô tô rẽ trái."
         },
         {
           "question": "Biển nào cấm các phương tiện rẽ phải?",
@@ -635,7 +635,7 @@
           "correctAnswer": 0,
           "isCritical": false,
           "imageName": "de2_q22",
-          "explanation": "Quy tắc an toàn và pháp luật cấm tuyệt đối hành vi/điều kiện nêu trong đáp án đúng: “Biển 1 và biển 2.”, nhằm phòng ngừa nguy hiểm và vi phạm. Các đáp án còn lại không bao trùm đầy đủ hoặc không phù hợp."
+          "explanation": "Biển 1 cấm rẽ phải. Biển 2 cấm rẽ phải và quay đầu. Chọn Biển 1 và 2."
         },
         {
           "question": "Biển nào cấm các phương tiện rẽ trái?",
@@ -646,7 +646,7 @@
           "correctAnswer": 0,
           "isCritical": false,
           "imageName": "de2_q23",
-          "explanation": "Quy tắc an toàn và pháp luật cấm tuyệt đối hành vi/điều kiện nêu trong đáp án đúng: “Biển 1 và biển 2.”, nhằm phòng ngừa nguy hiểm và vi phạm. Các đáp án còn lại không bao trùm đầy đủ hoặc không phù hợp."
+          "explanation": "Biển 1 cấm rẽ trái. Biển 2 cấm rẽ trái và quay đầu. Chọn Biển 1 và 2."
         },
         {
           "question": "Biển nào dưới đây chỉ cấm xe ô tô quay đầu?",
@@ -657,7 +657,7 @@
           "correctAnswer": 0,
           "isCritical": false,
           "imageName": "de2_q24",
-          "explanation": "Quy tắc an toàn và pháp luật cấm tuyệt đối hành vi/điều kiện nêu trong đáp án đúng: “Biển 1.”, nhằm phòng ngừa nguy hiểm và vi phạm. Các đáp án còn lại không bao trùm đầy đủ hoặc không phù hợp."
+          "explanation": "Biển 1 cấm ô tô quay đầu. Biển 2 cấm ô tô rẽ trái và quay đầu. Chọn Biển 1."
         },
         {
           "question": "Biển nào dưới đây cấm xe ô tô rẽ trái và quay đầu?",
@@ -668,7 +668,7 @@
           "correctAnswer": 1,
           "isCritical": false,
           "imageName": "de2_q25",
-          "explanation": "Quy tắc an toàn và pháp luật cấm tuyệt đối hành vi/điều kiện nêu trong đáp án đúng: “Biển 2.”, nhằm phòng ngừa nguy hiểm và vi phạm. Các đáp án còn lại không bao trùm đầy đủ hoặc không phù hợp."
+          "explanation": "Biển 2 cấm ô tô rẽ trái và quay đầu. Chọn Biển 2."
         },
         {
           "question": "Theo hướng mũi tên, xe nào phải nhường đường đi cuối cùng qua nơi giao nhau này?",
@@ -679,7 +679,7 @@
           "correctAnswer": 0,
           "isCritical": false,
           "imageName": "de2_q26",
-          "explanation": "Nguyên tắc nhường đường: ưu tiên an toàn, giữ phải, nhường cho xe ưu tiên, người đi bộ; tại chỗ hẹp thì xe gần nơi tránh hoặc theo quy tắc dốc lên/dốc xuống. Chọn đáp án: “Xe khách.”."
+          "explanation": "Xe tải và xe con nằm trên đường ưu tiên. Xe khách rẽ trái nằm trên đường không ưu tiên nên đi cuối cùng."
         },
         {
           "question": "Theo hướng mũi tên, xe nào phải nhường đường là đúng quy tắc giao thông?",
@@ -690,7 +690,7 @@
           "correctAnswer": 0,
           "isCritical": false,
           "imageName": "de2_q27",
-          "explanation": "Nguyên tắc nhường đường: ưu tiên an toàn, giữ phải, nhường cho xe ưu tiên, người đi bộ; tại chỗ hẹp thì xe gần nơi tránh hoặc theo quy tắc dốc lên/dốc xuống. Chọn đáp án: “Xe con.”."
+          "explanation": "Xe con rẽ trái phải nhường đường cho xe tải đi thẳng từ hướng ngược lại."
         },
         {
           "question": "Xe nào được quyền đi trước trong trường hợp này?",
@@ -701,7 +701,7 @@
           "correctAnswer": 1,
           "isCritical": false,
           "imageName": "de2_q28",
-          "explanation": "Chọn đáp án đúng “Xe chữa cháy đi làm nhiệm vụ chữa cháy.” vì phù hợp với quy tắc/định nghĩa chính thức của Luật GTĐB và quy chuẩn báo hiệu. Các lựa chọn khác thiếu, sai hoặc trái quy tắc."
+          "explanation": "Xe chữa cháy có mức ưu tiên cao hơn xe công an nên được quyền đi trước."
         },
         {
           "question": "Theo tín hiệu đèn, xe nào được phép đi?",
@@ -712,7 +712,7 @@
           "correctAnswer": 0,
           "isCritical": false,
           "imageName": "de2_q29",
-          "explanation": "Thứ tự chấp hành: hiệu lệnh người điều khiển giao thông > tín hiệu đèn > biển báo/vạch. Với tín hiệu vàng: dừng trước vạch, trừ khi đã qua vạch; vàng nhấp nháy thì giảm tốc, quan sát. Đáp án: “Xe con và xe khách.”."
+          "explanation": "Xe con và xe khách đi hướng đèn xanh. Xe tải và mô tô dừng lại trước đèn đỏ."
         },
         {
           "question": "Theo tín hiệu đèn, xe nào đi là đúng quy tắc giao thông?",
@@ -723,7 +723,7 @@
           "correctAnswer": 1,
           "isCritical": false,
           "imageName": "de2_q30",
-          "explanation": "Thứ tự chấp hành: hiệu lệnh người điều khiển giao thông > tín hiệu đèn > biển báo/vạch. Với tín hiệu vàng: dừng trước vạch, trừ khi đã qua vạch; vàng nhấp nháy thì giảm tốc, quan sát. Đáp án: “Xe con, xe tải.”."
+          "explanation": "Xe con rẽ phải và xe tải đi thẳng đúng đèn xanh. Xe khách rẽ trái và mô tô rẽ phải sai đèn đỏ."
         },
         {
           "question": "Trong trường hợp này xe nào được quyền đi trước?",
@@ -734,7 +734,7 @@
           "correctAnswer": 1,
           "isCritical": false,
           "imageName": "de2_q31",
-          "explanation": "Chọn đáp án đúng “Xe quân sự đi làm nhiệm vụ khẩn cấp.” vì phù hợp với quy tắc/định nghĩa chính thức của Luật GTĐB và quy chuẩn báo hiệu. Các lựa chọn khác thiếu, sai hoặc trái quy tắc."
+          "explanation": "Xe quân sự có mức ưu tiên cao hơn xe công an nên được đi trước."
         },
         {
           "question": "Theo tín hiệu đèn, xe tải đi theo hướng nào là đúng quy tắc giao thông?",
@@ -745,7 +745,7 @@
           "correctAnswer": 1,
           "isCritical": false,
           "imageName": "de2_q32",
-          "explanation": "Thứ tự chấp hành: hiệu lệnh người điều khiển giao thông > tín hiệu đèn > biển báo/vạch. Với tín hiệu vàng: dừng trước vạch, trừ khi đã qua vạch; vàng nhấp nháy thì giảm tốc, quan sát. Đáp án: “Chỉ hướng 1.”."
+          "explanation": "Xe tải chỉ được rẽ phải (hướng 1) theo đèn xanh kèm biển báo chỉ hướng bắt buộc."
         },
         {
           "question": "Các xe đi theo hướng mũi tên, những xe nào vi phạm quy tắc giao thông?",
@@ -756,7 +756,7 @@
           "correctAnswer": 0,
           "isCritical": false,
           "imageName": "de2_q33",
-          "explanation": "Chọn đáp án đúng “Xe khách, xe tải, xe mô tô.” vì phù hợp với quy tắc/định nghĩa chính thức của Luật GTĐB và quy chuẩn báo hiệu. Các lựa chọn khác thiếu, sai hoặc trái quy tắc."
+          "explanation": "Xe khách, xe tải và xe mô tô đều đi sai hướng làn đường bắt buộc hoặc vượt đèn đỏ."
         },
         {
           "question": "Theo hướng mũi tên, thứ tự các xe đi như thế nào là đúng quy tắc giao thông?",
@@ -767,7 +767,7 @@
           "correctAnswer": 2,
           "isCritical": false,
           "imageName": "de2_q34",
-          "explanation": "Chọn đáp án đúng “Xe mô tô, xe tải, xe khách, xe con.” vì phù hợp với quy tắc/định nghĩa chính thức của Luật GTĐB và quy chuẩn báo hiệu. Các lựa chọn khác thiếu, sai hoặc trái quy tắc."
+          "explanation": "Thứ tự: Mô tô -> Xe tải -> Xe khách -> Xe con theo thứ tự đường ưu tiên và quyền rẽ phải/đi thẳng."
         },
         {
           "question": "Trong trường hợp này xe nào đỗ vi phạm quy tắc giao thông?",
@@ -778,7 +778,7 @@
           "correctAnswer": 0,
           "isCritical": false,
           "imageName": "de2_q35",
-          "explanation": "Chọn đáp án đúng “Xe tải.” vì phù hợp với quy tắc/định nghĩa chính thức của Luật GTĐB và quy chuẩn báo hiệu. Các lựa chọn khác thiếu, sai hoặc trái quy tắc."
+          "explanation": "Xe tải đỗ ngược chiều di chuyển nên vi phạm quy tắc giao thông."
         }
       ]
     },
@@ -795,7 +795,7 @@
           "correctAnswer": 2,
           "isCritical": true,
           "imageName": "",
-          "explanation": "Chọn đáp án đúng “Được cơ quan có thẩm quyền cấp phép.” vì phù hợp với quy tắc/định nghĩa chính thức của Luật GTĐB và quy chuẩn báo hiệu. Các lựa chọn khác thiếu, sai hoặc trái quy tắc. (Câu điểm liệt – bắt buộc nắm chắc)."
+          "explanation": "Chỉ được đua xe khi được cơ quan có thẩm quyền cấp phép. (Câu điểm liệt)"
         },
         {
           "question": "Có bao nhiêu nhóm biển báo hiệu đường bộ?",
@@ -806,7 +806,7 @@
           "correctAnswer": 2,
           "isCritical": true,
           "imageName": "",
-          "explanation": "Chính xác! Theo quy định hiện hành, hệ thống biển báo hiệu đường bộ của chúng ta gồm có 5 nhóm chính: Biển báo cấm, biển báo nguy hiểm, biển hiệu lệnh, biển chỉ dẫn và biển phụ. Mỗi nhóm có một nhiệm vụ riêng, giúp chúng ta nắm rõ thông tin và chấp hành luật giao thông an toàn trên mọi nẻo đường. Mẹo: Hãy nhớ có 3 nhóm chính là Cấm, Nguy hiểm, Hiệu lệnh, và 2 nhóm hỗ trợ là Chỉ dẫn, Phụ. Tổng cộng là 5 nhóm bạn nhé!"
+          "explanation": "Hệ thống biển báo hiệu gồm 5 nhóm: Biển cấm, nguy hiểm, hiệu lệnh, chỉ dẫn và biển phụ."
         },
         {
           "question": "Khi gặp hiệu lệnh điều khiển của Cảnh sát giao thông như hình dưới đây thì người tham gia giao thông đường bộ phải đi như thế nào là đúng quy tắc giao thông?",
@@ -817,7 +817,7 @@
           "correctAnswer": 3,
           "isCritical": true,
           "imageName": "de3_q3",
-          "explanation": "Thứ tự chấp hành: hiệu lệnh người điều khiển giao thông > tín hiệu đèn > biển báo/vạch. Với tín hiệu vàng: dừng trước vạch, trừ khi đã qua vạch; vàng nhấp nháy thì giảm tốc, quan sát. Đáp án: “Người tham gia giao thông đường bộ ở phía trước và phía sau người điều khiển phải dừng lại; người tham gia giao thông đường bộ ở phía bên phải và phía bên trái người điều khiển được đi tất cả các hướng.”."
+          "explanation": "Cảnh sát giang hai tay: Phía trước/sau dừng lại. Phía bên phải/trái được đi tất cả các hướng."
         },
         {
           "question": "Khi gặp hiệu lệnh điều khiển của Cảnh sát giao thông như hình dưới đây thì người tham gia giao thông đường bộ phải đi như thế nào là đúng quy tắc giao thông?",
@@ -828,7 +828,7 @@
           "correctAnswer": 2,
           "isCritical": true,
           "imageName": "de3_q4",
-          "explanation": "Thứ tự chấp hành: hiệu lệnh người điều khiển giao thông > tín hiệu đèn > biển báo/vạch. Với tín hiệu vàng: dừng trước vạch, trừ khi đã qua vạch; vàng nhấp nháy thì giảm tốc, quan sát. Đáp án: “Người tham gia giao thông đường bộ ở tất cả các hướng phải dừng lại, trừ các xe đã ở trong khu vực giao nhau.”."
+          "explanation": "Cảnh sát giơ tay thẳng đứng: Tất cả các hướng dừng lại, trừ các xe đã đi vào ngã tư."
         },
         {
           "question": "Khi hiệu lệnh của người điều khiển giao thông trái với tín hiệu đèn giao thông hoặc biển báo hiệu đường bộ thì người tham gia giao thông đường bộ phải chấp hành báo hiệu đường bộ nào dưới đây?",
@@ -839,7 +839,7 @@
           "correctAnswer": 0,
           "isCritical": true,
           "imageName": "",
-          "explanation": "Thứ tự chấp hành: hiệu lệnh người điều khiển giao thông > tín hiệu đèn > biển báo/vạch. Với tín hiệu vàng: dừng trước vạch, trừ khi đã qua vạch; vàng nhấp nháy thì giảm tốc, quan sát. Đáp án: “Theo hiệu lệnh của người điều khiển giao thông.”."
+          "explanation": "Hiệu lệnh của người điều khiển giao thông (CSGT) là ưu tiên cao nhất."
         },
         {
           "question": "Khi ở một vị trí vừa có biển báo hiệu đặt cố định vừa có biển báo hiệu tạm thời mà hai biển có ý nghĩa khác nhau, người tham gia giao thông đường bộ phải chấp hành hiệu lệnh của biển báo hiệu nào?",
@@ -850,7 +850,7 @@
           "correctAnswer": 1,
           "isCritical": true,
           "imageName": "",
-          "explanation": "Thứ tự chấp hành: hiệu lệnh người điều khiển giao thông > tín hiệu đèn > biển báo/vạch. Với tín hiệu vàng: dừng trước vạch, trừ khi đã qua vạch; vàng nhấp nháy thì giảm tốc, quan sát. Đáp án: “Biển báo hiệu tạm thời.”."
+          "explanation": "Người tham gia giao thông phải ưu tiên tuân thủ biển báo hiệu tạm thời."
         },
         {
           "question": "Tại nơi đường giao nhau, khi đèn điều khiển giao thông có tín hiệu màu vàng, người điều khiển phương tiện tham gia giao thông phải chấp hành như thế nào là đúng quy tắc giao thông?",
@@ -861,7 +861,7 @@
           "correctAnswer": 0,
           "isCritical": true,
           "imageName": "de3_q7",
-          "explanation": "Thứ tự chấp hành: hiệu lệnh người điều khiển giao thông > tín hiệu đèn > biển báo/vạch. Với tín hiệu vàng: dừng trước vạch, trừ khi đã qua vạch; vàng nhấp nháy thì giảm tốc, quan sát. Đáp án: “Dừng lại trước vạch dừng; trường hợp đang đi trên vạch dừng hoặc đã đi qua vạch dừng mà tín hiệu đèn màu vàng thì được đi tiếp; trường hợp tín hiệu đèn màu vàng nhấp nháy, người điều khiển phương tiện tham gia giao thông đường bộ được đi nhưng phải quan sát, giảm tốc độ hoặc dừng lại nhường đường cho người đi bộ, xe lăn của người khuyết tật qua đường hoặc các phương tiện khác.”."
+          "explanation": "Dừng trước vạch. Nếu đã vượt qua vạch thì đi tiếp. Đèn vàng nhấp nháy: được đi nhưng phải giảm tốc."
         },
         {
           "question": "Người lái xe trên đường cần chấp hành quy định về tốc độ tối đa như thế nào?",
@@ -872,7 +872,7 @@
           "correctAnswer": 2,
           "isCritical": true,
           "imageName": "de3_q8",
-          "explanation": "Nguyên tắc tốc độ: không vượt quá tốc độ tối đa theo biển/loại đường; trong khu đông dân cư phải thận trọng, chỉ dùng còi/đèn theo khung giờ cho phép. Chọn đáp án phù hợp: “Không vượt quá tốc độ tối đa cho phép.”."
+          "explanation": "Không được phép chạy vượt quá tốc độ tối đa cho phép ghi trên biển báo hoặc quy định."
         },
         {
           "question": "Khi chở trẻ em dưới 10 tuổi và chiều cao dưới 1,35 mét trên xe ô tô, người lái xe phải thực hiện quy tắc nào dưới đây để bảo đảm an toàn?",
@@ -883,7 +883,7 @@
           "correctAnswer": 0,
           "isCritical": true,
           "imageName": "de3_q9",
-          "explanation": "An toàn bắt buộc: trẻ em phải có thiết bị an toàn phù hợp; người đi mô tô/xe máy phải đội mũ đạt chuẩn và cài quai đúng quy cách. Chọn phương án khẳng định yêu cầu bắt buộc: “Không được cho trẻ em ngồi cùng hàng ghế với người lái xe, trừ loại xe ô tô chỉ có một hàng ghế; người lái xe phải sử dụng, hướng dẫn sử dụng thiết bị an toàn phù hợp cho trẻ em.”."
+          "explanation": "Không cho ngồi hàng ghế trước (trừ xe 1 hàng ghế) và phải sử dụng thiết bị an toàn phù hợp."
         },
         {
           "question": "Phương tiện tham gia giao thông đường bộ di chuyển với tốc độ thấp hơn phải đi như thế nào?",
@@ -894,7 +894,7 @@
           "correctAnswer": 1,
           "isCritical": true,
           "imageName": "de3_q10",
-          "explanation": "Nguyên tắc tốc độ: không vượt quá tốc độ tối đa theo biển/loại đường; trong khu đông dân cư phải thận trọng, chỉ dùng còi/đèn theo khung giờ cho phép. Chọn đáp án phù hợp: “Đi về bên phải theo chiều đi của mình.”."
+          "explanation": "Phương tiện di chuyển với tốc độ thấp hơn phải đi về phía bên phải."
         },
         {
           "question": "Trên một chiều đường có vạch kẻ phân làn đường, người lái xe cơ giới, xe máy chuyên dùng phải điều khiển xe đi trên làn đường nào?",
@@ -905,7 +905,7 @@
           "correctAnswer": 1,
           "isCritical": true,
           "imageName": "de3_q11",
-          "explanation": "Nguyên tắc làn đường: đi đúng làn; chỉ chuyển sang làn liền kề ở nơi cho phép, bật tín hiệu trước khi chuyển, bảo đảm khoảng cách an toàn. Đáp án mô tả đúng nguyên tắc: “Đi trên làn đường bên trái.”."
+          "explanation": "Phải đi đúng làn đường quy định và chỉ chuyển làn ở những nơi cho phép."
         },
         {
           "question": "Người lái xe kinh doanh vận tải cần thực hiện những công việc gì ghi ở dưới đây để thường xuyên rèn luyện nâng cao đạo đức nghề nghiệp?",
@@ -916,7 +916,7 @@
           "correctAnswer": 2,
           "isCritical": true,
           "imageName": "",
-          "explanation": "Chọn đáp án đúng “Cả hai ý trên.” vì phù hợp với quy tắc/định nghĩa chính thức của Luật GTĐB và quy chuẩn báo hiệu. Các lựa chọn khác thiếu, sai hoặc trái quy tắc."
+          "explanation": "Phải quản lý, bảo dưỡng xe tốt, tiết kiệm và tuân thủ pháp luật, tác phong văn minh."
         },
         {
           "question": "Khi ngồi lái ô tô tư thế chân, lưng, tay của người lái xe như thế nào là đúng để bảo đảm an toàn và thoải mái?",
@@ -927,7 +927,7 @@
           "correctAnswer": 0,
           "isCritical": true,
           "imageName": "",
-          "explanation": "Chọn đáp án đúng “Điều chỉnh ghế sao cho chân có thể đạp phanh và ga dễ dàng, ngồi thẳng lưng, hai tay nắm vô lăng, tay trái nắm ở vị trí 9 đến 10 giờ và tay phải nắm ở vị trí từ 2 đến 4 giờ.” vì phù hợp với quy tắc/định nghĩa chính thức của Luật GTĐB và quy chuẩn báo hiệu. Các lựa chọn khác thiếu, sai hoặc trái quy tắc."
+          "explanation": "Ghế chỉnh vừa tầm chân, lưng thẳng, 2 tay nắm vô lăng (trái: 9-10h, phải: 2-4h)."
         },
         {
           "question": "Khi điều khiển ô tô lên dốc cao, người lái xe cần thực hiện các thao tác nào dưới đây để bảo đảm an toàn?",
@@ -938,7 +938,7 @@
           "correctAnswer": 1,
           "isCritical": true,
           "imageName": "",
-          "explanation": "Chọn đáp án đúng “Về số thấp từ chân dốc, điều chỉnh ga cho xe từ từ lên dốc; đến gần đỉnh dốc phải đi chậm, đi sát về phía bên phải đường, có tín hiệu (còi, đèn) để báo cho người lái xe đi ngược chiều biết.” vì phù hợp với quy tắc/định nghĩa chính thức của Luật GTĐB và quy chuẩn báo hiệu. Các lựa chọn khác thiếu, sai hoặc trái quy tắc."
+          "explanation": "Về số thấp từ chân dốc, đi chậm sát lề phải ở đỉnh dốc, bật đèn/còi báo hiệu."
         },
         {
           "question": "Xe mô tô và xe ô tô tham gia giao thông trên đường bộ có bắt buộc phải đủ bộ phận giảm thanh không?",
@@ -949,7 +949,7 @@
           "correctAnswer": 1,
           "isCritical": true,
           "imageName": "",
-          "explanation": "Chọn đáp án đúng “Bắt buộc.” vì phù hợp với quy tắc/định nghĩa chính thức của Luật GTĐB và quy chuẩn báo hiệu. Các lựa chọn khác thiếu, sai hoặc trái quy tắc."
+          "explanation": "Tất cả xe ô tô và xe mô tô khi tham gia giao thông bắt buộc phải có bộ phận giảm thanh."
         },
         {
           "question": "Biển nào cấm xe taxi mà không cấm các phương tiện khác?",
@@ -960,7 +960,7 @@
           "correctAnswer": 1,
           "isCritical": true,
           "imageName": "de3_q16",
-          "explanation": "Quy tắc an toàn và pháp luật cấm tuyệt đối hành vi/điều kiện nêu trong đáp án đúng: “Biển 2.”, nhằm phòng ngừa nguy hiểm và vi phạm. Các đáp án còn lại không bao trùm đầy đủ hoặc không phù hợp."
+          "explanation": "Biển 2 ghi chữ \"TAXI\" trong vòng tròn cấm, chỉ cấm xe taxi."
         },
         {
           "question": "Biển nào xe được phép rẽ trái?",
@@ -971,7 +971,7 @@
           "correctAnswer": 1,
           "isCritical": true,
           "imageName": "de3_q17",
-          "explanation": "Chọn đáp án đúng “Biển 2.” vì phù hợp với quy tắc/định nghĩa chính thức của Luật GTĐB và quy chuẩn báo hiệu. Các lựa chọn khác thiếu, sai hoặc trái quy tắc."
+          "explanation": "Biển 1 cấm rẽ trái. Biển 2 là biển chỉ dẫn khu vực quay đầu xe (được phép rẽ trái). Chọn Biển 2."
         },
         {
           "question": "Biển nào xe quay đầu không bị cấm?",
@@ -982,7 +982,7 @@
           "correctAnswer": 2,
           "isCritical": true,
           "imageName": "de3_q18",
-          "explanation": "Quy tắc an toàn và pháp luật cấm tuyệt đối hành vi/điều kiện nêu trong đáp án đúng: “Cả hai biển.”, nhằm phòng ngừa nguy hiểm và vi phạm. Các đáp án còn lại không bao trùm đầy đủ hoặc không phù hợp."
+          "explanation": "Cả Biển 1 (Cấm rẽ trái) và Biển 2 (Khu vực quay đầu) đều không cấm quay đầu xe."
         },
         {
           "question": "Biển nào xe được phép quay đầu nhưng không được rẽ trái?",
@@ -993,7 +993,7 @@
           "correctAnswer": 0,
           "isCritical": true,
           "imageName": "de3_q19",
-          "explanation": "Câu về vị trí/thao tác dừng, đỗ, quay đầu, lùi. Đáp án đúng nêu đúng nguyên tắc: chỉ thực hiện ở nơi cho phép, bảo đảm tầm nhìn và an toàn; cấm tại cầu, đoạn cong, giao cắt đường sắt, phần đường người đi bộ, đường một chiều... Chọn: “Biển 1.”."
+          "explanation": "Biển 1 (Cấm rẽ trái) được phép quay đầu xe nhưng cấm rẽ trái."
         },
         {
           "question": "Biển nào là biển \"Cấm đi ngược chiều\"?",
@@ -1004,7 +1004,7 @@
           "correctAnswer": 1,
           "isCritical": true,
           "imageName": "de3_q20",
-          "explanation": "Quy tắc an toàn và pháp luật cấm tuyệt đối hành vi/điều kiện nêu trong đáp án đúng: “Biển 2.”, nhằm phòng ngừa nguy hiểm và vi phạm. Các đáp án còn lại không bao trùm đầy đủ hoặc không phù hợp."
+          "explanation": "Biển 2 (Vòng tròn đỏ gạch ngang trắng) là biển báo cấm đi ngược chiều."
         },
         {
           "question": "Biển nào dưới đây các phương tiện không được phép đi vào?",
@@ -1015,7 +1015,7 @@
           "correctAnswer": 2,
           "isCritical": true,
           "imageName": "de3_q21",
-          "explanation": "Chọn đáp án đúng “Biển 1 và biển 2.” vì phù hợp với quy tắc/định nghĩa chính thức của Luật GTĐB và quy chuẩn báo hiệu. Các lựa chọn khác thiếu, sai hoặc trái quy tắc."
+          "explanation": "Biển 1 (Đường cấm) và Biển 2 (Cấm đi ngược chiều) đều cấm phương tiện đi vào."
         },
         {
           "question": "Gặp biển nào người lái xe không được đỗ xe vào ngày chẵn?",
@@ -1026,7 +1026,7 @@
           "correctAnswer": 1,
           "isCritical": true,
           "imageName": "de3_q22",
-          "explanation": "Câu về vị trí/thao tác dừng, đỗ, quay đầu, lùi. Đáp án đúng nêu đúng nguyên tắc: chỉ thực hiện ở nơi cho phép, bảo đảm tầm nhìn và an toàn; cấm tại cầu, đoạn cong, giao cắt đường sắt, phần đường người đi bộ, đường một chiều... Chọn: “Biển 1 và biển 3.”."
+          "explanation": "Biển 1 (Cấm đỗ tất cả các ngày) và Biển 3 (Cấm đỗ ngày chẵn - hai vạch dọc) cấm đỗ ngày chẵn."
         },
         {
           "question": "Gặp biển nào người lái xe không được đỗ xe vào ngày lẻ?",
@@ -1037,7 +1037,7 @@
           "correctAnswer": 0,
           "isCritical": true,
           "imageName": "de3_q23",
-          "explanation": "Câu về vị trí/thao tác dừng, đỗ, quay đầu, lùi. Đáp án đúng nêu đúng nguyên tắc: chỉ thực hiện ở nơi cho phép, bảo đảm tầm nhìn và an toàn; cấm tại cầu, đoạn cong, giao cắt đường sắt, phần đường người đi bộ, đường một chiều... Chọn: “Biển 1 và biển 2.”."
+          "explanation": "Biển 1 (Cấm đỗ tất cả các ngày) và Biển 2 (Cấm đỗ ngày lẻ - một vạch dọc) cấm đỗ ngày lẻ."
         },
         {
           "question": "Khi gặp biển nào xe ưu tiên theo luật định vẫn phải dừng lại?",
@@ -1048,7 +1048,7 @@
           "correctAnswer": 1,
           "isCritical": true,
           "imageName": "de3_q24",
-          "explanation": "Nguyên tắc nhường đường: ưu tiên an toàn, giữ phải, nhường cho xe ưu tiên, người đi bộ; tại chỗ hẹp thì xe gần nơi tránh hoặc theo quy tắc dốc lên/dốc xuống. Chọn đáp án: “Biển 2.”."
+          "explanation": "Biển 2 (Biển STOP) bắt buộc tất cả xe, bao gồm cả xe ưu tiên, phải dừng lại."
         },
         {
           "question": "Biển nào cấm tất cả các loại xe cơ giới và thô sơ đi lại trên đường, trừ xe ưu tiên theo luật định (nếu đường vẫn cho xe chạy được)?",
@@ -1059,7 +1059,7 @@
           "correctAnswer": 0,
           "isCritical": true,
           "imageName": "de3_q25",
-          "explanation": "Quy tắc an toàn và pháp luật cấm tuyệt đối hành vi/điều kiện nêu trong đáp án đúng: “Biển 1.”, nhằm phòng ngừa nguy hiểm và vi phạm. Các đáp án còn lại không bao trùm đầy đủ hoặc không phù hợp."
+          "explanation": "Biển 1 (Đường cấm) cấm tất cả phương tiện trừ xe ưu tiên. Biển 2 (STOP) bắt buộc xe ưu tiên dừng lại."
         },
         {
           "question": "Theo hướng mũi tên, xe nào được quyền đi trước?",
@@ -1070,7 +1070,7 @@
           "correctAnswer": 1,
           "isCritical": true,
           "imageName": "de3_q26",
-          "explanation": "Chọn đáp án đúng “Xe con (B).” vì phù hợp với quy tắc/định nghĩa chính thức của Luật GTĐB và quy chuẩn báo hiệu. Các lựa chọn khác thiếu, sai hoặc trái quy tắc."
+          "explanation": "Xe con B nằm trên đường ưu tiên nên được quyền đi trước xe tải ở ngã tư."
         },
         {
           "question": "Theo hướng mũi tên, những hướng nào xe gắn máy được phép đi?",
@@ -1081,7 +1081,7 @@
           "correctAnswer": 0,
           "isCritical": true,
           "imageName": "de3_q27",
-          "explanation": "💡 Cần phân biệt rõ: - Biển ở hướng 2 là biển CẤM MÔ TÔ (xe ≥ 50 phân khối). Biển này KHÔNG cấm xe gắn máy (xe < 50 phân khối). - Biển ở hướng 3 là biển CẤM Ô TÔ. Cũng KHÔNG cấm xe gắn máy. Đề bài đang hỏi xe của người lái là \"xe gắn máy\" (xe nhỏ dưới 50cc). Do đó, xe gắn máy không bị cấm ở hướng nào cả và được phép đi CẢ 3 HƯỚNG. (Mẹo dễ nhớ: Hỏi Mô tô -> Chọn 2 hướng. Hỏi Gắn máy -> Chọn 3 hướng)."
+          "explanation": "Xe gắn máy dưới 50cc không bị cấm bởi biển cấm mô tô (hướng 2) hay cấm ô tô (hướng 3). Đi cả 3 hướng."
         },
         {
           "question": "Xe nào đỗ vi phạm quy tắc giao thông?",
@@ -1092,7 +1092,7 @@
           "correctAnswer": 0,
           "isCritical": true,
           "imageName": "de3_q28",
-          "explanation": "Chọn đáp án đúng “Cả hai xe.” vì phù hợp với quy tắc/định nghĩa chính thức của Luật GTĐB và quy chuẩn báo hiệu. Các lựa chọn khác thiếu, sai hoặc trái quy tắc."
+          "explanation": "Cả hai xe đều đỗ đè lên vạch dành cho người đi bộ qua đường nên vi phạm."
         },
         {
           "question": "Xe nào đỗ vi phạm quy tắc giao thông?",
@@ -1103,7 +1103,7 @@
           "correctAnswer": 2,
           "isCritical": true,
           "imageName": "de3_q29",
-          "explanation": "Chọn đáp án đúng “Cả ba xe.” vì phù hợp với quy tắc/định nghĩa chính thức của Luật GTĐB và quy chuẩn báo hiệu. Các lựa chọn khác thiếu, sai hoặc trái quy tắc."
+          "explanation": "Biển cấm đỗ kèm biển phụ phạm vi tác dụng phía trước/sau cấm đỗ. Cả 3 xe đều đỗ sai."
         },
         {
           "question": "Xe tải kéo xe mô tô ba bánh như hình này có đúng quy tắc giao thông không?",
@@ -1114,7 +1114,7 @@
           "correctAnswer": 1,
           "isCritical": true,
           "imageName": "de3_q30",
-          "explanation": "Chọn đáp án đúng “Không đúng.” vì phù hợp với quy tắc/định nghĩa chính thức của Luật GTĐB và quy chuẩn báo hiệu. Các lựa chọn khác thiếu, sai hoặc trái quy tắc."
+          "explanation": "Không được kéo xe khác khi đi qua khu vực đô thị hoặc kéo xe đã kéo một xe khác."
         },
         {
           "question": "Theo hướng mũi tên, hướng nào xe không được phép đi?",
@@ -1125,7 +1125,7 @@
           "correctAnswer": 1,
           "isCritical": true,
           "imageName": "de3_q31",
-          "explanation": "Chọn đáp án đúng “Chỉ hướng 1.” vì phù hợp với quy tắc/định nghĩa chính thức của Luật GTĐB và quy chuẩn báo hiệu. Các lựa chọn khác thiếu, sai hoặc trái quy tắc."
+          "explanation": "Biển báo đầu đường chỉ cấm rẽ trái (hướng 1), xe được đi các hướng khác."
         },
         {
           "question": "hướng mũi tên, những hướng nào xe ô tô không được phép đi?",
@@ -1136,7 +1136,7 @@
           "correctAnswer": 1,
           "isCritical": true,
           "imageName": "de3_q32",
-          "explanation": "Chọn đáp án đúng “Hướng 3.” vì phù hợp với quy tắc/định nghĩa chính thức của Luật GTĐB và quy chuẩn báo hiệu. Các lựa chọn khác thiếu, sai hoặc trái quy tắc."
+          "explanation": "Hướng 3 có biển cấm ô tô rẽ trái và quay đầu. Ô tô không được đi hướng này."
         },
         {
           "question": "Xe nào vượt đúng quy tắc giao thông?",
@@ -1147,7 +1147,7 @@
           "correctAnswer": 0,
           "isCritical": true,
           "imageName": "de3_q33",
-          "explanation": "Chọn đáp án đúng “Cả hai xe đều đúng.” vì phù hợp với quy tắc/định nghĩa chính thức của Luật GTĐB và quy chuẩn báo hiệu. Các lựa chọn khác thiếu, sai hoặc trái quy tắc."
+          "explanation": "Cả hai xe vượt đúng vì vạch kẻ giữa đường là vạch đứt cho phép đè vạch vượt."
         },
         {
           "question": "Theo hướng mũi tên, gặp biển hướng đi phải theo đặt trước ngã tư, những hướng nào xe được phép đi?",
@@ -1158,7 +1158,7 @@
           "correctAnswer": 0,
           "isCritical": true,
           "imageName": "de3_q34",
-          "explanation": "Chọn đáp án đúng “Hướng 2 và 3.” vì phù hợp với quy tắc/định nghĩa chính thức của Luật GTĐB và quy chuẩn báo hiệu. Các lựa chọn khác thiếu, sai hoặc trái quy tắc."
+          "explanation": "Biển bắt buộc đi thẳng hoặc rẽ trái (hướng 2 và 3), không được rẽ phải (hướng 1)."
         },
         {
           "question": "Xe kéo nhau như hình này có vi phạm quy tắc giao thông không?",
@@ -1169,7 +1169,7 @@
           "correctAnswer": 1,
           "isCritical": true,
           "imageName": "de3_q35",
-          "explanation": "Chọn đáp án đúng “Vi phạm.” vì phù hợp với quy tắc/định nghĩa chính thức của Luật GTĐB và quy chuẩn báo hiệu. Các lựa chọn khác thiếu, sai hoặc trái quy tắc."
+          "explanation": "Xe tải kéo xe chở khách phía sau là vi phạm quy tắc an toàn giao thông."
         }
       ]
     }

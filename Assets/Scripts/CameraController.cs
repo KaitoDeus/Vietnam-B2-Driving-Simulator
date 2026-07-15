@@ -27,8 +27,14 @@ public class CameraController : MonoBehaviour
     [Header("Third Person Settings")]
     public float distance = 5.5f;           // Khoảng cách từ camera tới xe
     public float height = 1.8f;             // Chiều cao của camera so với xe
-    public float followDamping = 6f;        // Độ mượt khi bám đuôi vị trí
-    public float rotationDamping = 4f;      // Độ mượt khi xoay theo hướng xe
+    public float followDamping = 6f;        // Độ mượt khi bám đuôi vị trí (Legacy)
+    public float rotationDamping = 4f;      // Độ mượt khi xoay theo hướng xe (Legacy)
+    
+    [Header("Smooth Damp Settings")]
+    [Tooltip("Thời gian trễ vị trí camera (càng nhỏ bám càng sát, khuyên dùng 0.1 - 0.2)")]
+    public float positionSmoothTime = 0.15f;
+    [Tooltip("Thời gian trễ góc quay camera (càng nhỏ xoay càng nhạy, khuyên dùng 0.08 - 0.15)")]
+    public float rotationSmoothTime = 0.12f;
     
     [Header("Third Person Orbit Settings")]
     public float mouseSensitivityX = 3f;    // Độ nhạy chuột ngang
@@ -58,6 +64,15 @@ public class CameraController : MonoBehaviour
     private MonoBehaviour cinemachineBrain; // Hỗ trợ tương thích với Cinemachine
     private bool wasCursorLockedLastFrame = false;
     private float lastCarYaw = 0f;
+    private Vector3 smoothedPivot;
+    private bool isSmoothedPivotInitialized = false;
+    private Vector3 pivotVelocity;
+    private float yawVelocity;
+    private float pitchVelocity;
+    private float fpYawVelocity;
+    private float fpPitchVelocity;
+    private float smoothedOrbitY;
+    private float smoothedOrbitX;
 
     private void Start()
     {
@@ -110,6 +125,10 @@ public class CameraController : MonoBehaviour
         {
             orbitY = carTarget.eulerAngles.y;
             lastCarYaw = carTarget.eulerAngles.y;
+            smoothedPivot = carTarget.position + Vector3.up * (height * 0.4f);
+            smoothedOrbitY = orbitY;
+            smoothedOrbitX = orbitX;
+            isSmoothedPivotInitialized = true;
         }
     }
 
@@ -228,6 +247,25 @@ public class CameraController : MonoBehaviour
             {
                 cam.nearClipPlane = originalNearClip;
             }
+
+            // Snap camera immediately to target position to avoid zoom-out transition from driver's seat
+            if (carTarget != null)
+            {
+                smoothedPivot = carTarget.position + Vector3.up * (height * 0.4f);
+                smoothedOrbitY = orbitY;
+                smoothedOrbitX = orbitX;
+                isSmoothedPivotInitialized = true;
+
+                // Reset velocities to prevent spring momentum from cabin movement
+                pivotVelocity = Vector3.zero;
+                yawVelocity = 0f;
+                pitchVelocity = 0f;
+
+                Quaternion rotation = Quaternion.Euler(orbitX, orbitY, 0f);
+                transform.rotation = rotation;
+                transform.position = smoothedPivot - rotation * Vector3.forward * distance;
+            }
+
             Debug.Log("Chuyển sang góc nhìn thứ ba (Third-person).");
         }
     }
@@ -293,8 +331,8 @@ public class CameraController : MonoBehaviour
 
         if (!isFpOrbiting)
         {
-            fpYaw = Mathf.LerpAngle(fpYaw, 0f, Time.deltaTime * autoAlignSpeed);
-            fpPitch = Mathf.Lerp(fpPitch, 0f, Time.deltaTime * autoAlignSpeed);
+            fpYaw = Mathf.SmoothDampAngle(fpYaw, 0f, ref fpYawVelocity, 0.25f);
+            fpPitch = Mathf.SmoothDampAngle(fpPitch, 0f, ref fpPitchVelocity, 0.25f);
         }
 
         // 3. Tính toán hướng xoay = Hướng của xe + Góc quay tương đối từ chuột
@@ -328,14 +366,27 @@ public class CameraController : MonoBehaviour
         }
 
         // 2. Tính toán vị trí và góc quay mục tiêu quanh tâm nhìn (pivot) của xe
-        Quaternion rotation = Quaternion.Euler(orbitX, orbitY, 0f);
-        // Dùng tỉ lệ height để đặt tâm nhìn (pivot) tầm trung thân xe (khoảng 1.1m với height=2.75) giúp camera luôn hướng thẳng vào xe
-        Vector3 pivot = carTarget.position + Vector3.up * (height * 0.4f);
-        Vector3 targetPosition = pivot - (rotation * Vector3.forward * distance);
+        Vector3 targetPivot = carTarget.position + Vector3.up * (height * 0.4f);
 
-        // 3. Di chuyển camera mịn màng (Damping)
-        transform.position = Vector3.Lerp(transform.position, targetPosition, Time.deltaTime * followDamping);
-        transform.rotation = Quaternion.Slerp(transform.rotation, rotation, Time.deltaTime * rotationDamping);
+        if (!isSmoothedPivotInitialized)
+        {
+            smoothedPivot = targetPivot;
+            smoothedOrbitY = orbitY;
+            smoothedOrbitX = orbitX;
+            isSmoothedPivotInitialized = true;
+        }
+        else
+        {
+            // Nội suy SmoothDamp cho cả vị trí và góc quay để đạt độ mượt mà cao nhất
+            smoothedPivot = Vector3.SmoothDamp(smoothedPivot, targetPivot, ref pivotVelocity, positionSmoothTime);
+            smoothedOrbitY = Mathf.SmoothDampAngle(smoothedOrbitY, orbitY, ref yawVelocity, rotationSmoothTime);
+            smoothedOrbitX = Mathf.SmoothDampAngle(smoothedOrbitX, orbitX, ref pitchVelocity, rotationSmoothTime);
+        }
+
+        // 3. Xoay quanh pivot bằng góc xoay đã được làm mượt (SmoothDamp)
+        Quaternion smoothedRotation = Quaternion.Euler(smoothedOrbitX, smoothedOrbitY, 0f);
+        transform.rotation = smoothedRotation;
+        transform.position = smoothedPivot - smoothedRotation * Vector3.forward * distance;
     }
 
     private void OnDisable()

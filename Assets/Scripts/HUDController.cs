@@ -310,7 +310,7 @@ public class HUDController : MonoBehaviour
         {
             case ExamStep.None:
                 stepTitleText.text = "Chuẩn bị thi";
-                stepDescText.text = "Thắt dây an toàn, nổ máy (phím I) và chờ xuất phát.";
+                stepDescText.text = "Thắt dây an toàn, nổ máy (phím T) và chờ xuất phát.";
                 break;
             case ExamStep.XuatPhat:
                 stepTitleText.text = "Bài 1: Xuất phát";

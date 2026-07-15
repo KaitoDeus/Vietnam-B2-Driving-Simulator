@@ -13206,7 +13206,7 @@ MonoBehaviour:
   settingsPanel: {fileID: 1749798671}
   aboutPanel: {fileID: 1042497044}
   exitConfirmationPanel: {fileID: 1612388084}
-  simulateWebGLInEditor: 1
+  simulateWebGLInEditor: 0
   practiceSceneName: Practice
 --- !u!4 &1938508229
 Transform:
