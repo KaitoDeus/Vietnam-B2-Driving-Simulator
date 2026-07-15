@@ -552,8 +552,8 @@ public class TheoryExamManager : MonoBehaviour
         {
             rAnswerArea.anchorMin = new Vector2(0.04f, 0f);
             rAnswerArea.anchorMax = new Vector2(0.96f, 0f);
-            rAnswerArea.offsetMin = new Vector2(0f, 50f);
-            rAnswerArea.offsetMax = new Vector2(0f, 50f + totalAnswerAreaHeight);
+            rAnswerArea.offsetMin = new Vector2(0f, 100f);
+            rAnswerArea.offsetMax = new Vector2(0f, 100f + totalAnswerAreaHeight);
         }
 
         // Sắp xếp các nút trong bố cục 2x2
@@ -594,7 +594,7 @@ public class TheoryExamManager : MonoBehaviour
         }
 
         // Tính toán tỷ lệ chiều cao tối thiểu cho phần câu hỏi/hình ảnh trên canvas
-        float questionMinY = (50f + totalAnswerAreaHeight + 20f) / examPanelHeight;
+        float questionMinY = (100f + totalAnswerAreaHeight + 20f) / examPanelHeight;
         questionMinY = Mathf.Clamp(questionMinY, 0.35f, 0.68f);
 
         if (hasImage)
