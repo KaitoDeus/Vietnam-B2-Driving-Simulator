@@ -509,15 +509,72 @@ public class TheoryExamManager : MonoBehaviour
         RectTransform rQNum = txtQuestionNumber != null ? txtQuestionNumber.GetComponent<RectTransform>() : null;
         RectTransform rImg = imgQuestion != null ? imgQuestion.GetComponent<RectTransform>() : null;
 
+        RectTransform parentRect = rA.parent as RectTransform;
+        float parentHeight = parentRect != null ? parentRect.rect.height : 680f;
+        float parentWidth = parentRect != null ? parentRect.rect.width : 1000f;
+
+        // 1. Tính toán chiều cao và sắp xếp các nút đáp án từ dưới lên (xếp chồng dọc để tránh tràn)
+        float currentY = parentHeight * 0.04f; // Khoảng cách từ cạnh dưới là 4% chiều cao parent
+        float spacing = 12f; // Khoảng cách dọc giữa các nút đáp án
+        float btnWidthRatio = 0.94f; // Kéo rộng nút chiếm 94% chiều ngang (từ 3% -> 97%)
+        float btnWidthPixels = parentWidth * btnWidthRatio;
+
+        // Tạo danh sách nút đáp án theo thứ tự ngược để xếp từ dưới lên trên (D ở dưới cùng, A ở trên cùng)
+        List<RectTransform> activeAnswerRects = new List<RectTransform>();
+        if (rD != null && rD.gameObject.activeSelf) activeAnswerRects.Add(rD);
+        if (rC != null && rC.gameObject.activeSelf) activeAnswerRects.Add(rC);
+        if (rB != null && rB.gameObject.activeSelf) activeAnswerRects.Add(rB);
+        if (rA != null && rA.gameObject.activeSelf) activeAnswerRects.Add(rA);
+
+        foreach (var rBtn in activeAnswerRects)
+        {
+            TMP_Text txt = rBtn.GetComponentInChildren<TMP_Text>(true);
+            float btnHeight = 65f; // Chiều cao tối thiểu của nút để bấm dễ dàng
+
+            if (txt != null)
+            {
+                // Đồng nhất padding và lề trong của text
+                RectTransform rTxt = txt.GetComponent<RectTransform>();
+                if (rTxt != null)
+                {
+                    rTxt.anchorMin = Vector2.zero;
+                    rTxt.anchorMax = Vector2.one;
+                    rTxt.offsetMin = new Vector2(20f, 5f);
+                    rTxt.offsetMax = new Vector2(-20f, -5f);
+                }
+
+                // Tính toán preferredHeight chính xác theo chiều rộng của nút mà không làm hỏng RectTransform
+                Vector2 preferredSize = txt.GetPreferredValues(txt.text, btnWidthPixels - 40f, 0f);
+                float preferredH = preferredSize.y + 22f; // Chiều cao chữ + 22px padding dọc (11px trên, 11px dưới)
+                btnHeight = Mathf.Max(btnHeight, preferredH);
+            }
+
+            // Thiết lập vị trí của nút đáp án co dãn tự động theo chiều rộng màn hình
+            rBtn.anchorMin = new Vector2(0.03f, 0f);
+            rBtn.anchorMax = new Vector2(0.97f, 0f);
+
+            // Gán vị trí Y thực tế theo pixel tính từ dưới lên
+            rBtn.offsetMin = new Vector2(0f, currentY);
+            rBtn.offsetMax = new Vector2(0f, currentY + btnHeight);
+
+            // Cập nhật Y cho nút tiếp theo ở trên
+            currentY += btnHeight + spacing;
+        }
+
+        // Tỷ lệ Anchor Y tối thiểu cho phần câu hỏi/hình ảnh ở trên (quy đổi từ pixel sang tỷ lệ)
+        float topAnchorY = (currentY - spacing + 15f) / parentHeight;
+        // Giới hạn trong khoảng [0.42, 0.65] để phần nội dung bên trên không bị đẩy quá cao hoặc quá thấp
+        topAnchorY = Mathf.Clamp(topAnchorY, 0.42f, 0.65f);
+
+        // 2. Điều chỉnh vị trí phần câu hỏi và hình ảnh ở phía trên phần đáp án
         if (hasImage)
         {
             if (isReviewMode)
             {
-                // Chế độ xem lại có hình: Chia đôi cột để tránh hình che mất phần giải thích dài
-                // Cột trái: Question Content + Explanation (Y: 0.44 -> 0.87, X: 0.14 -> 0.55)
+                // Chế độ xem lại có hình: Chia đôi cột
                 if (rQContent != null)
                 {
-                    rQContent.anchorMin = new Vector2(0.14f, 0.44f);
+                    rQContent.anchorMin = new Vector2(0.14f, topAnchorY);
                     rQContent.anchorMax = new Vector2(0.55f, 0.87f);
                 }
                 if (rQNum != null)
@@ -526,21 +583,20 @@ public class TheoryExamManager : MonoBehaviour
                     rQNum.anchorMax = new Vector2(0.12f, 0.87f);
                 }
 
-                // Cột phải: Hình ảnh (Y: 0.44 -> 0.87, X: 0.58 -> 0.96)
                 if (rImg != null)
                 {
                     rImg.gameObject.SetActive(true);
-                    rImg.anchorMin = new Vector2(0.58f, 0.44f);
+                    rImg.anchorMin = new Vector2(0.58f, topAnchorY);
                     rImg.anchorMax = new Vector2(0.96f, 0.87f);
                 }
             }
             else
             {
-                // Chế độ thi bình thường có hình: Cố định vị trí và căn giữa hình ảnh lớn
+                // Chế độ thi bình thường có hình: Đặt hình lớn ở bên phải và câu hỏi ở bên trái
                 if (rQContent != null)
                 {
-                    rQContent.anchorMin = new Vector2(0.14f, 0.70f);
-                    rQContent.anchorMax = new Vector2(0.96f, 0.87f);
+                    rQContent.anchorMin = new Vector2(0.14f, topAnchorY);
+                    rQContent.anchorMax = new Vector2(0.52f, 0.87f);
                 }
                 if (rQNum != null)
                 {
@@ -550,87 +606,65 @@ public class TheoryExamManager : MonoBehaviour
 
                 if (rImg != null)
                 {
-                    rImg.anchorMin = new Vector2(0.2f, 0.44f);
-                    rImg.anchorMax = new Vector2(0.8f, 0.68f);
+                    rImg.gameObject.SetActive(true);
+                    rImg.anchorMin = new Vector2(0.55f, topAnchorY);
+                    rImg.anchorMax = new Vector2(0.96f, 0.87f);
                 }
             }
-
-            // Đẩy đáp án xuống dưới chiếm Y: 0.04 -> 0.42
-            rA.anchorMin = new Vector2(0.03f, 0.24f);
-            rA.anchorMax = new Vector2(0.49f, 0.42f);
-
-            rB.anchorMin = new Vector2(0.51f, 0.24f);
-            rB.anchorMax = new Vector2(0.97f, 0.42f);
-
-            rC.anchorMin = new Vector2(0.03f, 0.04f);
-            rC.anchorMax = new Vector2(0.49f, 0.22f);
-
-            rD.anchorMin = new Vector2(0.51f, 0.04f);
-            rD.anchorMax = new Vector2(0.97f, 0.22f);
         }
         else
         {
-            if (isReviewMode)
+            // Không có hình: Câu hỏi chiếm trọn chiều ngang
+            if (rQContent != null)
             {
-                // Chế độ xem lại không hình: Đẩy đáp án xuống dưới cùng (Y: 0.04 -> 0.42) để nhường không gian rộng rãi cho text giải thích cực kỳ dài (Y: 0.44 -> 0.89)
-                if (rQContent != null)
-                {
-                    rQContent.anchorMin = new Vector2(0.14f, 0.44f);
-                    rQContent.anchorMax = new Vector2(0.96f, 0.89f);
-                }
-                if (rQNum != null)
-                {
-                    rQNum.anchorMin = new Vector2(0.04f, 0.72f);
-                    rQNum.anchorMax = new Vector2(0.12f, 0.89f);
-                }
-
-                rA.anchorMin = new Vector2(0.03f, 0.24f);
-                rA.anchorMax = new Vector2(0.49f, 0.42f);
-
-                rB.anchorMin = new Vector2(0.51f, 0.24f);
-                rB.anchorMax = new Vector2(0.97f, 0.42f);
-
-                rC.anchorMin = new Vector2(0.03f, 0.04f);
-                rC.anchorMax = new Vector2(0.49f, 0.22f);
-
-                rD.anchorMin = new Vector2(0.51f, 0.04f);
-                rD.anchorMax = new Vector2(0.97f, 0.22f);
+                rQContent.anchorMin = new Vector2(0.14f, topAnchorY);
+                rQContent.anchorMax = new Vector2(0.96f, 0.89f);
             }
-            else
+            if (rQNum != null)
             {
-                // Chế độ thi bình thường không hình: Nút đáp án lớn chiếm trọn vẹn khu vực giữa
-                if (rQContent != null)
-                {
-                    rQContent.anchorMin = new Vector2(0.14f, 0.72f);
-                    rQContent.anchorMax = new Vector2(0.96f, 0.89f);
-                }
-                if (rQNum != null)
-                {
-                    rQNum.anchorMin = new Vector2(0.04f, 0.72f);
-                    rQNum.anchorMax = new Vector2(0.12f, 0.89f);
-                }
+                rQNum.anchorMin = new Vector2(0.04f, 0.72f);
+                rQNum.anchorMax = new Vector2(0.12f, 0.89f);
+            }
 
-                rA.anchorMin = new Vector2(0.03f, 0.40f);
-                rA.anchorMax = new Vector2(0.49f, 0.70f);
-
-                rB.anchorMin = new Vector2(0.51f, 0.40f);
-                rB.anchorMax = new Vector2(0.97f, 0.70f);
-
-                rC.anchorMin = new Vector2(0.03f, 0.08f);
-                rC.anchorMax = new Vector2(0.49f, 0.38f);
-
-                rD.anchorMin = new Vector2(0.51f, 0.08f);
-                rD.anchorMax = new Vector2(0.97f, 0.38f);
+            if (rImg != null)
+            {
+                rImg.gameObject.SetActive(false);
             }
         }
 
-        rA.offsetMin = rA.offsetMax = Vector2.zero;
-        rB.offsetMin = rB.offsetMax = Vector2.zero;
-        rC.offsetMin = rC.offsetMax = Vector2.zero;
-        rD.offsetMin = rD.offsetMax = Vector2.zero;
+        // Đảm bảo không bị lệch pixel do chỉnh tay
         if (rQContent != null) rQContent.offsetMin = rQContent.offsetMax = Vector2.zero;
         if (rQNum != null) rQNum.offsetMin = rQNum.offsetMax = Vector2.zero;
         if (rImg != null) rImg.offsetMin = rImg.offsetMax = Vector2.zero;
+    }
+
+    private void FormatAnswerText(Button button, string prefix, string text)
+    {
+        if (button == null) return;
+        bool hasText = !string.IsNullOrEmpty(text);
+        button.gameObject.SetActive(hasText);
+        if (hasText)
+        {
+            TMP_Text txt = button.GetComponentInChildren<TMP_Text>(true);
+            if (txt != null)
+            {
+                txt.text = prefix + " " + text;
+                txt.enableAutoSizing = false;
+                txt.fontSize = 17f; // Dùng cỡ chữ cố định Legible
+                txt.enableWordWrapping = true;
+                txt.overflowMode = TextOverflowModes.Overflow; // Không cắt chữ, cho phép chữ hiển thị đầy đủ
+                txt.alignment = TextAlignmentOptions.Left; // Căn lề trái dễ đọc
+
+                RectTransform rTxt = txt.GetComponent<RectTransform>();
+                if (rTxt != null)
+                {
+                    rTxt.anchorMin = Vector2.zero;
+                    rTxt.anchorMax = Vector2.one;
+                    rTxt.offsetMin = new Vector2(20f, 5f);
+                    rTxt.offsetMax = new Vector2(-20f, -5f);
+                }
+            }
+        }
     }
 
     private void ShowQuestion()
@@ -638,11 +672,8 @@ public class TheoryExamManager : MonoBehaviour
         if (questions.Count == 0) return;
 
         TheoryQuestion q = questions[currentQuestionIndex];
-        
-        // Điều chỉnh bố cục linh hoạt theo câu hỏi có/không có hình ảnh
-        AdjustLayout(!string.IsNullOrEmpty(q.imageName));
 
-        // Đánh dấu câu điểm liệt bằng chữ màu cam đỏ để người học chú ý
+        // 1. Đánh dấu câu điểm liệt bằng chữ màu cam đỏ để người học chú ý
         string prefix = q.isCritical ? "<color=#FF3B30>[CÂU ĐIỂM LIỆT]</color> " : "";
         
         if (txtQuestionNumber != null)
@@ -650,6 +681,11 @@ public class TheoryExamManager : MonoBehaviour
             
         if (txtQuestionContent != null)
         {
+            txtQuestionContent.enableAutoSizing = false;
+            txtQuestionContent.fontSize = 20f;
+            txtQuestionContent.enableWordWrapping = true;
+            txtQuestionContent.overflowMode = TextOverflowModes.Overflow;
+
             string questionText = prefix + q.question;
             if (isReviewMode && !string.IsNullOrEmpty(q.explanation))
             {
@@ -658,51 +694,19 @@ public class TheoryExamManager : MonoBehaviour
             txtQuestionContent.text = questionText;
         }
 
-        // Tự động ẩn/hiện nút đáp án và thiết lập văn bản nếu có dữ liệu
-        if (answerA != null)
-        {
-            bool hasA = !string.IsNullOrEmpty(q.answerA);
-            answerA.gameObject.SetActive(hasA);
-            if (hasA)
-            {
-                TMP_Text txt = answerA.GetComponentInChildren<TMP_Text>(true);
-                if (txt != null) txt.text = "A. " + q.answerA;
-            }
-        }
-        if (answerB != null)
-        {
-            bool hasB = !string.IsNullOrEmpty(q.answerB);
-            answerB.gameObject.SetActive(hasB);
-            if (hasB)
-            {
-                TMP_Text txt = answerB.GetComponentInChildren<TMP_Text>(true);
-                if (txt != null) txt.text = "B. " + q.answerB;
-            }
-        }
-        if (answerC != null)
-        {
-            bool hasC = !string.IsNullOrEmpty(q.answerC);
-            answerC.gameObject.SetActive(hasC);
-            if (hasC)
-            {
-                TMP_Text txt = answerC.GetComponentInChildren<TMP_Text>(true);
-                if (txt != null) txt.text = "C. " + q.answerC;
-            }
-        }
-        if (answerD != null)
-        {
-            bool hasD = !string.IsNullOrEmpty(q.answerD);
-            answerD.gameObject.SetActive(hasD);
-            if (hasD)
-            {
-                TMP_Text txt = answerD.GetComponentInChildren<TMP_Text>(true);
-                if (txt != null) txt.text = "D. " + q.answerD;
-            }
-        }
+        // 2. Thiết lập nội dung văn bản cho các nút đáp án (phải làm TRƯỚC khi tính toán layout)
+        FormatAnswerText(answerA, "A.", q.answerA);
+        FormatAnswerText(answerB, "B.", q.answerB);
+        FormatAnswerText(answerC, "C.", q.answerC);
+        FormatAnswerText(answerD, "D.", q.answerD);
+
+        // 3. Điều chỉnh bố cục linh hoạt co dãn theo câu hỏi có/không có hình ảnh và độ dài text đáp án
+        AdjustLayout(!string.IsNullOrEmpty(q.imageName));
 
         // Hiển thị hình ảnh minh họa nếu có
         if (imgQuestion != null)
         {
+            imgQuestion.preserveAspect = true; // Luôn giữ tỷ lệ ảnh nguyên bản để tránh méo ảnh
             if (!string.IsNullOrEmpty(q.imageName))
             {
                 Sprite imgSprite = Resources.Load<Sprite>($"TheoryImages/{q.imageName}");
