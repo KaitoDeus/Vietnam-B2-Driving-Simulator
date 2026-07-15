@@ -513,39 +513,95 @@ public class TheoryExamManager : MonoBehaviour
 
         // Lấy kích thước thực tế của panel chính
         RectTransform examPanelRect = examPanel != null ? examPanel.GetComponent<RectTransform>() : null;
-        float examPanelHeight = examPanelRect != null ? examPanelRect.rect.height : 680f;
         float examPanelWidth = examPanelRect != null ? examPanelRect.rect.width : 1000f;
 
         // Chiều rộng của khu vực đáp án (chiếm 92% chiều rộng panel)
         float answerAreaWidth = examPanelWidth * 0.92f;
 
-        // Chiều rộng của mỗi nút đáp án trong bố cục 2 cột (chiếm 49% chiều rộng AnswerArea)
-        float buttonWidth = answerAreaWidth * 0.49f;
-
-        // Tính toán chiều cao cần thiết cho từng nút đáp án dựa trên text của nó
-        float heightA = GetButtonPreferredHeight(rA, buttonWidth);
-        float heightB = GetButtonPreferredHeight(rB, buttonWidth);
-        float heightC = GetButtonPreferredHeight(rC, buttonWidth);
-        float heightD = GetButtonPreferredHeight(rD, buttonWidth);
-
-        // Gom nhóm thành Row 1 (A và B) và Row 2 (C và D)
-        bool hasRow1 = (rA != null && rA.gameObject.activeSelf) || (rB != null && rB.gameObject.activeSelf);
-        bool hasRow2 = (rC != null && rC.gameObject.activeSelf) || (rD != null && rD.gameObject.activeSelf);
-
-        float row1Height = 0f;
-        float row2Height = 0f;
-
-        if (hasRow1) row1Height = Mathf.Max(heightA, heightB);
-        if (hasRow2) row2Height = Mathf.Max(heightC, heightD);
-
         float paddingBottom = 12f;
         float paddingTop = 12f;
         float spacingVertical = 12f;
+        float totalAnswerAreaHeight = 0f;
 
-        float totalAnswerAreaHeight = paddingBottom + paddingTop;
-        if (hasRow1) totalAnswerAreaHeight += row1Height;
-        if (hasRow2) totalAnswerAreaHeight += row2Height;
-        if (hasRow1 && hasRow2) totalAnswerAreaHeight += spacingVertical;
+        if (hasImage)
+        {
+            // --- CÓ HÌNH ẢNH: Bố cục đáp án 2x2 để tiết kiệm chiều cao ---
+            float buttonWidth = answerAreaWidth * 0.49f;
+
+            float heightA = GetButtonPreferredHeight(rA, buttonWidth);
+            float heightB = GetButtonPreferredHeight(rB, buttonWidth);
+            float heightC = GetButtonPreferredHeight(rC, buttonWidth);
+            float heightD = GetButtonPreferredHeight(rD, buttonWidth);
+
+            bool hasRow1 = (rA != null && rA.gameObject.activeSelf) || (rB != null && rB.gameObject.activeSelf);
+            bool hasRow2 = (rC != null && rC.gameObject.activeSelf) || (rD != null && rD.gameObject.activeSelf);
+
+            float row1Height = hasRow1 ? Mathf.Max(heightA, heightB) : 0f;
+            float row2Height = hasRow2 ? Mathf.Max(heightC, heightD) : 0f;
+
+            totalAnswerAreaHeight = paddingBottom + paddingTop;
+            if (hasRow1) totalAnswerAreaHeight += row1Height;
+            if (hasRow2) totalAnswerAreaHeight += row2Height;
+            if (hasRow1 && hasRow2) totalAnswerAreaHeight += spacingVertical;
+
+            // Sắp xếp các nút trong bố cục 2x2
+            float row2BottomY = paddingBottom;
+            float row1BottomY = paddingBottom;
+            if (hasRow2) row1BottomY += row2Height + spacingVertical;
+
+            if (rA != null)
+            {
+                rA.anchorMin = new Vector2(0f, 0f);
+                rA.anchorMax = new Vector2(0.49f, 0f);
+                rA.offsetMin = new Vector2(0f, row1BottomY);
+                rA.offsetMax = new Vector2(0f, row1BottomY + row1Height);
+            }
+            if (rB != null)
+            {
+                rB.anchorMin = new Vector2(0.51f, 0f);
+                rB.anchorMax = new Vector2(1f, 0f);
+                rB.offsetMin = new Vector2(0f, row1BottomY);
+                rB.offsetMax = new Vector2(0f, row1BottomY + row1Height);
+            }
+            if (rC != null)
+            {
+                rC.anchorMin = new Vector2(0f, 0f);
+                rC.anchorMax = new Vector2(0.49f, 0f);
+                rC.offsetMin = new Vector2(0f, row2BottomY);
+                rC.offsetMax = new Vector2(0f, row2BottomY + row2Height);
+            }
+            if (rD != null)
+            {
+                rD.anchorMin = new Vector2(0.51f, 0f);
+                rD.anchorMax = new Vector2(1f, 0f);
+                rD.offsetMin = new Vector2(0f, row2BottomY);
+                rD.offsetMax = new Vector2(0f, row2BottomY + row2Height);
+            }
+        }
+        else
+        {
+            // --- KHÔNG CÓ HÌNH ẢNH: Bố cục đáp án 1 cột dọc (Full width) để đọc rõ ràng hơn ---
+            List<RectTransform> activeButtons = new List<RectTransform>();
+            if (rD != null && rD.gameObject.activeSelf) activeButtons.Add(rD);
+            if (rC != null && rC.gameObject.activeSelf) activeButtons.Add(rC);
+            if (rB != null && rB.gameObject.activeSelf) activeButtons.Add(rB);
+            if (rA != null && rA.gameObject.activeSelf) activeButtons.Add(rA);
+
+            float currentY = paddingBottom;
+            for (int i = 0; i < activeButtons.Count; i++)
+            {
+                RectTransform rBtn = activeButtons[i];
+                float btnHeight = GetButtonPreferredHeight(rBtn, answerAreaWidth);
+
+                rBtn.anchorMin = new Vector2(0f, 0f);
+                rBtn.anchorMax = new Vector2(1f, 0f);
+                rBtn.offsetMin = new Vector2(0f, currentY);
+                rBtn.offsetMax = new Vector2(0f, currentY + btnHeight);
+
+                currentY += btnHeight + spacingVertical;
+            }
+            totalAnswerAreaHeight = currentY - spacingVertical + paddingTop;
+        }
 
         // Cập nhật kích thước và vị trí của AnswerArea
         if (rAnswerArea != null)
@@ -556,91 +612,56 @@ public class TheoryExamManager : MonoBehaviour
             rAnswerArea.offsetMax = new Vector2(0f, 100f + totalAnswerAreaHeight);
         }
 
-        // Sắp xếp các nút trong bố cục 2x2
-        // Row 2 (C & D) xếp ở dưới cùng
-        float row2BottomY = paddingBottom;
-        // Row 1 (A & B) xếp ở trên Row 2
-        float row1BottomY = paddingBottom;
-        if (hasRow2) row1BottomY += row2Height + spacingVertical;
-
-        // Thiết lập Anchors và Offsets cho từng nút
-        if (rA != null)
-        {
-            rA.anchorMin = new Vector2(0f, 0f);
-            rA.anchorMax = new Vector2(0.49f, 0f);
-            rA.offsetMin = new Vector2(0f, row1BottomY);
-            rA.offsetMax = new Vector2(0f, row1BottomY + row1Height);
-        }
-        if (rB != null)
-        {
-            rB.anchorMin = new Vector2(0.51f, 0f);
-            rB.anchorMax = new Vector2(1f, 0f);
-            rB.offsetMin = new Vector2(0f, row1BottomY);
-            rB.offsetMax = new Vector2(0f, row1BottomY + row1Height);
-        }
-        if (rC != null)
-        {
-            rC.anchorMin = new Vector2(0f, 0f);
-            rC.anchorMax = new Vector2(0.49f, 0f);
-            rC.offsetMin = new Vector2(0f, row2BottomY);
-            rC.offsetMax = new Vector2(0f, row2BottomY + row2Height);
-        }
-        if (rD != null)
-        {
-            rD.anchorMin = new Vector2(0.51f, 0f);
-            rD.anchorMax = new Vector2(1f, 0f);
-            rD.offsetMin = new Vector2(0f, row2BottomY);
-            rD.offsetMax = new Vector2(0f, row2BottomY + row2Height);
-        }
-
-        // Tính toán tỷ lệ chiều cao tối thiểu cho phần câu hỏi/hình ảnh trên canvas
-        float questionMinY = (100f + totalAnswerAreaHeight + 20f) / examPanelHeight;
-        questionMinY = Mathf.Clamp(questionMinY, 0.35f, 0.68f);
+        // --- CẤU HÌNH VỊ TRÍ CÂU HỎI VÀ HÌNH ẢNH TRÊN ANSWER AREA ---
+        // Đặt biên dưới của câu hỏi và hình ảnh ở vị trí tuyệt đối (offset) phía trên AnswerArea (20px gap)
+        float questionBottomOffset = 100f + totalAnswerAreaHeight + 20f;
 
         if (hasImage)
         {
-            // Luôn chia làm 2 cột: câu hỏi bên trái, hình ảnh bên phải
-            // để bảo đảm hình ảnh hiển thị đúng chuẩn tỷ lệ và không chạm vào phần đáp án bên dưới.
+            // Có hình: chia 2 cột bên trên
             if (rQContent != null)
             {
-                rQContent.anchorMin = new Vector2(0.14f, questionMinY);
-                rQContent.anchorMax = new Vector2(0.54f, 0.87f);
+                rQContent.anchorMin = new Vector2(0.14f, 0f);
+                rQContent.anchorMax = new Vector2(0.52f, 0.87f);
+                rQContent.offsetMin = new Vector2(0f, questionBottomOffset);
+                rQContent.offsetMax = new Vector2(0f, 0f);
             }
             if (rQNum != null)
             {
                 rQNum.anchorMin = new Vector2(0.04f, 0.80f);
                 rQNum.anchorMax = new Vector2(0.12f, 0.87f);
+                rQNum.offsetMin = rQNum.offsetMax = Vector2.zero;
             }
             if (rImg != null)
             {
                 rImg.gameObject.SetActive(true);
-                rImg.anchorMin = new Vector2(0.56f, questionMinY);
+                rImg.anchorMin = new Vector2(0.55f, 0f);
                 rImg.anchorMax = new Vector2(0.96f, 0.87f);
+                rImg.offsetMin = new Vector2(0f, questionBottomOffset);
+                rImg.offsetMax = new Vector2(0f, 0f);
             }
         }
         else
         {
-            // Không có hình: Câu hỏi chiếm trọn vẹn chiều ngang ở phía trên
+            // Không hình: chiếm trọn chiều ngang, ẩn hình
             if (rQContent != null)
             {
-                rQContent.anchorMin = new Vector2(0.14f, questionMinY);
+                rQContent.anchorMin = new Vector2(0.14f, 0f);
                 rQContent.anchorMax = new Vector2(0.96f, 0.87f);
+                rQContent.offsetMin = new Vector2(0f, questionBottomOffset);
+                rQContent.offsetMax = new Vector2(0f, 0f);
             }
             if (rQNum != null)
             {
                 rQNum.anchorMin = new Vector2(0.04f, 0.80f);
                 rQNum.anchorMax = new Vector2(0.12f, 0.87f);
+                rQNum.offsetMin = rQNum.offsetMax = Vector2.zero;
             }
             if (rImg != null)
             {
                 rImg.gameObject.SetActive(false);
             }
         }
-
-        // Reset offsets để kéo căng theo Anchors
-        if (rQContent != null) rQContent.offsetMin = rQContent.offsetMax = Vector2.zero;
-        if (rQNum != null) rQNum.offsetMin = rQNum.offsetMax = Vector2.zero;
-        if (rImg != null) rImg.offsetMin = rImg.offsetMax = Vector2.zero;
     }
 
     private float GetButtonPreferredHeight(RectTransform rBtn, float buttonWidth)
