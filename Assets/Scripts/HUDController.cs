@@ -235,6 +235,54 @@ public class HUDController : MonoBehaviour
         // Cập nhật Bài thi hiện tại và mô tả
         UpdateStepTexts(em.currentStep);
 
+        // Hiển thị trạng thái xi-nhan xuất phát trên HUD (góc phải)
+        if (em.currentStep == ExamStep.None)
+        {
+            if (targetCar != null)
+            {
+                if (targetCar.isLeftBlinkerOn)
+                {
+                    stepDescText.text = "<color=#1FA659><b>[ĐÃ BẬT XI-NHAN TRÁI]</b></color> Nổ máy (phím T) & di chuyển vào vạch xuất phát.";
+                }
+                else
+                {
+                    stepDescText.text = "Nổ máy (phím T) & <color=#FF9900><b>bật xi-nhan trái (phím Q)</b></color> trước khi xuất phát.";
+                }
+            }
+        }
+        else if (em.currentStep == ExamStep.XuatPhat)
+        {
+            if (targetCar != null)
+            {
+                if (!em.XuatPhatMovingChecked)
+                {
+                    if (targetCar.isLeftBlinkerOn)
+                    {
+                        stepDescText.text = "<color=#1FA659><b>[ĐÃ BẬT XI-NHAN TRÁI]</b></color> Nhấn ga (W) qua vạch xuất phát.";
+                    }
+                    else
+                    {
+                        stepDescText.text = "<color=#FF9900><b>[CẦN BẬT XI-NHAN TRÁI (Q)]</b></color> Bật xi-nhan trái trước khi xuất phát!";
+                    }
+                }
+                else
+                {
+                    if (em.HasDeductedForNoBlinker)
+                    {
+                        stepDescText.text = "<color=#E74C3C><b>[BỊ TRỪ 5 ĐIỂM]</b></color> Quên bật xi-nhan trái khi xuất phát. Di chuyển sang Bài 2.";
+                    }
+                    else if (targetCar.isLeftBlinkerOn && !em.XuatPhatBlinkerOffChecked)
+                    {
+                        stepDescText.text = "<color=#0078D4><b>[ĐÃ QUA VẠCH XUẤT PHÁT]</b></color> Hãy <color=#FF9900><b>TẮT XI-NHAN TRÁI (phím Q)</b></color> để tiếp tục bài thi.";
+                    }
+                    else
+                    {
+                        stepDescText.text = "<color=#1FA659><b>[XUẤT PHÁT HỢP LỆ]</b></color> Tiến vào Bài 2: Dừng xe nhường đường.";
+                    }
+                }
+            }
+        }
+
         // Hiển thị tiến trình dừng nhường đường đi bộ trên HUD
         if (em.currentStep == ExamStep.DungNhuongDuongDiBo)
         {
@@ -271,34 +319,10 @@ public class HUDController : MonoBehaviour
             }
         }
 
-        // Hiển thị đếm ngược ở giữa màn hình đối với Bài 3: Khởi hành ngang dốc
+        // Bỏ hiển thị đếm ngược ở giữa màn hình theo yêu cầu
         if (countdownText != null)
         {
-            if (em.currentStep == ExamStep.DungAndKhoiHanhNgangDoc)
-            {
-                float elapsed = Time.time - em.GetStepStartTime();
-                float limit = em.GetTimeLimitForStep(ExamStep.DungAndKhoiHanhNgangDoc);
-                float timeLeft = Mathf.Max(0f, limit - elapsed);
-                
-                countdownText.text = Mathf.CeilToInt(timeLeft).ToString();
-                
-                if (timeLeft <= 5f)
-                {
-                    bool blink = (Time.time * 4f % 2) < 1;
-                    countdownText.color = blink ? errorColor : new Color(0.6f, 0f, 0f);
-                    countdownText.fontSize = 90;
-                }
-                else
-                {
-                    countdownText.color = warningColor;
-                    countdownText.fontSize = 72;
-                }
-                countdownText.gameObject.SetActive(true);
-            }
-            else
-            {
-                countdownText.gameObject.SetActive(false);
-            }
+            countdownText.gameObject.SetActive(false);
         }
     }
 

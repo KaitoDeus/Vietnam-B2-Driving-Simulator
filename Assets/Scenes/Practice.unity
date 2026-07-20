@@ -4149,7 +4149,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: -8679921383154817045, guid: 61835258d8b2c164098e6358da43078e, type: 3}
       propertyPath: m_LocalScale.x
-      value: 1.6994582
+      value: 1.7028571
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 61835258d8b2c164098e6358da43078e, type: 3}
       propertyPath: m_LocalScale.y
@@ -27776,15 +27776,15 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: -8679921383154817045, guid: 61835258d8b2c164098e6358da43078e, type: 3}
       propertyPath: m_LocalScale.x
-      value: 0.6989319
+      value: 0.7
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 61835258d8b2c164098e6358da43078e, type: 3}
       propertyPath: m_LocalScale.y
-      value: 5.3788714
+      value: 4.1
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 61835258d8b2c164098e6358da43078e, type: 3}
       propertyPath: m_LocalScale.z
-      value: 0.76845104
+      value: 0.75
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 61835258d8b2c164098e6358da43078e, type: 3}
       propertyPath: m_LocalPosition.x
@@ -27796,7 +27796,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 61835258d8b2c164098e6358da43078e, type: 3}
       propertyPath: m_LocalPosition.z
-      value: -350.48
+      value: -350.489
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 61835258d8b2c164098e6358da43078e, type: 3}
       propertyPath: m_LocalRotation.w
@@ -33045,15 +33045,15 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: -8679921383154817045, guid: 61835258d8b2c164098e6358da43078e, type: 3}
       propertyPath: m_LocalScale.x
-      value: 0.673755
+      value: 0.67
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 61835258d8b2c164098e6358da43078e, type: 3}
       propertyPath: m_LocalScale.y
-      value: 4.148245
+      value: 4.1
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 61835258d8b2c164098e6358da43078e, type: 3}
       propertyPath: m_LocalScale.z
-      value: 0.76845104
+      value: 0.75
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 61835258d8b2c164098e6358da43078e, type: 3}
       propertyPath: m_LocalPosition.x
@@ -63821,6 +63821,8 @@ MonoBehaviour:
   height: 2.75
   followDamping: 6
   rotationDamping: 4
+  positionSmoothTime: 0.15
+  rotationSmoothTime: 0.12
   mouseSensitivityX: 3
   mouseSensitivityY: 2
   mouseSensitivityFpX: 3

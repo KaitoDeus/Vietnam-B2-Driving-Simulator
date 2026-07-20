@@ -71,8 +71,11 @@ public class ExamManager : MonoBehaviour
 
     // Các biến trạng thái để kiểm tra quy tắc bài thi
     private float xuatPhatStartTime = 0f;
+    private float carMoveStartTime = 0f;
+    private bool xuatPhatMovingChecked = false;
     private bool xuatPhatBlinkerOffChecked = false;
     private bool hasStartedWithBlinker = false;
+    private bool hasDeductedForNoBlinker = false;
 
     private bool stoppedInPedestrianTrigger = false;
     private float pedestrianStopStartTime = 0f;
@@ -126,6 +129,10 @@ public class ExamManager : MonoBehaviour
     public float SlopeStopDuration => slopeStopDuration;
     public bool HasSlopeStoppedLongEnough => hasSlopeStoppedLongEnough;
     public bool IsInsideCurrentTrigger => isInsideCurrentTrigger;
+    public bool XuatPhatMovingChecked => xuatPhatMovingChecked;
+    public bool XuatPhatBlinkerOffChecked => xuatPhatBlinkerOffChecked;
+    public bool HasStartedWithBlinker => hasStartedWithBlinker;
+    public bool HasDeductedForNoBlinker => hasDeductedForNoBlinker;
 
     public void SetInsideTrigger(ExamStep step, bool isInside)
     {
@@ -286,9 +293,40 @@ public class ExamManager : MonoBehaviour
                     hasStartedWithBlinker = true;
                 }
 
-                if (!xuatPhatBlinkerOffChecked)
+                // Kiểm tra khi xe bắt đầu lăn bánh (khởi hành xuất phát)
+                if (targetCar.CurrentSpeed >= 0.5f)
                 {
-                    if (Time.time - xuatPhatStartTime > 5f)
+                    if (!xuatPhatMovingChecked)
+                    {
+                        xuatPhatMovingChecked = true;
+                        carMoveStartTime = Time.time;
+
+                        // Xe bắt đầu di chuyển: Kiểm tra nếu chưa bật xi-nhan trái thì trừ 5 điểm
+                        if (!hasStartedWithBlinker && !targetCar.isLeftBlinkerOn)
+                        {
+                            if (!hasDeductedForNoBlinker)
+                            {
+                                DeductPoints(5, "Không bật xi-nhan trái khi xuất phát");
+                                hasDeductedForNoBlinker = true;
+                            }
+                        }
+                        else
+                        {
+                            // Phát tiếng Bính boong nhận bài xuất phát hợp lệ!
+                            PlaySFX(soundBinhBoong);
+                        }
+                    }
+                }
+
+                // Kiểm tra tắt xi-nhan trái kịp thời (5s tính từ lúc xe bắt đầu di chuyển)
+                if (xuatPhatMovingChecked && !xuatPhatBlinkerOffChecked)
+                {
+                    if (!targetCar.isLeftBlinkerOn)
+                    {
+                        // Người chơi đã tắt xi-nhan trái hợp lệ
+                        xuatPhatBlinkerOffChecked = true;
+                    }
+                    else if (Time.time - carMoveStartTime > 5f)
                     {
                         if (targetCar.isLeftBlinkerOn)
                         {
@@ -447,7 +485,16 @@ public class ExamManager : MonoBehaviour
         switch (currentStep)
         {
             case ExamStep.XuatPhat:
-                // Bỏ qua kiểm tra xi-nhan trái xuất phát theo yêu cầu
+                if (!hasStartedWithBlinker && !hasDeductedForNoBlinker)
+                {
+                    DeductPoints(5, "Không bật xi-nhan trái khi xuất phát");
+                    hasDeductedForNoBlinker = true;
+                }
+                if (targetCar.isLeftBlinkerOn && !xuatPhatBlinkerOffChecked)
+                {
+                    DeductPoints(5, "Không tắt xi-nhan trái kịp thời");
+                    xuatPhatBlinkerOffChecked = true;
+                }
                 break;
 
             case ExamStep.DungNhuongDuongDiBo:
@@ -516,8 +563,11 @@ public class ExamManager : MonoBehaviour
         {
             case ExamStep.XuatPhat:
                 xuatPhatStartTime = Time.time;
+                carMoveStartTime = 0f;
+                xuatPhatMovingChecked = false;
                 xuatPhatBlinkerOffChecked = false;
-                hasStartedWithBlinker = targetCar.isLeftBlinkerOn;
+                hasStartedWithBlinker = targetCar != null && targetCar.isLeftBlinkerOn;
+                hasDeductedForNoBlinker = false;
                 break;
 
             case ExamStep.DungNhuongDuongDiBo:
