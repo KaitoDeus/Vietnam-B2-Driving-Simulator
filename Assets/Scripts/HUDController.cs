@@ -283,39 +283,135 @@ public class HUDController : MonoBehaviour
             }
         }
 
-        // Hiển thị tiến trình dừng nhường đường đi bộ trên HUD
-        if (em.currentStep == ExamStep.DungNhuongDuongDiBo)
+        // Cập nhật nhắc nhở khu vực thi cho các bài có Vùng Trigger riêng (Bài 2, 3, 7, 8, 10)
+        if (em.IsZoneRequiredForStep(em.currentStep) && !em.IsStepTimerActive)
         {
-            if (em.HasPedestrianStoppedLongEnough)
+            switch (em.currentStep)
             {
-                stepDescText.text = "<color=#1FA659><b>Đạt 2s!</b> Tiếp tục di chuyển sang bài tiếp theo.</color>";
-            }
-            else if (em.PedestrianStopDuration > 0f)
-            {
-                float remaining = Mathf.Max(0f, 2f - em.PedestrianStopDuration);
-                stepDescText.text = $"<color=#0078D4><b>Đang dừng:</b> {em.PedestrianStopDuration:F1}s/2.0s. Giữ phanh!</color>";
-            }
-            else
-            {
-                stepDescText.text = "Dừng trước vạch trắng và giữ đứng yên <b>2 giây</b>.";
+                case ExamStep.DungNhuongDuongDiBo:
+                    stepDescText.text = "<color=#FF9900><b>[Chờ vào vị trí]</b></color> Di chuyển vào <color=#0078D4>vùng vạch dừng đi bộ</color> để kích hoạt tính giờ.";
+                    break;
+                case ExamStep.DungAndKhoiHanhNgangDoc:
+                    stepDescText.text = "<color=#FF9900><b>[Chờ vào vị trí]</b></color> Di chuyển lên <color=#0078D4>vùng vạch dừng trên dốc</color> để kích hoạt tính giờ.";
+                    break;
+                case ExamStep.GhepDocVaoNoiDo:
+                    stepDescText.text = "<color=#FF9900><b>[Chờ vào vị trí]</b></color> Lùi xe vào <color=#0078D4>khu vực chuồng đỗ dọc</color> để kích hoạt đếm ngược 120s.";
+                    break;
+                case ExamStep.TamDungNoiDuongSat:
+                    stepDescText.text = "<color=#FF9900><b>[Chờ vào vị trí]</b></color> Di chuyển tới <color=#0078D4>vùng dừng đường sắt</color> để kích hoạt tính giờ 30s.";
+                    break;
+                case ExamStep.GhepNgangVaoNoiDo:
+                    stepDescText.text = "<color=#FF9900><b>[Chờ vào vị trí]</b></color> Lùi xe vào <color=#0078D4>khu vực chuồng đỗ ngang</color> để kích hoạt đếm ngược 120s.";
+                    break;
             }
         }
-
-        // Hiển thị tiến trình dừng dốc (Đề-pa) trên HUD
-        if (em.currentStep == ExamStep.DungAndKhoiHanhNgangDoc)
+        else
         {
-            if (em.HasSlopeStoppedLongEnough)
+            float limit = em.GetTimeLimitForStep(em.currentStep);
+            float elapsed = Time.time - em.GetStepStartTime();
+            int stepRemaining = Mathf.Max(0, Mathf.CeilToInt(limit - elapsed));
+            string timerColor = stepRemaining <= 15 ? "#E74C3C" : (stepRemaining <= 30 ? "#FF9900" : "#0078D4");
+
+            // Hiển thị tiến trình dừng nhường đường đi bộ trên HUD
+            if (em.currentStep == ExamStep.DungNhuongDuongDiBo)
             {
-                stepDescText.text = "<color=#1FA659><b>Đạt 5s!</b> Hãy khởi hành vượt dốc ngay.</color>";
+                if (em.HasPedestrianStoppedLongEnough)
+                {
+                    stepDescText.text = $"<color=#1FA659><b>Đạt 2s!</b> Tiếp tục di chuyển sang bài tiếp theo. <color=#0078D4>(Còn: {stepRemaining}s)</color></color>";
+                }
+                else if (em.PedestrianStopDuration > 0f)
+                {
+                    stepDescText.text = $"<color=#0078D4><b>Đang dừng:</b> {em.PedestrianStopDuration:F1}s/2.0s. Giữ phanh! (Bài thi còn: {stepRemaining}s)</color>";
+                }
+                else
+                {
+                    stepDescText.text = $"<color={timerColor}><b>[Đang đếm ngược: {stepRemaining}s]</b></color> Dừng trước vạch trắng và giữ đứng yên 2 giây.";
+                }
             }
-            else if (em.SlopeStopDuration > 0f)
+            // Hiển thị tiến trình dừng dốc (Đề-pa) trên HUD
+            else if (em.currentStep == ExamStep.DungAndKhoiHanhNgangDoc)
             {
-                float remaining = Mathf.Max(0f, 5f - em.SlopeStopDuration);
-                stepDescText.text = $"<color=#0078D4><b>Đang dừng:</b> {em.SlopeStopDuration:F1}s/5.0s. Giữ phanh/phanh tay!</color>";
+                if (em.HasSlopeStoppedLongEnough)
+                {
+                    stepDescText.text = $"<color=#1FA659><b>Đạt 5s!</b> Hãy khởi hành vượt dốc ngay. <color=#0078D4>(Còn: {stepRemaining}s)</color></color>";
+                }
+                else if (em.SlopeStopDuration > 0f)
+                {
+                    stepDescText.text = $"<color=#0078D4><b>Đang dừng:</b> {em.SlopeStopDuration:F1}s/5.0s. Giữ phanh! (Bài thi còn: {stepRemaining}s)</color>";
+                }
+                else
+                {
+                    stepDescText.text = $"<color={timerColor}><b>[Đang đếm ngược: {stepRemaining}s]</b></color> Dừng trên dốc đúng vị trí và giữ đứng yên 5 giây.";
+                }
             }
-            else
+            // Hiển thị đếm ngược cho Bài 7 (Ghép dọc)
+            else if (em.currentStep == ExamStep.GhepDocVaoNoiDo)
             {
-                stepDescText.text = "Dừng trên dốc đúng vị trí và giữ đứng yên <b>5 giây</b>.";
+                if (em.HasParkingStoppedLongEnough)
+                {
+                    stepDescText.text = $"<color=#1FA659><b>[ĐÃ NHẬN BÀI]</b></color> Đã ghép xe thành công! Hãy lái xe đi ra khỏi chuồng. <color=#0078D4>(Còn: {stepRemaining}s)</color>";
+                }
+                else if (em.ParkingStopDuration > 0f)
+                {
+                    stepDescText.text = $"<color=#0078D4><b>Đang dừng đỗ:</b> {em.ParkingStopDuration:F1}s/2.0s. Giữ xe đứng yên trong chuồng! (Còn: {stepRemaining}s)</color>";
+                }
+                else
+                {
+                    stepDescText.text = $"<color={timerColor}><b>[Đang đếm ngược: {stepRemaining}s]</b></color> Lùi xe vào chuồng dọc đúng quy định và giữ đứng yên 2s.";
+                }
+            }
+            // Hiển thị đếm ngược cho Bài 8 (Đường sắt)
+            else if (em.currentStep == ExamStep.TamDungNoiDuongSat)
+            {
+                if (em.HasRailwayStoppedLongEnough)
+                {
+                    stepDescText.text = $"<color=#1FA659><b>Đạt 2s!</b> Tiếp tục di chuyển sang bài tiếp theo. <color=#0078D4>(Còn: {stepRemaining}s)</color></color>";
+                }
+                else if (em.RailwayStopDuration > 0f)
+                {
+                    stepDescText.text = $"<color=#0078D4><b>Đang dừng:</b> {em.RailwayStopDuration:F1}s/2.0s. Giữ phanh! (Bài thi còn: {stepRemaining}s)</color>";
+                }
+                else
+                {
+                    stepDescText.text = $"<color={timerColor}><b>[Đang đếm ngược: {stepRemaining}s]</b></color> Dừng trước vạch đường sắt và giữ xe đứng yên 2s.";
+                }
+            }
+            // Hiển thị đếm ngược cho Bài 10 (Ghép ngang)
+            else if (em.currentStep == ExamStep.GhepNgangVaoNoiDo)
+            {
+                if (em.HasParkingStoppedLongEnough)
+                {
+                    stepDescText.text = $"<color=#1FA659><b>[ĐÃ NHẬN BÀI]</b></color> Đã ghép xe thành công! Hãy lái xe đi ra khỏi chuồng. <color=#0078D4>(Còn: {stepRemaining}s)</color>";
+                }
+                else if (em.ParkingStopDuration > 0f)
+                {
+                    stepDescText.text = $"<color=#0078D4><b>Đang dừng đỗ:</b> {em.ParkingStopDuration:F1}s/2.0s. Giữ xe đứng yên trong chuồng! (Còn: {stepRemaining}s)</color>";
+                }
+                else
+                {
+                    stepDescText.text = $"<color={timerColor}><b>[Đang đếm ngược: {stepRemaining}s]</b></color> Lái xe ghép vào chuồng ngang đúng quy định và giữ đứng yên 2s.";
+                }
+            }
+            // Hiển thị tiến trình & tốc độ cho Bài 9 (Thay đổi số)
+            else if (em.currentStep == ExamStep.ThayDoiSoDuongBang)
+            {
+                float curSpeed = targetCar != null ? targetCar.CurrentSpeed : 0f;
+                if (em.step9Segment == 2)
+                {
+                    string speedStatus = curSpeed < 20f ? "<color=#1FA659>[ĐẠT <20km/h]</color>" : "<color=#E74C3C>[CẦN <20km/h!]</color>";
+                    stepDescText.text = $"<color={timerColor}><b>[Còn {stepRemaining}s]</b></color> {speedStatus} Giảm tốc từ biển 2 -> biển 3 (rẽ trái). Vận tốc: <b>{curSpeed:F1} km/h</b>";
+                }
+                else
+                {
+                    string speedStatus = curSpeed > 20f ? "<color=#1FA659>[ĐẠT >20km/h]</color>" : "<color=#FF9900>[CẦN >20km/h!]</color>";
+                    stepDescText.text = $"<color={timerColor}><b>[Còn {stepRemaining}s]</b></color> {speedStatus} Tăng tốc từ biển 1 -> biển 2. Vận tốc: <b>{curSpeed:F1} km/h</b>";
+                }
+            }
+            // Hiển thị đếm ngược cho các bài thi khác nếu có thời gian quy định
+            else if (limit < 9999f && em.currentStep != ExamStep.None && em.currentStep != ExamStep.XuatPhat)
+            {
+                string baseDesc = GetBaseDescForStep(em.currentStep);
+                stepDescText.text = $"<color={timerColor}><b>[Đang đếm ngược: {stepRemaining}s]</b></color> {baseDesc}";
             }
         }
 
@@ -370,7 +466,10 @@ public class HUDController : MonoBehaviour
                 break;
             case ExamStep.ThayDoiSoDuongBang:
                 stepTitleText.text = "Bài 9: Thay đổi tốc độ";
-                stepDescText.text = "Tăng tốc >24 km/h và giảm tốc <20 km/h theo biển.";
+                if (ExamManager.Instance != null && ExamManager.Instance.step9Segment == 2)
+                    stepDescText.text = "Giảm tốc < 20 km/h từ biển 2 đến biển 3 (rẽ trái).";
+                else
+                    stepDescText.text = "Tăng tốc > 20 km/h từ biển 1 đến biển 2.";
                 break;
             case ExamStep.GhepNgangVaoNoiDo:
                 stepTitleText.text = "Bài 10: Ghép xe ngang";
@@ -380,6 +479,27 @@ public class HUDController : MonoBehaviour
                 stepTitleText.text = "Bài 11: Kết thúc";
                 stepDescText.text = "Bật xi-nhan phải và lái xe qua vạch kết thúc.";
                 break;
+        }
+    }
+
+    private string GetBaseDescForStep(ExamStep step)
+    {
+        switch (step)
+        {
+            case ExamStep.XuatPhat: return "Bật xi-nhan trái, nhấn ga (W) qua vạch xuất phát.";
+            case ExamStep.DungNhuongDuongDiBo: return "Dừng trước vạch trắng và giữ đứng yên 2 giây.";
+            case ExamStep.DungAndKhoiHanhNgangDoc: return "Dừng trên dốc, giữ yên 5 giây và vượt dốc.";
+            case ExamStep.VetBanhXeAndDuongVuongGoc: return "Lái bánh xe bên phụ qua vệt bánh xe, tránh đè vạch.";
+            case ExamStep.QuaNgaTuDenTinHieu: return "Dừng khi đèn đỏ, đi khi đèn xanh và xi-nhan đúng.";
+            case ExamStep.DuongVongQuanhCo: return "Lái xe qua đường chữ S uốn lượn, không đè vạch.";
+            case ExamStep.GhepDocVaoNoiDo: return "Lùi xe vào chuồng dọc đúng quy định và đi ra.";
+            case ExamStep.TamDungNoiDuongSat: return "Dừng trước vạch đường sắt và giữ xe đứng yên.";
+            case ExamStep.ThayDoiSoDuongBang:
+                if (ExamManager.Instance != null && ExamManager.Instance.step9Segment == 2)
+                    return "Giảm tốc < 20 km/h từ biển 2 đến biển 3 (rẽ trái).";
+                return "Tăng tốc > 20 km/h từ biển 1 đến biển 2.";
+            case ExamStep.GhepNgangVaoNoiDo: return "Lái xe ghép vào chuồng ngang đúng quy định và đi ra.";
+            default: return "";
         }
     }
 

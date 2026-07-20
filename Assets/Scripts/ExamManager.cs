@@ -93,11 +93,21 @@ public class ExamManager : MonoBehaviour
     private int ngaTuVisitCount = 0;
 
     private bool stoppedAtRailway = false;
+    private float railwayStopDuration = 0f;
+    private bool hasRailwayStoppedLongEnough = false;
     private bool reachedTargetSpeed = false;
     private bool slowedDownAfterTargetSpeed = false;
     private bool parkedSuccessfully = false;
+    private float parkingStopDuration = 0f;
+    private bool hasParkingStoppedLongEnough = false;
     private bool hasPassedBridgeMid = false;
     private bool isCurrentStepValidated = false;
+
+    [Header("Trạng thái Bài 9 (Thay đổi số trên đường bằng)")]
+    public int step9Segment = 1; // 1: Từ Biển 1 -> Biển 2 (>20km/h), 2: Từ Biển 2 -> Biển 3 (<20km/h), 3: Qua Biển 3
+    private float lastStep9DeductedTime = -999f;
+    private bool step9Segment1SpeedPassed = false;
+    private bool step9Segment2SpeedPassed = false;
 
     // Quản lý thời gian của từng bài thi riêng lẻ
     private float stepStartTime = 0f;
@@ -128,11 +138,64 @@ public class ExamManager : MonoBehaviour
     public bool HasPedestrianStoppedLongEnough => hasPedestrianStoppedLongEnough;
     public float SlopeStopDuration => slopeStopDuration;
     public bool HasSlopeStoppedLongEnough => hasSlopeStoppedLongEnough;
+    public float RailwayStopDuration => railwayStopDuration;
+    public bool HasRailwayStoppedLongEnough => hasRailwayStoppedLongEnough;
+    public float ParkingStopDuration => parkingStopDuration;
+    public bool HasParkingStoppedLongEnough => hasParkingStoppedLongEnough;
     public bool IsInsideCurrentTrigger => isInsideCurrentTrigger;
     public bool XuatPhatMovingChecked => xuatPhatMovingChecked;
     public bool XuatPhatBlinkerOffChecked => xuatPhatBlinkerOffChecked;
     public bool HasStartedWithBlinker => hasStartedWithBlinker;
     public bool HasDeductedForNoBlinker => hasDeductedForNoBlinker;
+
+    // Vùng xác định (Zone Trigger) cho Bài 2, 3, 7, 8, 10
+    private bool isStepTimerActive = false;
+    private bool isInsideZoneTrigger = false;
+    private bool hasEnteredZone = false;
+
+    public bool IsStepTimerActive => isStepTimerActive;
+    public bool IsInsideZoneTrigger => isInsideZoneTrigger;
+    public bool HasEnteredZone => hasEnteredZone;
+
+    public bool IsZoneRequiredForStep(ExamStep step)
+    {
+        return step == ExamStep.DungNhuongDuongDiBo ||          // Bài 2
+               step == ExamStep.DungAndKhoiHanhNgangDoc ||      // Bài 3
+               step == ExamStep.GhepDocVaoNoiDo ||              // Bài 7
+               step == ExamStep.TamDungNoiDuongSat ||           // Bài 8
+               step == ExamStep.GhepNgangVaoNoiDo;              // Bài 10
+    }
+
+    public void SetZoneTriggerState(ExamStep step, bool isInside)
+    {
+        if (step == currentStep)
+        {
+            isInsideZoneTrigger = isInside;
+            if (isInside && !isStepTimerActive)
+            {
+                ActivateZoneTimer(step);
+            }
+        }
+    }
+
+    public void ActivateZoneTimer(ExamStep step)
+    {
+        if (step == currentStep && !isStepTimerActive)
+        {
+            isStepTimerActive = true;
+            hasEnteredZone = true;
+            stepStartTime = Time.time;
+            stepTimeLimitDeducted = false;
+
+            Debug.Log($"[ExamManager] Xe đã vào đúng vùng bài thi {step}. Kích hoạt đếm ngược {GetTimeLimitForStep(step)}s!");
+
+            var hud = Object.FindAnyObjectByType<HUDController>();
+            if (hud != null)
+            {
+                hud.ShowSuccessNotification("Đã vào vùng bài thi! Bắt đầu đếm ngược thời gian.", 2.5f);
+            }
+        }
+    }
 
     public void SetInsideTrigger(ExamStep step, bool isInside)
     {
@@ -209,6 +272,12 @@ public class ExamManager : MonoBehaviour
     private void CheckStepTimeLimit()
     {
         if (stepTimeLimitDeducted) return;
+
+        // Bài 2, 3, 7, 8, 10: Chỉ tính thời gian đếm ngược sau khi xe đã đi vào vùng trigger xác định (Zone Trigger)
+        if (IsZoneRequiredForStep(currentStep) && !isStepTimerActive)
+        {
+            return;
+        }
 
         float elapsed = Time.time - stepStartTime;
         float limit = GetTimeLimitForStep(currentStep);
@@ -310,11 +379,6 @@ public class ExamManager : MonoBehaviour
                                 hasDeductedForNoBlinker = true;
                             }
                         }
-                        else
-                        {
-                            // Phát tiếng Bính boong nhận bài xuất phát hợp lệ!
-                            PlaySFX(soundBinhBoong);
-                        }
                     }
                 }
 
@@ -345,7 +409,6 @@ public class ExamManager : MonoBehaviour
                     if (pedestrianStopStartTime >= 2f && !hasPedestrianStoppedLongEnough)
                     {
                         hasPedestrianStoppedLongEnough = true;
-                        PlaySFX(soundBinhBoong);
                         var hud = Object.FindAnyObjectByType<HUDController>();
                         if (hud != null)
                         {
@@ -377,7 +440,6 @@ public class ExamManager : MonoBehaviour
                     if (slopeStopDuration >= 5f && !hasSlopeStoppedLongEnough)
                     {
                         hasSlopeStoppedLongEnough = true;
-                        PlaySFX(soundBinhBoong);
                         var hud = Object.FindAnyObjectByType<HUDController>();
                         if (hud != null)
                         {
@@ -446,28 +508,89 @@ public class ExamManager : MonoBehaviour
                 break;
 
             case ExamStep.TamDungNoiDuongSat:
-                if (targetCar.CurrentSpeed < 0.1f)
+                if (isInsideZoneTrigger && targetCar.CurrentSpeed < 0.1f)
                 {
                     stoppedAtRailway = true;
+                    railwayStopDuration += Time.deltaTime;
+                    if (railwayStopDuration >= 2f && !hasRailwayStoppedLongEnough)
+                    {
+                        hasRailwayStoppedLongEnough = true;
+                        var hud = Object.FindAnyObjectByType<HUDController>();
+                        if (hud != null)
+                        {
+                            hud.ShowSuccessNotification("Đã dừng đủ thời gian! Hãy tiếp tục di chuyển.", 2f);
+                        }
+                    }
+                }
+                else
+                {
+                    if (!hasRailwayStoppedLongEnough)
+                    {
+                        railwayStopDuration = 0f;
+                    }
                 }
                 break;
 
             case ExamStep.ThayDoiSoDuongBang:
-                if (targetCar.CurrentSpeed >= 24f)
+                if (step9Segment == 1)
                 {
-                    reachedTargetSpeed = true;
+                    if (!step9Segment1SpeedPassed)
+                    {
+                        // Từ Biển 1 đến Biển 2: Phải đạt tốc độ > 20 km/h
+                        if (targetCar.CurrentSpeed > 20f)
+                        {
+                            step9Segment1SpeedPassed = true;
+                            reachedTargetSpeed = true;
+                        }
+                        else if (Time.time - lastStep9DeductedTime >= 2.0f)
+                        {
+                            lastStep9DeductedTime = Time.time;
+                            DeductPoints(5, "Tốc độ không đạt (>20km/h) giữa biển 1 và biển 2");
+                        }
+                    }
                 }
-                if (reachedTargetSpeed && targetCar.CurrentSpeed <= 20f)
+                else if (step9Segment == 2)
                 {
-                    slowedDownAfterTargetSpeed = true;
+                    if (!step9Segment2SpeedPassed)
+                    {
+                        // Từ Biển 2 đến Biển 3 (rẽ trái): Phải giảm tốc < 20 km/h
+                        if (targetCar.CurrentSpeed < 20f)
+                        {
+                            step9Segment2SpeedPassed = true;
+                            slowedDownAfterTargetSpeed = true;
+                        }
+                        else if (Time.time - lastStep9DeductedTime >= 2.0f)
+                        {
+                            lastStep9DeductedTime = Time.time;
+                            DeductPoints(5, "Tốc độ chưa giảm dưới 20km/h giữa biển 2 và biển 3");
+                        }
+                    }
                 }
                 break;
 
             case ExamStep.GhepDocVaoNoiDo:
             case ExamStep.GhepNgangVaoNoiDo:
-                if (targetCar.CurrentSpeed < 0.1f)
+                if (isInsideZoneTrigger && targetCar.CurrentSpeed < 0.1f)
                 {
-                    parkedSuccessfully = true;
+                    parkingStopDuration += Time.deltaTime;
+                    if (parkingStopDuration >= 2f && !hasParkingStoppedLongEnough)
+                    {
+                        hasParkingStoppedLongEnough = true;
+                        parkedSuccessfully = true;
+                        PlaySFX(soundBinhBoong);
+                        var hud = Object.FindAnyObjectByType<HUDController>();
+                        if (hud != null)
+                        {
+                            hud.ShowSuccessNotification("Đã nhận bài đỗ xe thành công! Hãy lái xe đi ra.", 3f);
+                        }
+                    }
+                }
+                else
+                {
+                    if (!hasParkingStoppedLongEnough)
+                    {
+                        parkingStopDuration = 0f;
+                    }
                 }
                 break;
             case ExamStep.QuaNgaTuDenTinHieu:
@@ -532,6 +655,10 @@ public class ExamManager : MonoBehaviour
                 {
                     DeductPoints(5, "Không ghép xe đúng quy định (chưa dừng đỗ trong chuồng)");
                 }
+                else if (!hasParkingStoppedLongEnough)
+                {
+                    DeductPoints(5, "Dừng đỗ trong chuồng chưa đủ 2 giây");
+                }
                 break;
 
             case ExamStep.TamDungNoiDuongSat:
@@ -539,16 +666,20 @@ public class ExamManager : MonoBehaviour
                 {
                     DeductPoints(5, "Không dừng xe nơi đường sắt chạy qua");
                 }
+                else if (!hasRailwayStoppedLongEnough)
+                {
+                    DeductPoints(5, "Dừng xe chưa đủ 2 giây nơi đường sắt chạy qua");
+                }
                 break;
 
             case ExamStep.ThayDoiSoDuongBang:
-                if (!reachedTargetSpeed)
+                if (!step9Segment1SpeedPassed && !reachedTargetSpeed)
                 {
-                    DeductPoints(5, "Không đạt tốc độ quy định (>24 km/h)");
+                    DeductPoints(5, "Không đạt tốc độ quy định (>20 km/h) giữa biển 1 và biển 2");
                 }
-                else if (!slowedDownAfterTargetSpeed)
+                if (!step9Segment2SpeedPassed && !slowedDownAfterTargetSpeed)
                 {
-                    DeductPoints(5, "Không giảm tốc độ về quy định khi kết thúc bài tăng số");
+                    DeductPoints(5, "Không giảm tốc độ về quy định (<20 km/h) giữa biển 2 và biển 3");
                 }
                 break;
         }
@@ -556,8 +687,20 @@ public class ExamManager : MonoBehaviour
 
     private void InitializeStepStates(ExamStep step)
     {
-        ResetStepTimer();
         isInsideCurrentTrigger = true;
+
+        if (IsZoneRequiredForStep(step))
+        {
+            isStepTimerActive = false;
+            hasEnteredZone = false;
+            isInsideZoneTrigger = false;
+        }
+        else
+        {
+            isStepTimerActive = true;
+            hasEnteredZone = true;
+            ResetStepTimer();
+        }
 
         switch (step)
         {
@@ -615,13 +758,21 @@ public class ExamManager : MonoBehaviour
             case ExamStep.GhepDocVaoNoiDo:
             case ExamStep.GhepNgangVaoNoiDo:
                 parkedSuccessfully = false;
+                hasParkingStoppedLongEnough = false;
+                parkingStopDuration = 0f;
                 break;
 
             case ExamStep.TamDungNoiDuongSat:
                 stoppedAtRailway = false;
+                hasRailwayStoppedLongEnough = false;
+                railwayStopDuration = 0f;
                 break;
 
             case ExamStep.ThayDoiSoDuongBang:
+                step9Segment = 1;
+                lastStep9DeductedTime = Time.time; // Chờ 2s đệm khi vừa qua biển 1 trước khi kiểm tra tốc độ
+                step9Segment1SpeedPassed = false;
+                step9Segment2SpeedPassed = false;
                 reachedTargetSpeed = false;
                 slowedDownAfterTargetSpeed = false;
                 break;
@@ -890,6 +1041,32 @@ public class ExamManager : MonoBehaviour
         {
             float delay = 0.8f + (clipToPlay != null ? clipToPlay.length : 2f) + 1.5f;
             StartCoroutine(CompleteExamAfterDelay(delay));
+        }
+    }
+
+    public void SetStep9Segment(int segment)
+    {
+        if (!isExamActive || currentStep != ExamStep.ThayDoiSoDuongBang) return;
+        if (step9Segment == segment) return; // Tránh reset lại timer nếu xe vẫn đang di chuyển trong cùng 1 phân đoạn
+
+        step9Segment = segment;
+        lastStep9DeductedTime = Time.time; // Chờ 2s đệm khi vừa qua biển mới trước khi kiểm tra trừ điểm
+
+        var hud = Object.FindAnyObjectByType<HUDController>();
+        if (hud != null)
+        {
+            if (segment == 1)
+            {
+                hud.ShowSuccessNotification("Vào đoạn Tăng tốc (Biển 1 -> Biển 2): Yêu cầu tốc độ > 20 km/h!", 3f);
+            }
+            else if (segment == 2)
+            {
+                hud.ShowSuccessNotification("Vào đoạn Giảm tốc (Biển 2 -> Biển 3): Yêu cầu tốc độ < 20 km/h!", 3f);
+            }
+            else if (segment == 3)
+            {
+                hud.ShowSuccessNotification("Đã qua Biển 3 (Rẽ trái): Đã hoàn thành Bài 9!", 3f);
+            }
         }
     }
 

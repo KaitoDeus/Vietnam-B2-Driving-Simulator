@@ -42,13 +42,16 @@ public class BuildScript
         }
     }
 
-    [MenuItem("Build/Build Windows Game (v0.0.1)")]
+    [MenuItem("Build/Build Windows Game (v0.0.2)")]
     public static void BuildWindowsGame()
     {
+        // Set Bundle Version
+        PlayerSettings.bundleVersion = "0.0.2";
+
         // Automatically setup the application icon before building
         SetupApplicationIcon();
 
-        string buildFolder = Path.Combine(Directory.GetCurrentDirectory(), "Builds/v0.0.1/Windows");
+        string buildFolder = Path.Combine(Directory.GetCurrentDirectory(), "Builds/v0.0.2/Windows");
         if (!Directory.Exists(buildFolder))
         {
             Directory.CreateDirectory(buildFolder);
@@ -64,7 +67,7 @@ public class BuildScript
 
         string buildPath = Path.Combine(buildFolder, "Vietnam B2 Driving Simulator.exe");
 
-        Debug.Log("Starting Windows Build (StandaloneWindows64)...");
+        Debug.Log("Starting Windows Build (StandaloneWindows64) v0.0.2...");
         
         BuildPlayerOptions buildPlayerOptions = new BuildPlayerOptions();
         buildPlayerOptions.scenes = scenes;
@@ -78,7 +81,6 @@ public class BuildScript
         if (summary.result == UnityEditor.Build.Reporting.BuildResult.Succeeded)
         {
             Debug.Log($"Build Succeeded! Total size: {summary.totalSize} bytes. Path: {buildPath}");
-            EditorUtility.RevealInFinder(buildPath);
         }
         else if (summary.result == UnityEditor.Build.Reporting.BuildResult.Failed)
         {

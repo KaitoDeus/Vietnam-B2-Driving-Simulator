@@ -2,15 +2,14 @@
 ; SEE THE DOCUMENTATION FOR DETAILS ON CREATING INNO SETUP SCRIPT FILES!
 
 #define MyAppName "Vietnam B2 Driving Simulator"
-#define MyAppVersion "0.0.1"
+#define MyAppVersion "0.0.2"
 #define MyAppPublisher "KaitoDeus"
 #define MyAppExeName "Vietnam B2 Driving Simulator.exe"
-#define MyBuildPath "Builds\v0.0.1\Windows"
+#define MyBuildPath "Builds\v0.0.2\Windows"
 
 [Setup]
 ; NOTE: The value of AppId uniquely identifies this application. Do not use the same AppId value in installers for other applications.
-; (To generate a new GUID, click Tools | Generate GUID inside the IDE.)
-AppId={{D9A3B52C-5F9A-4E90-A54D-93D25BA298B3}
+AppId={{D9A3B52C-5F9A-4E90-A54D-93D25BA298B3}}
 AppName={#MyAppName}
 AppVersion={#MyAppVersion}
 AppPublisher={#MyAppPublisher}
@@ -18,8 +17,8 @@ DefaultDirName={autopf}\{#MyAppName}
 UninstallDisplayIcon={app}\{#MyAppExeName}
 DisableProgramGroupPage=yes
 ; The directory where the installer will output the setup package.
-OutputDir=Builds\v0.0.1\Installer
-OutputBaseFilename=Vietnam_B2_Driving_Simulator_v0.0.1_Setup
+OutputDir=Builds\v0.0.2\Installer
+OutputBaseFilename=Vietnam_B2_Driving_Simulator_v0.0.2_Setup
 Compression=lzma2/max
 SolidCompression=yes
 WizardStyle=modern
@@ -33,14 +32,7 @@ Name: "english"; MessagesFile: "compiler:Default.isl"
 Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: unchecked
 
 [Files]
-Source: "{#MyBuildPath}\{#MyAppExeName}"; DestDir: "{app}"; Flags: ignoreversion
-Source: "{#MyBuildPath}\UnityPlayer.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "{#MyBuildPath}\UnityCrashHandler64.exe"; DestDir: "{app}"; Flags: ignoreversion
-Source: "{#MyBuildPath}\dstorage.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "{#MyBuildPath}\dstoragecore.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "{#MyBuildPath}\D3D12\*"; DestDir: "{app}\D3D12"; Flags: ignoreversion recursesubdirs createallsubdirs
-Source: "{#MyBuildPath}\Vietnam B2 Driving Simulator_Data\*"; DestDir: "{app}\Vietnam B2 Driving Simulator_Data"; Flags: ignoreversion recursesubdirs createallsubdirs
-Source: "{#MyBuildPath}\MonoBleedingEdge\*"; DestDir: "{app}\MonoBleedingEdge"; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "{#MyBuildPath}\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
 
 [Icons]
 Name: "{autoprograms}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"
